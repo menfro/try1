@@ -78,6 +78,21 @@
             margin-top: -6px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
+        
+        /* Edit Inputs */
+        .score-input {
+            width: 40px;
+            text-align: center;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 2px;
+            font-size: 0.75rem;
+        }
+        .score-input:focus {
+            outline: none;
+            border-color: #004aad;
+            background-color: #f0f9ff;
+        }
 
         /* Chart Container */
         .chart-container {
@@ -103,17 +118,30 @@
             opacity: 1;
         }
 
+        /* Report Typography */
+        .report-content h2 { font-size: 1.25rem; font-weight: 700; color: #004aad; margin-top: 2rem; margin-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+        .report-content h3 { font-size: 1.1rem; font-weight: 700; color: #334155; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        .report-content h4 { font-size: 1rem; font-weight: 700; color: #475569; margin-top: 1rem; margin-bottom: 0.25rem; }
+        .report-content p { margin-bottom: 0.75rem; line-height: 1.6; color: #475569; font-size: 0.95rem; text-align: justify; }
+        .report-content ul, .report-content ol { padding-right: 1.5rem; margin-bottom: 1rem; color: #475569; font-size: 0.95rem; }
+        .report-content ul { list-style-type: disc; }
+        .report-content ol { list-style-type: decimal; }
+        .report-content li { margin-bottom: 0.5rem; }
+        .report-content strong { color: #1e293b; font-weight: 700; }
+        
+        /* Report Tables */
+        .report-table-wrapper { overflow-x: auto; margin-bottom: 1.5rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; }
+        .report-table { width: 100%; font-size: 0.85rem; text-align: right; border-collapse: collapse; min-width: 600px; }
+        .report-table th { background-color: #f1f5f9; color: #334155; font-weight: 700; padding: 0.75rem; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
+        .report-table td { padding: 0.75rem; border-bottom: 1px solid #e2e8f0; color: #475569; vertical-align: top; }
+        .report-table tr:last-child td { border-bottom: none; }
+        .report-table tr:nth-child(even) { background-color: #f8fafc; }
+
         /* Mobile Adjustments */
         @media (max-width: 640px) {
-            .mobile-stack {
-                flex-direction: column;
-            }
-            .mobile-full {
-                width: 100%;
-            }
-            .hide-mobile {
-                display: none;
-            }
+            .mobile-stack { flex-direction: column; }
+            .mobile-full { width: 100%; }
+            .hide-mobile { display: none; }
             h1 { font-size: 1.25rem; }
             h2 { font-size: 1.1rem; }
         }
@@ -132,7 +160,7 @@
                         <span class="text-[10px] text-slate-500">ניתוח חלופות</span>
                     </div>
                 </div>
-                <div class="flex space-x-4 space-x-reverse h-full items-end pb-1 overflow-x-auto">
+                <div class="flex space-x-2 md:space-x-4 space-x-reverse h-full items-end pb-1 overflow-x-auto no-scrollbar">
                     <button onclick="switchView('dashboard')" id="nav-dashboard" class="nav-item active px-2 py-2 text-xs md:text-sm font-medium text-slate-600 whitespace-nowrap">
                         <i class="fa-solid fa-chart-pie ml-1"></i> דשבורד
                     </button>
@@ -141,6 +169,9 @@
                     </button>
                     <button onclick="switchView('details')" id="nav-details" class="nav-item px-2 py-2 text-xs md:text-sm font-medium text-slate-600 whitespace-nowrap">
                         <i class="fa-solid fa-city ml-1"></i> פירוט
+                    </button>
+                    <button onclick="switchView('report')" id="nav-report" class="nav-item px-2 py-2 text-xs md:text-sm font-medium text-slate-600 whitespace-nowrap">
+                        <i class="fa-solid fa-file-contract ml-1"></i> דו"ח מלא
                     </button>
                 </div>
             </div>
@@ -232,7 +263,17 @@
 
                     <!-- Hidden Drilldown Table -->
                     <div id="drilldown-container" class="hidden border-t border-slate-100 pt-4 mt-4 bg-slate-50 rounded-lg p-2 overflow-x-auto">
-                        <h4 class="text-xs font-bold text-slate-500 mb-2">פירוט ציונים גולמיים (לפני משקולות)</h4>
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="text-xs font-bold text-slate-500">פירוט ציונים גולמיים (לפני משקולות)</h4>
+                            <div class="flex gap-2">
+                                <button onclick="resetScores()" class="text-[10px] bg-red-50 text-red-600 px-2 py-1 rounded border border-red-100 hover:bg-red-100">
+                                    <i class="fa-solid fa-rotate-left"></i> אפס ברירת מחדל
+                                </button>
+                                <button id="btn-edit-scores" onclick="toggleEditMode()" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded border border-blue-100 hover:bg-blue-100 font-bold">
+                                    <i class="fa-solid fa-pen"></i> ערוך ציונים
+                                </button>
+                            </div>
+                        </div>
                         <table class="w-full text-xs text-right whitespace-nowrap">
                             <thead class="bg-slate-200 text-slate-600">
                                 <tr>
@@ -250,6 +291,7 @@
                                 <!-- Injected via JS -->
                             </tbody>
                         </table>
+                        <p class="text-[10px] text-slate-400 mt-2" id="edit-hint">* לחץ על "ערוך ציונים" כדי לשנות את הערכים בטבלה. השינוי ישפיע מידית על כל הדשבורד.</p>
                     </div>
                 </div>
 
@@ -306,7 +348,7 @@
                         <div>
                             <h3 class="font-bold text-slate-800 text-lg leading-none">בניית תרחיש</h3>
                             <div class="text-xs text-slate-500 mt-1">
-                                סה"כ ניקוד: <span id="total-weight" class="font-bold text-primary"></span>
+                                סה"כ ניקוד: <span id="total-weight" class="font-bold text-primary">100%</span> (מתנרמל אוטומטית)
                             </div>
                         </div>
                         <button onclick="resetCustomSliders()" class="text-xs text-slate-500 hover:text-primary"><i class="fa-solid fa-rotate-right"></i> איפוס</button>
@@ -374,6 +416,290 @@
             </div>
         </div>
 
+        <!-- VIEW 4: FULL REPORT -->
+        <div id="view-report" class="hidden animate-fade-in">
+            <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-4 md:p-8 border border-slate-200 report-content">
+                
+                <div class="border-b-2 border-primary pb-4 mb-6">
+                    <h1 class="text-2xl font-bold text-primary">מסמך עמדה: בחינת חלופות אסטרטגיות להעתקת מטה חנ"י</h1>
+                    <div class="mt-2 text-sm text-slate-500 flex flex-col md:flex-row justify-between">
+                        <div><strong>אל:</strong> מנכ"ל החברה</div>
+                        <div><strong>מאת:</strong> מנחם פרויליך, סמנכ"ל נכסים</div>
+                        <div><strong>תאריך:</strong> 11 בדצמבר 2025</div>
+                    </div>
+                </div>
+
+                <h2>1. תקציר מנהלים</h2>
+                <p>מסמך זה מציג את עבודת המטה שבוצעה בחטיבת הנכסים לבחינת חלופות להעתקת משרדי הנהלת החברה (מטה) ממיקומם הנוכחי ברחוב המלאכה 2, ת"א. המהלך נועד להתאים את סביבת העבודה לצרכים העדכניים של חנ"י, לשפר את הנגישות לעובדים ולאורחים, ולמקסם את היעילות הכלכלית.</p>
+                <div class="bg-blue-50 p-4 border-r-4 border-blue-500 rounded my-4">
+                    <strong>החלטה נדרשת:</strong> אישור לביצוע סקר מגורים ממוכן לכלל עובדי המטה, ואישור לצאת בפניה דיסקרטית בארבע חלופות נבחרות: פתח תקווה, ראשון לציון, מודיעין ובני ברק.
+                </div>
+                <p>במסגרת העבודה נותחו 7 מתחמי תעסוקה מרכזיים בגוש דן והשפלה. הניתוח התבסס על מודל משוקלל המעניק עדיפות לנגישות תחבורתית מגוונת ולחוויית העובד. המסקנה המרכזית היא כי <strong>חלופת פתח-תקווה (רמת סיב)</strong> מספקת את המענה המיטבי (ציון 8.75) לכלל העובדים. עם זאת, ניתוח הרגישות מראה כי במידה ורוב העובדים מתגוררים בדרום (אשדוד/שפלה), <strong>ראשון לציון</strong> הופכת לחלופה המובילה.</p>
+
+                <h2>2. הגדרת הפרוגרמה והצרכים</h2>
+                <p>על בסיס ניתוח ראשוני של מצבת כוח האדם וצרכי החברה, הוגדרו עקרונות הבסיס לאיתור:</p>
+                <ul>
+                    <li><strong>היקף השטח:</strong> כ-5,000 מ"ר (ברוטו). שטח זה מאפשר יחס ברוטו לעובד של כ-33 מ"ר, הכולל רווחה נדיבה, חדרי ישיבות מרובים ושטחי ציבור.</li>
+                    <li><strong>אוכלוסייה:</strong> כ-150 עובדים (הנהלה, כספים, משפטית, נכסים, הנדסה).</li>
+                    <li><strong>תצורה:</strong> עדיפות לקומות גדולות (Floor Plate של 1,500 מ"ר ומעלה) לשמירה על רצף ניהולי וסנכרון בין מחלקות.</li>
+                    <li><strong>נגישות:</strong> דרישה ל"תמהיל תחבורה מלא" – דגש על רכבת קלה (רק"ל) ורכבת כבדה, לצד נגישות לרכב פרטי.</li>
+                </ul>
+
+                <h2>3. מתודולוגיית הדירוג (מודל המשקולות)</h2>
+                <p>הניקוד לכל חלופה ניתן על בסיס המשקולות הבאים:</p>
+                <div class="report-table-wrapper">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>קטגוריה</th>
+                                <th>פרמטר</th>
+                                <th>משקל</th>
+                                <th>רציונל</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td rowspan="3">תחבורה ציבורית</td>
+                                <td>רכבת קלה (רק"ל)</td>
+                                <td>15%</td>
+                                <td>אמצעי הניידות המרכזי והאמין במטרופולין.</td>
+                            </tr>
+                            <tr>
+                                <td>רכבת כבדה</td>
+                                <td>15%</td>
+                                <td>קריטי לעובדים המגיעים מהפריפריה (חיפה/אשדוד). (סה"כ 40%)</td>
+                            </tr>
+                            <tr>
+                                <td>אוטובוסים</td>
+                                <td>10%</td>
+                                <td>רשת משלימה וגיבוי לרכבות.</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2">רכב וחניה</td>
+                                <td>נגישות כבישים</td>
+                                <td>15%</td>
+                                <td>קרבה לצירים ארציים (איילון/4/431).</td>
+                            </tr>
+                            <tr>
+                                <td>הקצאת חניות</td>
+                                <td>5%</td>
+                                <td>גמישות תפעולית (הסתמכות על פתרונות היקפיים). (סה"כ 20%)</td>
+                            </tr>
+                            <tr>
+                                <td>כלכלי</td>
+                                <td>עלויות שוטפות</td>
+                                <td>15%</td>
+                                <td>שכ"ד, ניהול וארנונה.</td>
+                            </tr>
+                            <tr>
+                                <td>שוק</td>
+                                <td>זמינות והיצע</td>
+                                <td>10%</td>
+                                <td>כוח מיקוח וכניסה מהירה.</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2">איכות ורווחה</td>
+                                <td>איכות וגמישות תפעולית</td>
+                                <td>10%</td>
+                                <td>מפרט הבניין, גודל קומה, מערכות.</td>
+                            </tr>
+                            <tr>
+                                <td>סביבת עבודה</td>
+                                <td>5%</td>
+                                <td>מסעדות, שירותים בקרבת מקום, אווירה. (סה"כ 15%)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2>4. חלופות אסטרטגיות שנבחנו</h2>
+                <ul>
+                    <li><strong>חלופה א':</strong> תל אביב – ציר יגאל אלון / ביצרון (מגדלי טויוטה, אלקטרה, תוצרת הארץ).</li>
+                    <li><strong>חלופה ב':</strong> רמת גן – מתחם הבורסה (אזור מגדל השחר, אטריום, סבידור).</li>
+                    <li><strong>חלופה ג':</strong> בני ברק – מתחם ה-BBC (צפון בני ברק, מגדלי ב.ס.ר).</li>
+                    <li><strong>חלופה ד':</strong> פתח תקווה – רמת סיב / קריית אריה (אזור גלובל טאוורס, ב.ס.ר סיטי).</li>
+                    <li><strong>חלופה ה':</strong> ראשון לציון – מתחם האלף (מערב ראשל"צ).</li>
+                    <li><strong>חלופה ו':</strong> מודיעין – ליגד / מע"ר.</li>
+                    <li><strong>חלופה ז':</strong> אזור השרון – הרצליה פיתוח / רעננה צפון.</li>
+                </ul>
+
+                <h2>5. ניתוח עומק השוואתי (Data Breakdown)</h2>
+                <h3>5.1 ניתוח עלויות מפורט: שכירות, ניהול וארנונה (אומדן 2025)</h3>
+                <p>בצענו ניתוח שוק על בסיס נתוני אמת והצעות מחיר ראשוניות (Asking Price) למשרדים ברמת גמר מלא (Class A) בשטח של כ-5,000 מ"ר. הנתונים להלן כוללים שקלול של דמי שכירות, דמי ניהול ותשלומי ארנונה (לפי תעריפי 2024/5):</p>
+                <div class="report-table-wrapper">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>פרמטר</th>
+                                <th>תל אביב (יגאל אלון)</th>
+                                <th>רמת גן (הבורסה)</th>
+                                <th>בני ברק (BBC)</th>
+                                <th>פתח תקווה (רמת סיב)</th>
+                                <th>ראשל"צ (האלף)</th>
+                                <th>מודיעין (מע"ר/ליגד)</th>
+                                <th>הרצליה פיתוח</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>שכירות למ"ר (הערכה)</td><td>135 ₪</td><td>120 ₪</td><td>75 ₪</td><td>65 ₪</td><td>75 ₪</td><td>60 ₪</td><td>115 ₪</td></tr>
+                            <tr><td>דמי ניהול למ"ר</td><td>24 ₪</td><td>24 ₪</td><td>20 ₪</td><td>18 ₪</td><td>20 ₪</td><td>16 ₪</td><td>22 ₪</td></tr>
+                            <tr><td>ארנונה למ"ר (חודשי*)</td><td>~34 ₪</td><td>~31 ₪</td><td>~28 ₪</td><td>~25 ₪</td><td>~25 ₪</td><td>~18 ₪</td><td>~30 ₪</td></tr>
+                            <tr class="font-bold bg-slate-100"><td>סה"כ למ"ר לחודש</td><td>193 ₪</td><td>175 ₪</td><td>123 ₪</td><td>108 ₪</td><td>120 ₪</td><td>94 ₪</td><td>167 ₪</td></tr>
+                            <tr class="font-bold"><td>סה"כ חודשי (5,000 מ"ר)</td><td>965,000 ₪</td><td>875,000 ₪</td><td>615,000 ₪</td><td>540,000 ₪</td><td>600,000 ₪</td><td>470,000 ₪</td><td>835,000 ₪</td></tr>
+                            <tr class="font-bold text-primary"><td>עלות שנתית כוללת</td><td>11.6 מלש"ח</td><td>10.5 מלש"ח</td><td>7.4 מלש"ח</td><td>6.5 מלש"ח</td><td>7.2 מלש"ח</td><td>5.6 מלש"ח</td><td>10.0 מלש"ח</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-xs text-slate-500 mb-4">*הערה: המספרים לעיל מהווים אומדן להשוואה בין-עירונית ואינם מהווים חלופה לבדיקה פרטנית של כל נכס, שתבוצע בשלב מו"מ. הטווחים עשויים לנוע בשיעור של ±10% בהתאם לסיווג הנכס המדויק ואזור המס הספציפי.</p>
+                <p><strong>משמעויות כלכליות:</strong> המעבר למודיעין או לפתח תקווה משקף חיסכון שנתי של כ-5 עד 6 מיליון ש"ח (כ-50% מעלות הדיור) בהשוואה להישארות בתל אביב. בנוסף, עלות החניה בפריפריה נמוכה בכ-50% מאשר בתל אביב, חיסכון נוסף של כמיליון ש"ח בשנה.</p>
+
+                <h3>5.2 נגישות רכבתית (קלה וכבדה)</h3>
+                <p><strong>פתח תקווה (רמת סיב):</strong> נגישות מצוינת ל<strong>רכבת הקלה</strong> (הקו האדום - תחנות שנקר/שחם/בלינסון בלב אזורי התעסוקה). הנגישות ל<strong>רכבת כבדה</strong> (תחנת קריית אריה) טובה לחלק הצפוני, ודורשת קישורית מאזור רמת סיב הדרומי.</p>
+                <p><strong>רמת גן (הבורסה):</strong> <strong>הציון הגבוה ביותר.</strong> שילוב מנצח של <strong>רכבת כבדה</strong> ("סבידור מרכז" - ה-Hub הראשי של ישראל) ו<strong>רכבת קלה</strong> (תחנת "אבא הלל" של הקו האדום) במרחק הליכה מיידי.</p>
+                <p><strong>תל אביב (יגאל אלון):</strong> נגישות טובה ל<strong>רכבת כבדה</strong> (תחנת "השלום" במרחק הליכה של כ-8-10 דקות). נגישות בינונית ל<strong>רכבת הקלה</strong> (תחנות הקו האדום "יהודית" או "שאול המלך" במרחק הליכה של כ-10-12 דקות).</p>
+                <p><strong>בני ברק (BBC):</strong> נגישות מצוינת ל<strong>רכבת הקלה</strong> (תחנות "בן גוריון" ו"אהרונוביץ'" של הקו האדום). נגישות נמוכה ל<strong>רכבת כבדה</strong> (תחנת "בני ברק" ממוקמת בקצה הצפוני ודורשת הליכה ארוכה או שאטל), יש אוטובוסים גם מתחנת הבורסה.</p>
+                <p><strong>ראשון לציון (מתחם האלף):</strong> נגישות מצוינת ל<strong>רכבת כבדה</strong> (תחנת "משה דיין" צמודה למתחם, קו מהיר לת"א ולדרום). <strong>חיסרון מהותי:</strong> אין כרגע רכבת קלה פעילה (הקו הירוק בבנייה, צפי הפעלה 2028).</p>
+                <p><strong>מודיעין:</strong> מצטיינת ב<strong>רכבת כבדה</strong> מהירה לת"א (כ-25 דקות) ולירושלים (כ-20 דקות) מתחנות "פאתי מודיעין" (אזור ליגד) ו"מודיעין מרכז" (מע"ר). <strong>חיסרון:</strong> אין רכבת קלה בעיר.</p>
+                <p><strong>אזור השרון:</strong> רכבת כבדה קיימת (דורשת שאטל למרכזי התעסוקה). אין מענה רק"ל בטווח הקרוב.</p>
+
+                <h3>5.3 נגישות כבישים ואוטובוסים</h3>
+                <p><strong>מתחם האלף (ראשל"צ):</strong> <strong>הציון הגבוה ביותר.</strong> ממוקם על מחלף ייעודי המחבר ישירות את נתיבי איילון דרום (כביש 20) וכביש 431. מאפשר לעובדי הדרום והשפלה לעצור "לפני הפקק" הגדול של גוש דן.</p>
+                <p><strong>תל אביב (יגאל אלון):</strong> ירידה נוחה יחסית מאיילון, אך ציר יגאל אלון עצמו ורחובות הגישה סובלים מעומסי תנועה כבדים מאוד בשעות הבוקר והערב. אוטובוסים: נגישות מצוינת.</p>
+                <p><strong>רמת גן (הבורסה):</strong> "צוואר בקבוק" לרכב פרטי. הכניסה והיציאה למתחם כרוכה בעמידה ממושכת בפקקים. אוטובוסים: הציון הגבוה ביותר (מסוף 2000).</p>
+                <p><strong>בני ברק (BBC):</strong> כבישים: גישה סבירה מכביש 4 (מחלף אם המושבות/ז'בוטינסקי), אך המתחם הפנימי (רחובות הירקון/בן גוריון) צפוף וקשה לתנועה. אוטובוסים: נגישות טובה מאוד. נהנה מהשירות האינטנסיבי על ציר ז'בוטינסקי ודרך בן גוריון.</p>
+                <p><strong>פתח תקווה (רמת סיב):</strong> מיקום אסטרטגי (כביש 4, 5, 471), אך עומסים בכניסות לעיר (ז'בוטינסקי/רבין) בבקרים. אוטובוסים: נגישות טובה מאוד.</p>
+                <p><strong>מודיעין (ליגד/מע"ר):</strong> נגישות פנומנלית לרכב פרטי דרך כביש 431 וכביש 1. הפארק הטכנולוגי מרווח וללא פקקי תנועה פנימיים.</p>
+                <p><strong>אזור השרון (הרצליה/רעננה):</strong> אתגר קשה לעובדים הגרים מדרום לגלילות. ההגעה בבוקר מחייבת חצייה של כל נתיבי איילון/כביש 4 לכיוון צפון.</p>
+
+                <h3>5.4 איכות, גמישות תפעולית וסביבת עבודה</h3>
+                <p><strong>תל אביב - ציר יגאל אלון (ציון: 9.5 משוקלל):</strong><br>איכות המבנה: מגדלי Class A+ אייקוניים (כגון מגדלי אלון, אלקטרה, תוצרת הארץ). לובי מפואר, שמירה 24/7, ומערכות ניהול מתקדמות.<br>סביבת עבודה: الציון הגבוה ביותר בישראל. סביבה אורבנית שוקקת ("עירוב שימושים" אמיתי). שפע מסעדות מכל הסוגים במרחק הליכה, בתי קפה, מכוני כושר, וגישה רגלית למתחם שרונה ועזריאלי. האזור פעיל ותוסס גם בשעות הערב.</p>
+                
+                <p><strong>פתח תקווה - רמת סיב (ציון: 8.0 משוקלל):</strong><br>איכות המבנה: תנופת בנייה חדשה ומודרנית (גלובל טאוורס, ב.ס.ר סיטי). היתרון האסטרטגי הוא <strong>גודל הקומה (Floor Plate):</strong> קומות ענק של 1,500-2,500 מ"ר המאפשרות לרכז את כל המטה ב-2-3 קומות בלבד, מה שמייעל את התקשורת הארגונית וחוסך שטחי שירות כפולים.<br>סביבת עבודה: פונקציונלית מאוד ("אזור תעשייה משודרג"). קיימים מתחמי הסעדה ובילוי ייעודיים המספקים פתרון, אך האזור פחות "הליכתי" ומרגיש מנותק בשעות הערב.</p>
+                
+                <p><strong>ראשון לציון - מתחם האלף (ציון: 7.5 משוקלל):</strong><br>איכות המבנה: הציון הגבוה ביותר לאיכות הבנייה (10/10). כלל הבניינים הם חדשים לחלוטין ("מהניילונים"), נבנו בתקן ירוק (LEED) מחמיר, ומציעים תשתיות תקשורת ומערכות חכמות מתקדמות ביותר. קומות ענק מרווחות.<br>סביבת עבודה: עדיין בשלבי פיתוח ראשוניים. ההיצע הקולינרי מוגבל כרגע לקפיטריות בתוך הבניינים או למתחמי קניות סמוכים (קניון הזהב/סינמה סיטי) המצריכים רכב או שאטל. חסרה תחושת "רחוב" והליכה ספונטנית.</p>
+                
+                <p><strong>רמת גן - מתחם הבורסה (ציון: 8.0 משוקלל):</strong><br>איכות המבנה: מלאי מעורב מאוד. לצד מגדלים חדשים ונוצצים (אטריום, ספיר), ישנם בניינים ותיקים רבים עם קומות קטנות (כ-1,000 מ"ר) וריבוי עמודים, המקשים על תכנון Open Space יעיל ומחייבים פיצול החברה למספר רב של קומות.<br>סביבת עבודה: סביבה אינטנסיבית ושוקקת חיים. היצע אדיר וזמין של מסעדות פועלים ומזון מהיר, אך האזור סובל מצפיפות גבוהה, רעש, וזיהום אוויר, והוא פחות "מזמין" להליכה נינוחה או לאירוח יוקרתי.</p>
+                
+                <p><strong>אזור השרון - הרצליה פיתוח (ציון: 9.5 משוקלל):</strong><br>איכות המבנה: מבנים איכותיים מאוד, שילוב של מגדלים וקמפוסים נמוכים ומטופחים.<br>סביבת עבודה: סביבת העבודה היוקרתית בישראל. מסעדות גורמה, קרבה לים, מלונות עסקים ואווירה בינלאומית. החיסרון הוא עלויות המחיה הגבוהות (מסעדות, חניה) והריחוק עבור עובדי הדרום.</p>
+                
+                <p><strong>מודיעין - ליגד/מע"ר (ציון: 8.0 משוקלל):</strong><br>איכות המבנה: מבנים חדשים, קמפוסים מרווחים ונוף פתוח. צפיפות נמוכה המאפשרת רווחה לעובד.<br>סביבת עבודה: במע"ר החדש - מצוינת (צמוד לקניון עזריאלי, רכבת ושדרת חנויות). באזור הפארק הטכנולוגי (ליגד) - הסביבה מבודדת יותר ומסתמכת בעיקר על שירותי הסעדה פנימיים בתוך המתחם.</p>
+                
+                <p><strong>בני ברק - BBC (ציון: 7.0 משוקלל):</strong><br>איכות המבנה: מגדלים חדשים יחסית (בעיקר קבוצת ב.ס.ר), איכות טובה ומחיר תחרותי.<br>סביבת עבודה: פונקציונלית ועמוסה. היצע סביר של מסעדות (בעיקר כשרות למהדרין), אך האזור סובל מצפיפות ועומסי תנועה כבדים בתוך הרחובות הצרים של המתחם.</p>
+
+                <h2>6. טבלת דירוג משוקללת (תרחיש בסיס)</h2>
+                <div class="report-table-wrapper">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>פרמטר לבחינה</th>
+                                <th>משקל</th>
+                                <th>תל אביב</th>
+                                <th>הבורסה</th>
+                                <th>בני ברק</th>
+                                <th>פתח תקווה</th>
+                                <th>ראשל"צ</th>
+                                <th>מודיעין</th>
+                                <th>השרון</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>רכבת קלה</td><td>15%</td><td>7</td><td>10</td><td>9</td><td>10</td><td>6</td><td>2</td><td>3</td></tr>
+                            <tr><td>2</td><td>רכבת כבדה</td><td>15%</td><td>9</td><td>10</td><td>6</td><td>7</td><td>10</td><td>10</td><td>8</td></tr>
+                            <tr><td>3</td><td>נגישות כבישים</td><td>15%</td><td>7</td><td>4</td><td>6</td><td>7</td><td>9</td><td>10</td><td>5</td></tr>
+                            <tr><td>4</td><td>קווי אוטובוס</td><td>10%</td><td>9</td><td>10</td><td>9</td><td>9</td><td>6</td><td>7</td><td>8</td></tr>
+                            <tr><td>5</td><td>הקצאת חניות</td><td>5%</td><td>3</td><td>2</td><td>6</td><td>10</td><td>10</td><td>10</td><td>8</td></tr>
+                            <tr><td>6</td><td>עלויות</td><td>15%</td><td>5</td><td>4</td><td>8</td><td>10</td><td>8</td><td>10</td><td>6</td></tr>
+                            <tr><td>7</td><td>זמינות והיצע</td><td>10%</td><td>6</td><td>7</td><td>8</td><td>10</td><td>9</td><td>9</td><td>7</td></tr>
+                            <tr><td>8</td><td>איכות וגמישות</td><td>10%</td><td>9</td><td>7</td><td>7</td><td>9</td><td>9</td><td>9</td><td>9</td></tr>
+                            <tr><td>9</td><td>סביבת עבודה</td><td>5%</td><td>10</td><td>9</td><td>6</td><td>7</td><td>6</td><td>7</td><td>10</td></tr>
+                            <tr class="font-bold bg-slate-200 text-primary">
+                                <td></td><td>ציון סופי</td><td>100%</td><td>7.25</td><td>7.15</td><td>7.35</td><td>8.75</td><td>8.15</td><td>8.20</td><td>7.05</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2>7. ניתוח רגישות (Sensitivity Analysis)</h2>
+                <p>כלי ניהולי זה נועד לבחון את "יציבות" ההמלצה על פתח תקווה. להלן פירוט של 5 תרחישי קיצון שנבחנו:</p>
+                <p><strong>7.1 תרחיש א': "העובד הנוהג" (Car Oriented)</strong><br>
+                ההנחה: הנהלת החברה מחליטה שרכב פרטי הוא אמצעי ההגעה העיקרי לרוב העובדים, וחובה לספק חניה צמודה לכולם.<br>
+                התוצאה: <strong>מודיעין (9.15)</strong> ו<strong>ראשון לציון (8.90)</strong> עוקפות את פתח תקווה ותופסות את המקומות הראשונים. תל אביב והבורסה צונחות לתחתית.</p>
+
+                <p><strong>7.2 תרחיש ב': "חיסכון אגרסיבי" (Budget Crisis)</strong><br>
+                ההנחה: החברה נכנסת למשטר התייעלות, והפרמטר הכלכלי הופך למכריע.<br>
+                התוצאה: <strong>פתח תקווה ומודיעין (9.30)</strong> חולקות את המקום הראשון בפער עצום. תל אביב הופכת ללא רלוונטית.</p>
+
+                <p><strong>7.3 תרחיש ג': "פרימיום ומרכזיות" (Prestige)</strong><br>
+                ההנחה: העדפה למיקום יוקרתי וסביבת עבודה עשירה על פני חיסכון.<br>
+                התוצאה: <strong>תל אביב (8.80)</strong> ו<strong>הרצליה פיתוח (8.60)</strong> כובשות את הפסגה. פתח תקווה ומודיעין יורדות בדירוג.</p>
+
+                <p><strong>7.4 תרחיש ד': "הרוב הצפוני" (North Demographics)</strong><br>
+                ההנחה: סקר העובדים מגלה כי רובם המוחלט מגיע מאזור השרון.<br>
+                התוצאה: <strong>הרצליה/רעננה (8.40)</strong> מצמצמת פערים והופכת לחלופה ריאלית ותחרותית לפתח תקווה.</p>
+
+                <p><strong>7.5 תרחיש ה': "הרוב הדרומי" (South Demographics)</strong><br>
+                ההנחה: סקר העובדים מגלה ריכוז גבוה של עובדים באשדוד, יבנה והשפלה.<br>
+                התוצאה: <strong>ראשון לציון (8.95)</strong> כובשת את המקום הראשון בפער ניכר, ודוחקת את פתח תקווה למקום השלישי.</p>
+
+                <h3>7.6 טבלת סיכום רגישות (מטריצת החלטה)</h3>
+                <div class="report-table-wrapper">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>החלופה</th>
+                                <th>תרחיש בסיס (מאוזן)</th>
+                                <th>תרחיש א' (רכב)</th>
+                                <th>תרחיש ב' (חיסכון)</th>
+                                <th>תרחיש ג' (יוקרה)</th>
+                                <th>תרחיש ד' (צפון)</th>
+                                <th>תרחיש ה' (דרום)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="font-bold text-green-700"><td>פתח תקווה</td><td>8.75 (1)</td><td>8.55 (3)</td><td>9.30 (1)</td><td>7.90 (3)</td><td>8.85 (1)</td><td>8.25 (3)</td></tr>
+                            <tr class="font-bold text-blue-700"><td>ראשון לציון</td><td>8.15 (3)</td><td>8.90 (2)</td><td>8.35 (3)</td><td>7.60 (4)</td><td>7.80 (4)</td><td>8.95 (1)</td></tr>
+                            <tr><td>מודיעין</td><td>8.20 (2)</td><td>9.15 (1)</td><td>9.30 (1)</td><td>7.50 (5)</td><td>7.60 (5)</td><td>8.80 (2)</td></tr>
+                            <tr><td>בני ברק</td><td>7.35 (4)</td><td>6.80 (5)</td><td>8.40 (3)</td><td>6.90 (7)</td><td>7.30 (5)</td><td>7.10 (4)</td></tr>
+                            <tr><td>תל אביב</td><td>7.25 (5)</td><td>6.10 (6)</td><td>5.80 (7)</td><td>8.80 (1)</td><td>7.25 (6)</td><td>6.80 (5)</td></tr>
+                            <tr><td>הבורסה</td><td>7.15 (6)</td><td>5.40 (7)</td><td>5.50 (6)</td><td>8.10 (2)</td><td>7.15 (7)</td><td>6.50 (6)</td></tr>
+                            <tr><td>הרצליה/השרון</td><td>7.05 (7)</td><td>6.80 (5)</td><td>6.00 (5)</td><td>8.60 (2)</td><td>8.40 (2)</td><td>6.20 (7)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>7.7 מסקנות מניתוח הרגישות</h3>
+                <p><strong>החלופה היציבה ("הבטוחה"): פתח תקווה.</strong> היא מדורגת במקום הראשון בשלושה מתוך שישה תרחישים, ולא יורדת מתחת למקום השלישי באף תרחיש ריאלי.</p>
+                <p><strong>החלופה האסטרטגית: ראשון לציון (מתחם האלף).</strong> אם הסקר יאשר את ההנחה שרוב העובדים הם "דרומיים" (תרחיש ה'), מתחם האלף הופך לחלופה המנצחת בפער ניכר.</p>
+                <p><strong>חלופות הנישה:</strong> תל אביב ומודיעין הן חלופות מצוינות רק בתנאי קיצון (תקציב בלתי מוגבל או דגש מוחלט על רכב/חיסכון).</p>
+
+                <h2>8. סיכום ומסקנות אינטגרטיביות</h2>
+                <p>תהליך הניתוח מוביל לשלוש תובנות אסטרטגיות מרכזיות:</p>
+                <p><strong>חלופת הליבה (The Rational Choice): פתח תקווה - רמת סיב (ציון 8.75)</strong> זוהי החלופה המנצחת בתרחיש הבסיס. היא מציעה את ה-<strong>Value for Money</strong> הגבוה ביותר: שילוב של מחיר למ"ר אטרקטיבי, נגישות מעולה לרכבת הקלה וזמינות גבוהה של נכסים חדישים. החיסרון: עומסי תנועה בבקרים.</p>
+                <p><strong>החלופה האסטרטגית: ראשון לציון - מתחם האלף</strong> זוהי החלופה המובילה במידה ויתברר כי מרכז הכובד הדמוגרפי של העובדים נוטה דרומה. היא מציעה נגישות רכבתית וכבישית עדיפה עבור עובדים אלו, ועוצרת אותם "לפני הפקק".</p>
+                <p><strong>חלופות הנישה:</strong><br>
+                <strong>מודיעין:</strong> הפתרון הכלכלי ביותר והנוח ביותר לבעלי רכב ולעובדי ירושלים/שפלה.<br>
+                <strong>בני ברק (מתחם ה-BBC):</strong> חלופה כלכלית חזקה הנהנית מנגישות טובה לרכבת הקלה ומחיר אטרקטיבי, אך סובלת מצפיפות גבוהה יותר.<br>
+                <strong>תל אביב:</strong> רלוונטית רק בתרחיש של העדפת יוקרה על פני עלות.<br>
+                <strong>אזור השרון (הרצליה/רעננה):</strong> נותרת כחלופת נישה איכותית, אולם <strong>נבחר שלא להכניסה בשלב זה</strong>, בשל קושי נגישותי משמעותי עבור עובדים מדרום והיעדר פתרון מסילתי (רק"ל) בטווח הנראה לעין.</p>
+
+                <h2>9. המלצות להמשך פעולה</h2>
+                <p>לאור הממצאים ולצורך קבלת החלטה מושכלת, אנו ממליצים על ביצוע שני מהלכים מקבילים:</p>
+                <p><strong>מיפוי גיאוגרפי של מגורי העובדים:</strong> ביצוע ניתוח מקיף לכתובות המגורים. תוצאת המיפוי צפויה להכריע בין תיק פתח תקווה–מודיעין (אם מרבית העובדים מצפון/מזרח) לבין תיק ראשון לציון (אם מרבית העובדים מדרום).</p>
+                <p><strong>פניה דיסקרטית למתווכים בחלופות המועדפות:</strong> מומלץ לפרסם פנייה דיסקרטית ליזמים ולבעלי נכסים באזורים שזכו לדירוג הגבוה ביותר בניתוח:<br>
+                <strong>פתח תקווה</strong> (רמת סיב / קריית אריה): החלופה הכלכלית והמאוזנת.<br>
+                <strong>ראשון לציון</strong> (מתחם האלף): החלופה האסטרטגית לדרום.<br>
+                <strong>מודיעין</strong> (פארק טכנולוגי / מע"ר): החלופה המפתיעה לבעלי רכב.<br>
+                <strong>בני ברק</strong> (מתחם ה-BBC): כחלופה כלכלית מרכזית הנהנית מנגישות טובה לרכבת הקלה.</p>
+                
+                <p class="mt-4">אבקש את אישורך לביצוע שני המהלכים במקביל: (1) מיפוי גיאוגרפי של מגורי עובדי המטה, ו־(2) פנייה ממוקדת לבעלי נכסים בארבע החלופות המועדפות (פתח תקווה, ראשון לציון, מודיעין, בני ברק) לצורך קבלת הצעות ראשוניות במסגרת הליך בדיקת שוק.</p>
+                
+                <div class="mt-8 pt-6 border-t border-slate-200">
+                    <p class="font-bold text-slate-800">בברכה,<br>מנחם פרויליך<br>סמנכ"ל נכסים<br>חברת נמלי ישראל</p>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- Footer -->
@@ -389,7 +715,8 @@
         Chart.register(ChartDataLabels);
 
         // --- DATA MODEL ---
-        const cities = {
+        // Immutable Default Data
+        const defaultCities = {
             pt: { 
                 id: 'pt', name: 'פתח תקווה', color: '#10b981', 
                 cost: 6.5, 
@@ -441,6 +768,9 @@
             }
         };
 
+        // Working Copy
+        let cities = JSON.parse(JSON.stringify(defaultCities));
+
         const scenarios = {
             base: { 
                 weights: { lightRail: 15, heavyRail: 15, roads: 15, bus: 10, parking: 5, cost: 15, avail: 10, quality: 10, env: 5 },
@@ -475,7 +805,6 @@
             bus: { label: 'אוטובוס', icon: 'fa-bus' },
             parking: { label: 'חניה', icon: 'fa-square-parking' },
             cost: { label: 'עלות', icon: 'fa-shekel-sign' },
-            avail: { label: 'זמינות', icon: 'fa-clock' },
             quality: { label: 'איכות', icon: 'fa-building' },
             env: { label: 'סביבה', icon: 'fa-tree' }
         };
@@ -483,6 +812,8 @@
         let mainChartInstance = null;
         let costChartInstance = null;
         let customChartInstance = null;
+        let currentScenarioKey = 'base';
+        let isEditMode = false;
 
         // --- CALCULATION LOGIC ---
 
@@ -496,7 +827,10 @@
                 const city = cities[key];
                 let score = 0;
                 for (const param in weights) {
-                    score += city.scores[param] * weights[param];
+                    // Only use params that exist in weights AND in city scores
+                    if(city.scores[param] !== undefined) {
+                        score += city.scores[param] * weights[param];
+                    }
                 }
                 const finalScore = (score / sumWeights); 
                 results.push({
@@ -513,13 +847,16 @@
         // --- DASHBOARD UI ---
 
         function setScenario(key) {
+            currentScenarioKey = key;
             document.querySelectorAll('.scenario-btn').forEach(btn => {
                 btn.classList.remove('active', 'bg-blue-50', 'border-secondary', 'shadow-md');
                 btn.classList.add('border-slate-200');
             });
             const activeBtn = document.getElementById(`btn-${key}`);
-            activeBtn.classList.add('active', 'bg-blue-50', 'border-secondary', 'shadow-md');
-            activeBtn.classList.remove('border-slate-200');
+            if (activeBtn) {
+                activeBtn.classList.add('active', 'bg-blue-50', 'border-secondary', 'shadow-md');
+                activeBtn.classList.remove('border-slate-200');
+            }
 
             const rankingData = calculateRanking(scenarios[key].weights);
             updateMainChart(rankingData);
@@ -530,23 +867,76 @@
             const tbody = document.getElementById('drilldown-body');
             tbody.innerHTML = '';
             
-            // Show top 7 cities
             data.forEach(item => {
                 const s = item.rawScores;
+                const cell = (val, param) => {
+                    if (isEditMode) {
+                        return `<input type="number" min="0" max="10" value="${val}" 
+                                class="score-input"
+                                onchange="updateScore('${item.key}', '${param}', this.value)">`;
+                    }
+                    return val;
+                };
+
                 const row = `
                     <tr class="hover:bg-white transition">
                         <td class="p-2 font-bold text-slate-700 border-b">${item.name}</td>
-                        <td class="p-2 text-center border-b">${s.lightRail}</td>
-                        <td class="p-2 text-center border-b">${s.heavyRail}</td>
-                        <td class="p-2 text-center border-b">${s.roads}</td>
-                        <td class="p-2 text-center border-b">${s.bus}</td>
-                        <td class="p-2 text-center border-b">${s.parking}</td>
-                        <td class="p-2 text-center border-b font-bold text-green-600">${s.cost}</td>
-                        <td class="p-2 text-center border-b">${s.quality}</td>
+                        <td class="p-2 text-center border-b">${cell(s.lightRail, 'lightRail')}</td>
+                        <td class="p-2 text-center border-b">${cell(s.heavyRail, 'heavyRail')}</td>
+                        <td class="p-2 text-center border-b">${cell(s.roads, 'roads')}</td>
+                        <td class="p-2 text-center border-b">${cell(s.bus, 'bus')}</td>
+                        <td class="p-2 text-center border-b">${cell(s.parking, 'parking')}</td>
+                        <td class="p-2 text-center border-b text-green-600 font-bold">${cell(s.cost, 'cost')}</td>
+                        <td class="p-2 text-center border-b">${cell(s.quality, 'quality')}</td>
                     </tr>
                 `;
                 tbody.innerHTML += row;
             });
+        }
+
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            const btn = document.getElementById('btn-edit-scores');
+            const hint = document.getElementById('edit-hint');
+            
+            if (isEditMode) {
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> סיום עריכה';
+                btn.classList.replace('bg-blue-50', 'bg-green-50');
+                btn.classList.replace('text-blue-600', 'text-green-600');
+                btn.classList.replace('border-blue-100', 'border-green-100');
+                hint.classList.add('hidden');
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-pen"></i> ערוך ציונים';
+                btn.classList.replace('bg-green-50', 'bg-blue-50');
+                btn.classList.replace('text-green-600', 'text-blue-600');
+                btn.classList.replace('border-green-100', 'border-blue-100');
+                hint.classList.remove('hidden');
+            }
+            
+            // Re-render table with/without inputs
+            const rankingData = calculateRanking(scenarios[currentScenarioKey].weights);
+            populateDrillDownTable(rankingData);
+        }
+
+        function updateScore(cityKey, param, value) {
+            let val = parseFloat(value);
+            if (isNaN(val)) val = 0;
+            if (val > 10) val = 10;
+            if (val < 0) val = 0;
+            
+            // Update Data Model
+            cities[cityKey].scores[param] = val;
+            
+            // Refresh everything
+            setScenario(currentScenarioKey);
+        }
+
+        function resetScores() {
+            if (confirm('האם לאפס את כל הציונים לברירת המחדל?')) {
+                cities = JSON.parse(JSON.stringify(defaultCities));
+                setScenario(currentScenarioKey);
+                if (isEditMode) toggleEditMode(); // Exit edit mode
+            }
         }
 
         function toggleDrillDown() {
@@ -603,19 +993,36 @@
         function initCustomView() {
             const container = document.getElementById('sliders-container');
             container.innerHTML = '';
-            const baseWeights = scenarios.base.weights;
+            const baseWeights = scenarios.base.weights; // Copy initial weights
 
-            for (const [key, config] of Object.entries(paramsLabels)) {
-                const initialVal = baseWeights[key] || 10;
+            if (!window.currentCustomWeights) {
+                window.currentCustomWeights = {...baseWeights};
+            }
+
+            // Define display params (subset of all params)
+            const displayParams = {
+                lightRail: { label: 'רק"ל', icon: 'fa-train-subway' },
+                heavyRail: { label: 'רכבת', icon: 'fa-train' },
+                roads: { label: 'רכב', icon: 'fa-car' },
+                bus: { label: 'אוטובוס', icon: 'fa-bus' },
+                parking: { label: 'חניה', icon: 'fa-square-parking' },
+                cost: { label: 'עלות', icon: 'fa-shekel-sign' },
+                quality: { label: 'איכות', icon: 'fa-building' },
+                env: { label: 'סביבה', icon: 'fa-tree' }
+            };
+
+            for (const [key, config] of Object.entries(displayParams)) {
+                const initialVal = window.currentCustomWeights[key] || 0;
                 const html = `
                     <div class="flex items-center gap-2 text-sm">
                         <div class="w-24 flex-shrink-0 flex items-center text-slate-700 font-medium">
                             <i class="fa-solid ${config.icon} w-5 text-primary"></i> ${config.label}
                         </div>
-                        <input type="range" min="0" max="100" value="${initialVal}" 
+                        <input type="range" min="0" max="100" step="0.1" value="${initialVal}" 
+                               id="slider-${key}"
                                class="flex-grow"
                                oninput="onSliderChange('${key}', this.value)">
-                        <span class="w-8 text-center font-mono font-bold text-primary text-xs bg-slate-100 rounded" id="val-${key}">${initialVal}</span>
+                        <span class="w-12 text-center font-mono font-bold text-primary text-xs bg-slate-100 rounded" id="val-${key}">${initialVal}%</span>
                     </div>
                 `;
                 container.innerHTML += html;
@@ -623,33 +1030,89 @@
             updateCustomAnalysis();
         }
 
-        function onSliderChange(key, value) {
-            document.getElementById(`val-${key}`).innerText = value;
+        function onSliderChange(changedKey, newValue) {
+            newValue = parseFloat(newValue);
+            const targetTotal = 100.0;
+            
+            // 1. Update the changed weight in our state
+            window.currentCustomWeights[changedKey] = newValue;
+            
+            // 2. Calculate remaining budget
+            const remainingBudget = Math.max(0, targetTotal - newValue);
+            
+            // 3. Identify other keys (only the ones we display/control)
+            const displayParamsKeys = ['lightRail', 'heavyRail', 'roads', 'bus', 'parking', 'cost', 'quality', 'env'];
+            const otherKeys = displayParamsKeys.filter(k => k !== changedKey);
+            
+            // 4. Sum of others current values
+            let sumOthers = 0;
+            otherKeys.forEach(k => sumOthers += (window.currentCustomWeights[k] || 0));
+            
+            // 5. Redistribute remaining budget proportionally
+            if (sumOthers > 0) {
+                otherKeys.forEach(k => {
+                    const ratio = window.currentCustomWeights[k] / sumOthers;
+                    window.currentCustomWeights[k] = remainingBudget * ratio;
+                });
+            } else if (remainingBudget > 0 && otherKeys.length > 0) {
+                 const equalShare = remainingBudget / otherKeys.length;
+                 otherKeys.forEach(k => window.currentCustomWeights[k] = equalShare);
+            } else {
+                 otherKeys.forEach(k => window.currentCustomWeights[k] = 0);
+            }
+
+            // 6. Rounding Fix
+            let currentSum = 0;
+            displayParamsKeys.forEach(k => {
+                window.currentCustomWeights[k] = Math.round(window.currentCustomWeights[k] * 10) / 10;
+                currentSum += window.currentCustomWeights[k];
+            });
+
+            const error = targetTotal - currentSum;
+            if (Math.abs(error) > 0.001) {
+                let adjustKey = otherKeys[0];
+                let maxVal = -1;
+                otherKeys.forEach(k => {
+                    if (window.currentCustomWeights[k] > maxVal) {
+                        maxVal = window.currentCustomWeights[k];
+                        adjustKey = k;
+                    }
+                });
+                window.currentCustomWeights[adjustKey] += error;
+                window.currentCustomWeights[adjustKey] = Math.round(window.currentCustomWeights[adjustKey] * 10) / 10;
+            }
+
+            // 7. Update UI elements
+            displayParamsKeys.forEach(k => {
+                const val = window.currentCustomWeights[k];
+                const textEl = document.getElementById(`val-${k}`);
+                if(textEl) textEl.innerText = val.toFixed(1) + '%';
+                
+                if (k !== changedKey) {
+                    const sliderEl = document.getElementById(`slider-${k}`);
+                    if(sliderEl) sliderEl.value = val;
+                }
+            });
+
             updateCustomAnalysis();
         }
 
         function resetCustomSliders() {
+            window.currentCustomWeights = null; // Clear state
             initCustomView();
         }
 
         function updateCustomAnalysis() {
-            const weights = {};
+            // Use the global state weights for calculation
+            const data = calculateRanking(window.currentCustomWeights);
+            
+            // Update Total Label
             let total = 0;
-            for (const key in paramsLabels) {
-                const el = document.getElementById(`val-${key}`);
-                if(el) {
-                    const val = parseInt(el.innerText);
-                    weights[key] = val;
-                    total += val;
-                }
-            }
-            
-            // Update total display
+             const displayParamsKeys = ['lightRail', 'heavyRail', 'roads', 'bus', 'parking', 'cost', 'quality', 'env'];
+             displayParamsKeys.forEach(k => total += (window.currentCustomWeights[k] || 0));
             const totalEl = document.getElementById('total-weight');
-            if(totalEl) totalEl.innerText = total;
-            
-            const data = calculateRanking(weights);
-            
+            if(totalEl) totalEl.innerText = Math.round(total) + '%';
+
             const ctx = document.getElementById('customChart').getContext('2d');
             if (customChartInstance) customChartInstance.destroy();
 
@@ -725,7 +1188,7 @@
         }
 
         function switchView(viewName) {
-            ['dashboard', 'custom', 'details'].forEach(v => {
+            ['dashboard', 'custom', 'details', 'report'].forEach(v => {
                 document.getElementById(`view-${v}`).classList.add('hidden');
                 document.getElementById(`nav-${v}`).classList.remove('active', 'text-primary');
             });
