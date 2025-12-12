@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דשבורד ניתוח חלופות - מטה חנ"י</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Heebo', sans-serif;
+            background-color: #f8fafc; /* Slate 50 */
+            color: #1e293b; /* Slate 800 */
+        }
+
+        /* Color Palette - Brilliant Blues */
+        .text-primary { color: #004aad; }
+        .bg-primary { background-color: #004aad; }
+        .border-primary { border-color: #004aad; }
+        
+        .text-secondary { color: #38b6ff; }
+        .bg-secondary { background-color: #38b6ff; }
+        
+        .text-accent { color: #d97706; }
+        .bg-accent { background-color: #ffde59; }
+
+        /* Navigation Active State */
+        .nav-item.active {
+            border-bottom: 3px solid #004aad;
+            color: #004aad;
+            font-weight: 700;
+        }
+
+        /* Scenario Button Active State */
+        .scenario-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .scenario-btn:hover {
+            transform: translateY(-2px);
+        }
+        .scenario-btn.active {
+            background-color: #e0f2fe; /* blue-100 */
+            border-color: #38b6ff;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Range Slider Styling - Fixed Visibility */
+        input[type=range] {
+            height: 26px;
+            -webkit-appearance: none;
+            margin: 10px 0;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]:focus {
+            outline: none;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            animate: 0.2s;
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #004aad;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -7px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        input[type=range]::-moz-range-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            animate: 0.2s;
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        input[type=range]::-moz-range-thumb {
+            height: 20px;
+            width: 20px;
+            border: none;
+            border-radius: 50%;
+            background: #004aad;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            max-height: 400px; 
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Card Styling */
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            transition: box-shadow 0.3s;
+        }
+        .card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-building-columns text-primary text-2xl ml-3"></i>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-800 leading-none">מטה חנ"י</h1>
+                        <span class="text-xs text-slate-500">דוח ניתוח חלופות (Site Selection)</span>
+                    </div>
+                </div>
+                <div class="flex space-x-8 space-x-reverse h-full items-end pb-1">
+                    <button onclick="switchView('dashboard')" id="nav-dashboard" class="nav-item active px-3 py-2 text-sm font-medium text-slate-600 hover:text-primary transition-colors">
+                        <i class="fa-solid fa-chart-pie ml-1"></i> דשבורד ורגישות
+                    </button>
+                    <button onclick="switchView('custom')" id="nav-custom" class="nav-item px-3 py-2 text-sm font-medium text-slate-600 hover:text-primary transition-colors">
+                        <i class="fa-solid fa-sliders ml-1"></i> בנה תרחיש
+                    </button>
+                    <button onclick="switchView('details')" id="nav-details" class="nav-item px-3 py-2 text-sm font-medium text-slate-600 hover:text-primary transition-colors">
+                        <i class="fa-solid fa-city ml-1"></i> פירוט חלופות
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- VIEW 1: DASHBOARD & SENSITIVITY -->
+        <div id="view-dashboard" class="animate-fade-in space-y-8">
+            
+            <!-- Recommendations Banner -->
+            <div class="card p-6 border-r-4 border-primary bg-gradient-to-l from-blue-50 to-white">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <div class="md:w-3/4">
+                        <h2 class="text-2xl font-bold text-primary mb-2">המלצה אסטרטגית</h2>
+                        <p class="text-slate-700 text-sm md:text-base leading-relaxed">
+                            החלופה המובילה היא <strong>פתח תקווה (רמת סיב)</strong> המציעה את המענה המיטבי (ציון 8.75) ושילוב של יעילות כלכלית עם נגישות רק"ל.
+                            <br>
+                            במידה ורוב העובדים מתגוררים בדרום, <strong>ראשון לציון</strong> הופכת לחלופה המובילה.
+                            <br>
+                            <strong>החלטה נדרשת:</strong> יציאה ל-RFI ב-4 אזורים: פתח תקווה, ראשון לציון, מודיעין ובני ברק.
+                        </p>
+                    </div>
+                    <div class="mt-4 md:mt-0 flex space-x-4 space-x-reverse md:w-1/4 justify-end">
+                        <div class="text-center px-4">
+                            <span class="block text-2xl font-bold text-green-600">50%</span>
+                            <span class="text-xs text-slate-500">חיסכון מול ת"א</span>
+                        </div>
+                        <div class="text-center px-4 border-r border-slate-200">
+                            <span class="block text-2xl font-bold text-blue-600">8.75</span>
+                            <span class="text-xs text-slate-500">ציון משוקלל (פ"ת)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scenario Selector Header -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                    <i class="fa-solid fa-sliders text-secondary ml-2"></i>
+                    ניתוח רגישות (Sensitivity Analysis) - בחר תרחיש:
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
+                    <button onclick="setScenario('base')" id="btn-base" class="scenario-btn active border rounded-lg p-2 text-right">
+                        <div class="font-bold text-slate-800 text-sm">תרחיש בסיס</div>
+                        <div class="text-[10px] text-slate-500">מאוזן (המלצת מטה)</div>
+                    </button>
+                    <button onclick="setScenario('south')" id="btn-south" class="scenario-btn border rounded-lg p-2 text-right">
+                        <div class="font-bold text-slate-800 text-sm">הרוב הדרומי</div>
+                        <div class="text-[10px] text-slate-500">אשדוד/יבנה</div>
+                    </button>
+                    <button onclick="setScenario('car')" id="btn-car" class="scenario-btn border rounded-lg p-2 text-right">
+                        <div class="font-bold text-slate-800 text-sm">העובד הנוהג</div>
+                        <div class="text-[10px] text-slate-500">דגש רכב וחניה</div>
+                    </button>
+                    <button onclick="setScenario('budget')" id="btn-budget" class="scenario-btn border rounded-lg p-2 text-right">
+                        <div class="font-bold text-slate-800 text-sm">חיסכון אגרסיבי</div>
+                        <div class="text-[10px] text-slate-500">מחיר מעל הכל</div>
+                    </button>
+                    <button onclick="setScenario('prestige')" id="btn-prestige" class="scenario-btn border rounded-lg p-2 text-right">
+                        <div class="font-bold text-slate-800 text-sm">יוקרה</div>
+                        <div class="text-[10px] text-slate-500">תדמית ומרכזיות</div>
+                    </button>
+                    <button onclick="setScenario('north')" id="btn-north" class="scenario-btn border rounded-lg p-2 text-right">
+                        <div class="font-bold text-slate-800 text-sm">הרוב הצפוני</div>
+                        <div class="text-[10px] text-slate-500">השרון/נתניה</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Left Column: Dynamic Ranking Table -->
+                <div class="lg:col-span-1 card flex flex-col">
+                    <div class="bg-primary text-white p-4 rounded-t-lg flex justify-between items-center">
+                        <h3 class="font-bold text-lg">טבלת דירוג (זמן אמת)</h3>
+                        <i class="fa-solid fa-list-ol"></i>
+                    </div>
+                    <div class="flex-grow overflow-hidden">
+                        <table class="w-full text-sm text-right">
+                            <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                                <tr>
+                                    <th class="px-4 py-3">#</th>
+                                    <th class="px-4 py-3">עיר</th>
+                                    <th class="px-4 py-3 text-left">ציון</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ranking-body" class="divide-y divide-slate-100">
+                                <!-- Rows injected by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="p-4 bg-slate-50 text-xs text-slate-500 text-center rounded-b-lg border-t">
+                        * הדירוג משתנה בהתאם לתרחיש הנבחר למעלה
+                    </div>
+                </div>
+
+                <!-- Right Column: Visualization Charts -->
+                <div class="lg:col-span-2 space-y-8">
+                    
+                    <!-- Main Score Chart -->
+                    <div class="card p-6">
+                        <h3 class="font-bold text-slate-700 mb-4">השוואת ציונים לפי תרחיש</h3>
+                        <div class="chart-container">
+                            <canvas id="mainChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Cost Chart (Static Reference) -->
+                    <div class="card p-6 border-t-4 border-green-500">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-slate-700">עלות שנתית כוללת (מלש"ח)</h3>
+                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full font-bold">אומדן 2025</span>
+                        </div>
+                        <div class="chart-container" style="height: 250px;">
+                            <canvas id="costChart"></canvas>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-2">* כולל: שכירות, דמי ניהול, ארנונה. נתוני אמת משוקללים.</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 2: CUSTOM SCENARIO BUILDER -->
+        <div id="view-custom" class="hidden animate-fade-in">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
+                
+                <!-- Controls Column -->
+                <div class="lg:col-span-4 bg-white rounded-xl shadow-md p-6 h-fit">
+                    <h3 class="font-bold text-slate-800 text-xl mb-2">מחשבון משקולות</h3>
+                    <p class="text-sm text-slate-500 mb-6">גרור את הסליידרים כדי לשנות את סדרי העדיפויות וליצור תרחיש אישי.</p>
+                    
+                    <div id="sliders-container" class="space-y-6">
+                        <!-- Sliders injected by JS -->
+                    </div>
+                    
+                    <button onclick="resetCustomSliders()" class="mt-8 w-full py-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition text-sm font-bold">
+                        <i class="fa-solid fa-rotate-right ml-2"></i> אפס למצב ברירת מחדל
+                    </button>
+                </div>
+
+                <!-- Results Column -->
+                <div class="lg:col-span-8 flex flex-col gap-6">
+                    <!-- Live Chart -->
+                    <div class="card p-6 flex-grow">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-slate-700">תוצאות התרחיש המותאם אישית</h3>
+                            <span class="bg-secondary text-white text-xs px-2 py-1 rounded-full">עדכון חי</span>
+                        </div>
+                        <div class="chart-container" style="height: 300px;">
+                            <canvas id="customChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Live Table -->
+                    <div class="card overflow-hidden">
+                        <table class="w-full text-sm text-right">
+                            <thead class="bg-slate-800 text-white uppercase text-xs">
+                                <tr>
+                                    <th class="px-6 py-3">דירוג</th>
+                                    <th class="px-6 py-3">חלופה</th>
+                                    <th class="px-6 py-3 text-left">ציון מותאם</th>
+                                </tr>
+                            </thead>
+                            <tbody id="custom-ranking-body" class="divide-y divide-slate-100">
+                                <!-- JS Injected -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- VIEW 3: CITY DETAILS -->
+        <div id="view-details" class="hidden animate-fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                
+                <!-- Sidebar Menu -->
+                <div class="md:col-span-3 space-y-2">
+                    <h3 class="font-bold text-slate-800 mb-4 px-2">בחר חלופה להעמקה:</h3>
+                    <!-- Dynamic Buttons -->
+                    <button onclick="renderCityDetail('pt')" class="city-nav-btn w-full text-right p-4 rounded-lg bg-white shadow-sm border-r-4 border-green-500 hover:bg-slate-50 transition flex justify-between items-center">
+                        <span class="font-bold text-slate-700">פתח תקווה</span>
+                        <i class="fa-solid fa-chevron-left text-xs text-slate-400"></i>
+                    </button>
+                    <button onclick="renderCityDetail('rishon')" class="city-nav-btn w-full text-right p-4 rounded-lg bg-white shadow-sm border-r-4 border-blue-500 hover:bg-slate-50 transition flex justify-between items-center">
+                        <span class="font-bold text-slate-700">ראשון לציון</span>
+                        <i class="fa-solid fa-chevron-left text-xs text-slate-400"></i>
+                    </button>
+                    <button onclick="renderCityDetail('modiin')" class="city-nav-btn w-full text-right p-4 rounded-lg bg-white shadow-sm border-r-4 border-indigo-500 hover:bg-slate-50 transition flex justify-between items-center">
+                        <span class="font-bold text-slate-700">מודיעין</span>
+                        <i class="fa-solid fa-chevron-left text-xs text-slate-400"></i>
+                    </button>
+                    <button onclick="renderCityDetail('bbc')" class="city-nav-btn w-full text-right p-4 rounded-lg bg-white shadow-sm border-r-4 border-yellow-500 hover:bg-slate-50 transition flex justify-between items-center">
+                        <span class="font-bold text-slate-700">בני ברק</span>
+                        <i class="fa-solid fa-chevron-left text-xs text-slate-400"></i>
+                    </button>
+                    <button onclick="renderCityDetail('tlv')" class="city-nav-btn w-full text-right p-4 rounded-lg bg-white shadow-sm border-r-4 border-red-500 hover:bg-slate-50 transition flex justify-between items-center">
+                        <span class="font-bold text-slate-700">תל אביב</span>
+                        <i class="fa-solid fa-chevron-left text-xs text-slate-400"></i>
+                    </button>
+                    <button onclick="renderCityDetail('bursa')" class="city-nav-btn w-full text-right p-4 rounded-lg bg-white shadow-sm border-r-4 border-orange-500 hover:bg-slate-50 transition flex justify-between items-center">
+                        <span class="font-bold text-slate-700">ר"ג - בורסה</span>
+                        <i class="fa-solid fa-chevron-left text-xs text-slate-400"></i>
+                    </button>
+                    <button onclick="renderCityDetail('sharon')" class="city-nav-btn w-full text-right p-4 rounded-lg bg-white shadow-sm border-r-4 border-pink-500 hover:bg-slate-50 transition flex justify-between items-center">
+                        <span class="font-bold text-slate-700">הרצליה/שרון</span>
+                        <i class="fa-solid fa-chevron-left text-xs text-slate-400"></i>
+                    </button>
+                </div>
+
+                <!-- Detail Content Area -->
+                <div class="md:col-span-9">
+                    <div id="city-content" class="bg-white rounded-xl shadow-md p-8 h-full">
+                        <!-- Content injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-slate-400 py-6 mt-12 border-t border-slate-700">
+        <div class="max-w-7xl mx-auto px-4 text-center text-sm">
+            <p>חברת נמלי ישראל | חטיבת נכסים | מנחם פרויליך, סמנכ"ל נכסים | דצמבר 2025</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- DATA MODEL ---
+        
+        // 1. Cities Data (Updated per Doc Table 6 & Section 5.1)
+        const cities = {
+            pt: { 
+                id: 'pt', name: 'פתח תקווה (רמת סיב)', color: '#10b981', 
+                cost: 6.5, 
+                scores: { lightRail: 10, heavyRail: 7, roads: 7, bus: 9, parking: 10, cost: 10, avail: 10, quality: 9, env: 7 },
+                pros: ['דירוג 1 בתרחיש בסיס (8.75)', 'חיסכון של 50% בעלויות מול ת"א', 'נגישות מלאה לקו האדום', 'קומות ענק (1,500 מ"ר+)'],
+                cons: ['עומסי תנועה כבדים בכניסות לעיר בבוקר', 'תדמית פחות יוקרתית מת"א', 'סביבה מנותקת בערב']
+            },
+            rishon: { 
+                id: 'rishon', name: 'ראשון לציון (האלף)', color: '#3b82f6', 
+                cost: 7.2, 
+                scores: { lightRail: 6, heavyRail: 10, roads: 9, bus: 6, parking: 10, cost: 8, avail: 9, quality: 9, env: 6 },
+                pros: ['החלופה המובילה לתושבי הדרום (עוקף פקקים)', 'צמוד לרכבת משה דיין', 'בנייה ירוקה וחדשנית (LEED)', 'גישה ישירה מ-431 ואיילון'],
+                cons: ['אין רק"ל פעילה כרגע (צפי 2028)', 'סביבת עבודה בבינוי', 'תחבורה משלימה דלילה']
+            },
+            modiin: { 
+                id: 'modiin', name: 'מודיעין (ליגד/מע"ר)', color: '#6366f1', 
+                cost: 5.6, 
+                scores: { lightRail: 2, heavyRail: 10, roads: 10, bus: 7, parking: 10, cost: 10, avail: 9, quality: 9, env: 7 },
+                pros: ['העלות הנמוכה ביותר (5.6 מלש"ח)', 'גן עדן לרכב פרטי', 'רכבת מהירה לירושלים ות"א', 'פארק עסקים מרווח'],
+                cons: ['בידוד גיאוגרפי (בעיה לצפוניים)', 'היעדר רכבת קלה', 'חוסר ב"חיי עיר" בליגד']
+            },
+            bbc: { 
+                id: 'bbc', name: 'בני ברק (BBC)', color: '#eab308', 
+                cost: 7.4, 
+                scores: { lightRail: 9, heavyRail: 6, roads: 6, bus: 9, parking: 6, cost: 8, avail: 8, quality: 7, env: 6 },
+                pros: ['מיקום מרכזי בגוש דן', 'מחיר תחרותי', 'נגישות טובה לרק"ל (קו אדום)', 'ארנונה נוחה'],
+                cons: ['צפיפות אורבנית גבוהה', 'עומסים בתוך המתחם', 'מצוקת חניה ביחס לפריפריה']
+            },
+            tlv: { 
+                id: 'tlv', name: 'תל אביב (יגאל אלון)', color: '#ef4444', 
+                cost: 11.6, 
+                scores: { lightRail: 7, heavyRail: 9, roads: 7, bus: 9, parking: 3, cost: 5, avail: 6, quality: 9, env: 10 },
+                pros: ['הסביבה הטובה בישראל (ציון 10)', 'יוקרה ומיתוג', 'רכבת השלום במרחק הליכה', 'עירוב שימושים מלא'],
+                cons: ['היקרה ביותר (כמעט כפול ממודיעין)', 'פקקים קשים', 'מצוקת חניה חמורה']
+            },
+            bursa: { 
+                id: 'bursa', name: 'רמת גן (הבורסה)', color: '#f97316', 
+                cost: 10.5, 
+                scores: { lightRail: 10, heavyRail: 10, roads: 4, bus: 10, parking: 2, cost: 4, avail: 7, quality: 7, env: 9 },
+                pros: ['ה-Hub התחבורתי הטוב בארץ (סבידור+רק"ל)', 'סביבה עסקית אינטנסיבית', 'שפע שירותים'],
+                cons: ['פקקים בלתי נסבלים לרכב', 'מלאי בניינים ישן בחלקו', 'מחיר גבוה']
+            },
+            sharon: { 
+                id: 'sharon', name: 'הרצליה פיתוח', color: '#ec4899', 
+                cost: 10.0, 
+                scores: { lightRail: 2, heavyRail: 8, roads: 5, bus: 8, parking: 8, cost: 6, avail: 7, quality: 9, env: 10 },
+                pros: ['סביבת עבודה יוקרתית ואיכותית', 'תדמית הייטק בינלאומית', 'קרבה לים ומסעדות'],
+                cons: ['"הפקק הנצחי" מדרום', 'אין רק"ל בטווח הקרוב', 'עלויות גבוהות']
+            }
+        };
+
+        // 2. Scenarios Weights Configuration
+        const scenarios = {
+            base: { 
+                weights: { lightRail: 15, heavyRail: 15, roads: 15, bus: 10, parking: 5, cost: 15, avail: 10, quality: 10, env: 5 },
+                description: 'תרחיש מאוזן: שקלול של נגישות מגוונת ועלות' 
+            },
+            south: { 
+                weights: { lightRail: 10, heavyRail: 25, roads: 25, bus: 5, parking: 5, cost: 15, avail: 10, quality: 5, env: 0 },
+                description: 'הרוב הדרומי: דגש על רכבת כבדה וכבישי רוחב (431)' 
+            },
+            car: { 
+                weights: { lightRail: 5, heavyRail: 10, roads: 25, bus: 5, parking: 25, cost: 10, avail: 10, quality: 5, env: 5 },
+                description: 'דגש רכב: העדפה ברורה להגעה ברכב פרטי וזמינות חניה' 
+            },
+            budget: { 
+                weights: { lightRail: 10, heavyRail: 10, roads: 10, bus: 10, parking: 5, cost: 40, avail: 10, quality: 5, env: 0 },
+                description: 'חיסכון אגרסיבי: העלות הכספית היא הגורם המכריע' 
+            },
+            prestige: { 
+                weights: { lightRail: 15, heavyRail: 10, roads: 10, bus: 10, parking: 5, cost: 5, avail: 5, quality: 20, env: 20 },
+                description: 'יוקרה: נכונות לשלם עבור תדמית וסביבת עבודה' 
+            },
+            north: {
+                weights: { lightRail: 5, heavyRail: 25, roads: 5, bus: 10, parking: 10, cost: 5, avail: 10, quality: 15, env: 15 },
+                description: 'הרוב הצפוני: דגש על איכות חיים ונגישות מהשרון'
+            }
+        };
+
+        const paramsLabels = {
+            lightRail: { label: 'נגישות רק"ל', icon: 'fa-train-subway' },
+            heavyRail: { label: 'רכבת כבדה', icon: 'fa-train' },
+            roads: { label: 'רכב פרטי', icon: 'fa-car' },
+            bus: { label: 'אוטובוסים', icon: 'fa-bus' },
+            parking: { label: 'חניה', icon: 'fa-square-parking' },
+            cost: { label: 'עלות נמוכה', icon: 'fa-shekel-sign' },
+            avail: { label: 'זמינות', icon: 'fa-clock' },
+            quality: { label: 'איכות בניין', icon: 'fa-building' },
+            env: { label: 'סביבת עבודה', icon: 'fa-tree' }
+        };
+
+        // --- GLOBAL VARIABLES ---
+        let mainChartInstance = null;
+        let costChartInstance = null;
+        let customChartInstance = null;
+
+        // --- LOGIC FUNCTIONS ---
+
+        // Calculate weighted score for all cities
+        function calculateRanking(weights) {
+            const results = [];
+            
+            let sumWeights = 0;
+            for (const p in weights) sumWeights += weights[p];
+            if (sumWeights === 0) sumWeights = 1; 
+
+            for (const key in cities) {
+                const city = cities[key];
+                let score = 0;
+                
+                for (const param in weights) {
+                    score += city.scores[param] * weights[param];
+                }
+                
+                const finalScore = (score / sumWeights); 
+                
+                results.push({
+                    key: key,
+                    name: city.name,
+                    score: finalScore.toFixed(2),
+                    color: city.color
+                });
+            }
+
+            return results.sort((a, b) => b.score - a.score);
+        }
+
+        // --- DASHBOARD VIEW LOGIC ---
+
+        function setScenario(key) {
+            document.querySelectorAll('.scenario-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-blue-50', 'border-secondary', 'shadow-md');
+                btn.classList.add('border-slate-200');
+            });
+            const activeBtn = document.getElementById(`btn-${key}`);
+            activeBtn.classList.add('active', 'bg-blue-50', 'border-secondary', 'shadow-md');
+            activeBtn.classList.remove('border-slate-200');
+
+            const rankingData = calculateRanking(scenarios[key].weights);
+
+            const tbody = document.getElementById('ranking-body');
+            tbody.innerHTML = '';
+            rankingData.forEach((item, index) => {
+                const isTop = index === 0;
+                const rowClass = isTop ? 'bg-green-50 font-bold' : '';
+                const rankIcon = isTop ? '<i class="fa-solid fa-trophy text-yellow-500 mr-2"></i>' : '';
+                
+                const row = `
+                    <tr class="${rowClass} hover:bg-slate-50 transition">
+                        <td class="px-4 py-3 text-slate-500 text-xs">${index + 1}</td>
+                        <td class="px-4 py-3">${item.name} ${rankIcon}</td>
+                        <td class="px-4 py-3 font-mono text-left dir-ltr ${isTop ? 'text-green-700' : 'text-slate-600'}">${item.score}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+
+            updateMainChart(rankingData);
+        }
+
+        function updateMainChart(data) {
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            if (mainChartInstance) mainChartInstance.destroy();
+
+            mainChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.name.split(' ')[0]),
+                    datasets: [{
+                        label: 'ציון משוקלל',
+                        data: data.map(d => d.score),
+                        backgroundColor: data.map(d => d.color),
+                        borderRadius: 6,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: false, min: 0, max: 10, title: { display: true, text: 'ציון (0-10)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // --- CUSTOM SCENARIO VIEW LOGIC ---
+
+        function initCustomView() {
+            const container = document.getElementById('sliders-container');
+            container.innerHTML = '';
+
+            const baseWeights = scenarios.base.weights;
+
+            for (const [key, config] of Object.entries(paramsLabels)) {
+                const initialVal = baseWeights[key] || 10;
+                
+                const html = `
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-sm font-semibold text-slate-700 flex items-center">
+                                <div class="w-6 text-center text-primary"><i class="fa-solid ${config.icon}"></i></div>
+                                ${config.label}
+                            </label>
+                            <span class="text-xs font-mono font-bold text-primary bg-blue-50 px-2 rounded" id="val-${key}">${initialVal}</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="${initialVal}" 
+                               class="slider-input"
+                               oninput="onSliderChange('${key}', this.value)">
+                    </div>
+                `;
+                container.innerHTML += html;
+            }
+            updateCustomAnalysis();
+        }
+
+        function onSliderChange(key, value) {
+            document.getElementById(`val-${key}`).innerText = value;
+            updateCustomAnalysis();
+        }
+
+        function resetCustomSliders() {
+            initCustomView();
+        }
+
+        function getCustomWeights() {
+            const weights = {};
+            for (const key in paramsLabels) {
+                const valSpan = document.getElementById(`val-${key}`);
+                if (valSpan) {
+                    weights[key] = parseInt(valSpan.innerText);
+                }
+            }
+            return weights;
+        }
+
+        function updateCustomAnalysis() {
+            const weights = getCustomWeights();
+            const data = calculateRanking(weights);
+
+            const tbody = document.getElementById('custom-ranking-body');
+            tbody.innerHTML = '';
+            data.forEach((item, index) => {
+                const isTop = index === 0;
+                const rowClass = isTop ? 'bg-green-50 font-bold' : 'hover:bg-slate-50';
+                const rankIcon = isTop ? '<i class="fa-solid fa-trophy text-yellow-500 mr-2"></i>' : '';
+                
+                tbody.innerHTML += `
+                    <tr class="${rowClass} transition">
+                        <td class="px-6 py-3 border-b border-slate-50 text-slate-500">${index + 1}</td>
+                        <td class="px-6 py-3 border-b border-slate-50">${item.name} ${rankIcon}</td>
+                        <td class="px-6 py-3 border-b border-slate-50 text-left font-mono text-primary font-bold">${item.score}</td>
+                    </tr>
+                `;
+            });
+
+            const ctx = document.getElementById('customChart').getContext('2d');
+            if (customChartInstance) customChartInstance.destroy();
+
+            customChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.name.split(' ')[0]),
+                    datasets: [{
+                        label: 'ציון מותאם',
+                        data: data.map(d => d.score),
+                        backgroundColor: data.map(d => d.color),
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { beginAtZero: true, max: 10 }
+                    },
+                    animation: {
+                        duration: 0 
+                    }
+                }
+            });
+        }
+
+        // --- SHARED ---
+
+        function initCostChart() {
+            const ctx = document.getElementById('costChart').getContext('2d');
+            const sortedCities = Object.values(cities).sort((a, b) => b.cost - a.cost);
+            if (costChartInstance) costChartInstance.destroy();
+            costChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sortedCities.map(c => c.name),
+                    datasets: [{
+                        label: 'עלות שנתית (מלש"ח)',
+                        data: sortedCities.map(c => c.cost),
+                        backgroundColor: sortedCities.map(c => c.color),
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { beginAtZero: true, title: { display: true, text: 'מיליוני ₪ בשנה' } } }
+                }
+            });
+        }
+
+        function switchView(viewName) {
+            ['dashboard', 'custom', 'details'].forEach(v => {
+                document.getElementById(`view-${v}`).classList.add('hidden');
+                document.getElementById(`nav-${v}`).classList.remove('active', 'text-primary');
+            });
+            
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+            document.getElementById(`nav-${viewName}`).classList.add('active', 'text-primary');
+
+            if (viewName === 'custom') {
+                // Always refresh to ensure proper sizing if hidden before
+                initCustomView();
+            }
+        }
+
+        function renderCityDetail(cityId) {
+            const city = cities[cityId];
+            const contentDiv = document.getElementById('city-content');
+            
+            const scoreBar = (label, val) => `
+                <div class="mb-2">
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="font-semibold text-slate-600">${label}</span>
+                        <span class="font-bold text-slate-800">${val}/10</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2">
+                        <div class="bg-primary h-2 rounded-full" style="width: ${val * 10}%"></div>
+                    </div>
+                </div>
+            `;
+
+            contentDiv.innerHTML = `
+                <div class="animate-fade-in">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b pb-4">
+                        <div>
+                            <h2 class="text-3xl font-bold text-slate-800 mb-1" style="color: ${city.color}">${city.name}</h2>
+                            <span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-bold">עלות: ${city.cost} מלש"ח בשנה</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                        <div class="space-y-6">
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                                <h4 class="font-bold text-green-700 mb-3 flex items-center"><i class="fa-solid fa-thumbs-up ml-2"></i> יתרונות</h4>
+                                <ul class="list-disc list-inside space-y-1 text-sm text-slate-700">
+                                    ${city.pros.map(p => `<li>${p}</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                                <h4 class="font-bold text-red-700 mb-3 flex items-center"><i class="fa-solid fa-triangle-exclamation ml-2"></i> חסרונות</h4>
+                                <ul class="list-disc list-inside space-y-1 text-sm text-slate-700">
+                                    ${city.cons.map(c => `<li>${c}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-4 border-b pb-2">פרופיל ציונים</h4>
+                            <div class="grid grid-cols-1 gap-1">
+                                ${scoreBar('נגישות רכבת קלה', city.scores.lightRail)}
+                                ${scoreBar('נגישות רכבת כבדה', city.scores.heavyRail)}
+                                ${scoreBar('נגישות רכב פרטי', city.scores.roads)}
+                                ${scoreBar('חניה', city.scores.parking)}
+                                ${scoreBar('עלות וארנונה', city.scores.cost)}
+                                ${scoreBar('איכות בניין', city.scores.quality)}
+                                ${scoreBar('סביבת עבודה', city.scores.env)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            Chart.defaults.font.family = 'Heebo';
+            setScenario('base');
+            initCostChart();
+            renderCityDetail('pt');
+        });
+
+    </script>
+</body>
+</html>
