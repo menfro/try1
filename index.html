@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>דשבורד ניתוח חלופות - העתקת מטה החברה</title>
+    <title>דשבורד ניתוח חלופות - העתקת מטה החברה (V3)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
@@ -178,7 +178,7 @@
                     <i class="fa-solid fa-building-columns text-primary text-xl ml-2"></i>
                     <div>
                         <h1 class="text-lg font-bold text-slate-800 leading-none">העתקת מטה החברה - ניתוח חלופות</h1>
-                        <span class="text-[10px] text-slate-500">גרסה V2</span>
+                        <span class="text-[10px] text-slate-500">גרסה V3 - ינואר 2026</span>
                     </div>
                 </div>
                 <div class="flex space-x-2 md:space-x-4 space-x-reverse h-full items-end pb-1 overflow-x-auto no-scrollbar">
@@ -212,23 +212,21 @@
             <div class="bg-white rounded-lg shadow-sm p-4 border-r-4 border-primary bg-gradient-to-l from-blue-50 to-white">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div class="md:w-3/4">
-                        <h2 class="text-xl font-bold text-primary mb-1">המלצה אסטרטגית (מעודכן V2)</h2>
+                        <h2 class="text-xl font-bold text-primary mb-1">המלצה אסטרטגית (מעודכן ינואר 2026)</h2>
                         <p class="text-slate-700 text-sm leading-relaxed">
-                            החלופה המובילה: <strong>פתח תקווה (רמת סיב)</strong> (ציון 8.75).
+                            החלופה המובילה: <strong>חלופה 0 - הישארות (קרליבך)</strong> (ציון 8.70).
                             <br>
-                            חלופה שנייה: <strong>ראשון לציון</strong> (8.15) - עקפה את מודיעין לאור נתוני הרק"ל.
-                            <br>
-                            <span class="font-bold text-slate-900">החלטה נדרשת:</span> פנייה דיסקרטית לקבלת הצעות (פ"ת, ראשל"צ, מודיעין, ב"ב).
+                            החלופה השנייה (והמובילה למעבר): <strong>פתח תקווה (רמת סיב)</strong> (ציון 8.30).
                         </p>
                     </div>
                     <div class="flex gap-4 md:w-1/4 justify-end w-full border-t md:border-t-0 pt-2 md:pt-0">
                         <div class="text-center">
-                            <span class="block text-xl font-bold text-green-600">50%</span>
-                            <span class="text-[10px] text-slate-500">חיסכון מול ת"א</span>
+                            <span class="block text-xl font-bold text-green-600">~2.8M</span>
+                            <span class="text-[10px] text-slate-500">עלות שנתית חלופה 0</span>
                         </div>
                         <div class="text-center border-r border-slate-200 pr-4">
-                            <span class="block text-xl font-bold text-blue-600">8.75</span>
-                            <span class="text-[10px] text-slate-500">ציון משוקלל (פ"ת)</span>
+                            <span class="block text-xl font-bold text-blue-600">8.70</span>
+                            <span class="text-[10px] text-slate-500">ציון משוקלל (קיים)</span>
                         </div>
                     </div>
                 </div>
@@ -243,19 +241,19 @@
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
                     <button onclick="setScenario('base')" id="btn-base" class="scenario-btn active border rounded-md p-2 text-right h-full">
                         <div class="font-bold text-slate-800 text-sm">בסיס (מאוזן)</div>
-                        <div class="text-[10px] text-slate-500 leading-tight">המלצת מטה</div>
+                        <div class="text-[10px] text-slate-500 leading-tight">הישארות מנצחת</div>
                     </button>
                     <button onclick="setScenario('south')" id="btn-south" class="scenario-btn border rounded-md p-2 text-right h-full">
                         <div class="font-bold text-slate-800 text-sm">הרוב הדרומי</div>
-                        <div class="text-[10px] text-slate-500 leading-tight">אשדוד/יבנה</div>
+                        <div class="text-[10px] text-slate-500 leading-tight">ראשל"צ מובילה</div>
                     </button>
                     <button onclick="setScenario('car')" id="btn-car" class="scenario-btn border rounded-md p-2 text-right h-full">
                         <div class="font-bold text-slate-800 text-sm">העובד הנוהג</div>
                         <div class="text-[10px] text-slate-500 leading-tight">דגש רכב</div>
                     </button>
                     <button onclick="setScenario('budget')" id="btn-budget" class="scenario-btn border rounded-md p-2 text-right h-full">
-                        <div class="font-bold text-slate-800 text-sm">חיסכון</div>
-                        <div class="text-[10px] text-slate-500 leading-tight">מחיר קובע</div>
+                        <div class="font-bold text-slate-800 text-sm">חיסכון אגרסיבי</div>
+                        <div class="text-[10px] text-slate-500 leading-tight">מחיר קובע (נוק-אאוט)</div>
                     </button>
                     <button onclick="setScenario('prestige')" id="btn-prestige" class="scenario-btn border rounded-md p-2 text-right h-full">
                         <div class="font-bold text-slate-800 text-sm">יוקרה</div>
@@ -263,7 +261,7 @@
                     </button>
                     <button onclick="setScenario('north')" id="btn-north" class="scenario-btn border rounded-md p-2 text-right h-full">
                         <div class="font-bold text-slate-800 text-sm">הרוב הצפוני</div>
-                        <div class="text-[10px] text-slate-500 leading-tight">השרון</div>
+                        <div class="text-[10px] text-slate-500 leading-tight">קרב צמוד</div>
                     </button>
                 </div>
             </div>
@@ -288,7 +286,7 @@
                     <!-- Hidden Drilldown Table -->
                     <div id="drilldown-container" class="hidden border-t border-slate-100 pt-4 mt-4 bg-slate-50 rounded-lg p-2 overflow-x-auto">
                         <div class="flex justify-between items-center mb-3">
-                            <h4 class="text-xs font-bold text-slate-500">פירוט ציונים גולמיים (לפני משקולות)</h4>
+                            <h4 class="text-xs font-bold text-slate-500">פירוט ציונים גולמיים (מנורמל)</h4>
                             <div class="flex gap-2">
                                 <button onclick="resetScores()" class="text-[10px] bg-red-50 text-red-600 px-2 py-1 rounded border border-red-100 hover:bg-red-100">
                                     <i class="fa-solid fa-rotate-left"></i> אפס ברירת מחדל
@@ -345,13 +343,12 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y">
-                                        <tr><td class="p-1">ת"א</td><td class="p-1">135</td><td class="p-1">24</td><td class="p-1">34</td><td class="p-1 font-bold">193</td></tr>
-                                        <tr><td class="p-1">ר"ג</td><td class="p-1">120</td><td class="p-1">24</td><td class="p-1">31</td><td class="p-1 font-bold">175</td></tr>
-                                        <tr><td class="p-1">הרצליה</td><td class="p-1">115</td><td class="p-1">22</td><td class="p-1">30</td><td class="p-1 font-bold">167</td></tr>
-                                        <tr><td class="p-1">ב"ב</td><td class="p-1">75</td><td class="p-1">20</td><td class="p-1">28</td><td class="p-1 font-bold">123</td></tr>
-                                        <tr><td class="p-1">ראשל"צ</td><td class="p-1">75</td><td class="p-1">20</td><td class="p-1">25</td><td class="p-1 font-bold">120</td></tr>
+                                        <tr><td class="p-1">חלופה 0</td><td class="p-1">0</td><td class="p-1">12</td><td class="p-1">34</td><td class="p-1 font-bold">46</td></tr>
                                         <tr><td class="p-1">פ"ת</td><td class="p-1">65</td><td class="p-1">18</td><td class="p-1">25</td><td class="p-1 font-bold">108</td></tr>
                                         <tr><td class="p-1">מודיעין</td><td class="p-1">60</td><td class="p-1">16</td><td class="p-1">18</td><td class="p-1 font-bold">94</td></tr>
+                                        <tr><td class="p-1">ראשל"צ</td><td class="p-1">75</td><td class="p-1">20</td><td class="p-1">25</td><td class="p-1 font-bold">120</td></tr>
+                                        <tr><td class="p-1">ב"ב</td><td class="p-1">75</td><td class="p-1">20</td><td class="p-1">28</td><td class="p-1 font-bold">123</td></tr>
+                                        <tr><td class="p-1">ת"א</td><td class="p-1">135</td><td class="p-1">24</td><td class="p-1">34</td><td class="p-1 font-bold">193</td></tr>
                                     </tbody>
                                 </table>
                                 <p class="text-[10px] text-slate-400 mt-1">* מחיר למ"ר לחודש בש"ח</p>
@@ -403,7 +400,7 @@
         <div id="view-map" class="hidden animate-fade-in h-full">
             <div class="card h-full flex flex-col">
                 <div class="p-4 border-b border-slate-100 flex justify-between items-center">
-                    <h3 class="font-bold text-slate-800">מפת החלופות בגוש דן והשפלה</h3>
+                    <h3 class="font-bold text-slate-800">מפת החלופות (כולל נכס קיים)</h3>
                     <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">לחץ על סמן לצפייה בפרטים</span>
                 </div>
                 <div class="flex-grow p-1">
@@ -419,9 +416,13 @@
                 <!-- Sidebar Menu (Mobile Horizontal / Desktop Vertical) -->
                 <div class="md:col-span-3 flex md:flex-col overflow-x-auto md:overflow-visible gap-2 pb-2 md:pb-0">
                     <!-- Dynamic Buttons -->
+                    <button onclick="renderCityDetail('option0')" class="city-nav-btn min-w-[120px] md:min-w-0 md:w-full text-right p-3 rounded-lg bg-white shadow-sm border-r-4 border-indigo-600 hover:bg-slate-50 transition">
+                        <span class="font-bold text-slate-700 text-sm block">חלופה 0 (קיים)</span>
+                        <span class="text-[10px] text-slate-400 hidden md:block">החיסכון הגדול</span>
+                    </button>
                     <button onclick="renderCityDetail('pt')" class="city-nav-btn min-w-[120px] md:min-w-0 md:w-full text-right p-3 rounded-lg bg-white shadow-sm border-r-4 border-green-500 hover:bg-slate-50 transition">
                         <span class="font-bold text-slate-700 text-sm block">פתח תקווה</span>
-                        <span class="text-[10px] text-slate-400 hidden md:block">הבחירה הכלכלית</span>
+                        <span class="text-[10px] text-slate-400 hidden md:block">הבחירה התפעולית</span>
                     </button>
                     <button onclick="renderCityDetail('rishon')" class="city-nav-btn min-w-[120px] md:min-w-0 md:w-full text-right p-3 rounded-lg bg-white shadow-sm border-r-4 border-blue-500 hover:bg-slate-50 transition">
                         <span class="font-bold text-slate-700 text-sm block">ראשון לציון</span>
@@ -434,13 +435,13 @@
                         <span class="font-bold text-slate-700 text-sm block">בני ברק</span>
                     </button>
                     <button onclick="renderCityDetail('tlv')" class="city-nav-btn min-w-[120px] md:min-w-0 md:w-full text-right p-3 rounded-lg bg-white shadow-sm border-r-4 border-red-500 hover:bg-slate-50 transition">
-                        <span class="font-bold text-slate-700 text-sm block">תל אביב</span>
+                        <span class="font-bold text-slate-700 text-sm block">תל אביב (חדש)</span>
                     </button>
                     <button onclick="renderCityDetail('bursa')" class="city-nav-btn min-w-[120px] md:min-w-0 md:w-full text-right p-3 rounded-lg bg-white shadow-sm border-r-4 border-orange-500 hover:bg-slate-50 transition">
-                        <span class="font-bold text-slate-700 text-sm block">בורסה</span>
+                        <span class="font-bold text-slate-700 text-sm block">הבורסה</span>
                     </button>
                     <button onclick="renderCityDetail('sharon')" class="city-nav-btn min-w-[120px] md:min-w-0 md:w-full text-right p-3 rounded-lg bg-white shadow-sm border-r-4 border-pink-500 hover:bg-slate-50 transition">
-                        <span class="font-bold text-slate-700 text-sm block">השרון</span>
+                        <span class="font-bold text-slate-700 text-sm block">הרצליה</span>
                     </button>
                 </div>
 
@@ -474,29 +475,30 @@
                 <!-- Actual Report Content (Hidden initially) -->
                 <div id="report-content-body" class="hidden report-content">
                     <div class="border-b-2 border-primary pb-4 mb-6">
-                        <h1 class="text-2xl font-bold text-primary">מסמך עמדה: בחינת חלופות אסטרטגיות להעתקת מטה החברה</h1>
+                        <h1 class="text-2xl font-bold text-primary">מסמך עמדה: בחינת חלופות אסטרטגיות להעתקת מטה החברה (גרסה משולבת מלאה)</h1>
                         <div class="mt-2 text-sm text-slate-500 flex flex-col md:flex-row justify-between">
                             <div><strong>אל:</strong> מנכ"ל החברה</div>
                             <div><strong>מאת:</strong> סמנכ"ל נכסים</div>
-                            <div><strong>תאריך:</strong> 11 בדצמבר 2025</div>
-                            <div><strong>הנדון:</strong> דוח ניתוח חלופות (Site Selection Analysis)</div>
+                            <div><strong>תאריך:</strong> 13 בינואר 2026 (עדכון למסמך המקורי מדצמבר 2025)</div>
+                            <div><strong>הנדון:</strong> דוח ניתוח חלופות (Site Selection Analysis), כולל חלופת הישארות (חלופה 0)</div>
                         </div>
                     </div>
 
                     <h2>1. תקציר מנהלים</h2>
-                    <p>מסמך זה מציג את עבודת המטה שבוצעה בחטיבת הנכסים לבחינת חלופות להעתקת משרדי הנהלת החברה (מטה) ממיקומם הנוכחי בת"א. המהלך נועד להתאים את סביבת העבודה לצרכים העדכניים של החברה, לשפר את הנגישות לעובדים ולאורחים, ולמקסם את היעילות הכלכלית.</p>
-                    <div class="bg-blue-50 p-4 border-r-4 border-blue-500 rounded my-4">
-                        <strong>החלטה נדרשת:</strong> אישור לביצוע סקר מגורים ממוכן לכלל עובדי המטה, ואישור לצאת בפניה דיסקרטית בארבע חלופות נבחרות: פתח תקווה, ראשון לציון, מודיעין ובני ברק.
-                    </div>
-                    <p>במסגרת העבודה נותחו 7 מתחמי תעסוקה מרכזיים בגוש דן והשפלה. הניתוח התבסס על מודל משוקלל המעניק עדיפות לנגישות תחבורתית מגוונת ולחוויית העובד. המסקנה המרכזית היא כי חלופת <strong>פתח-תקווה (רמת סיב)</strong> מספקת את המענה המיטבי (ציון 8.75) לכלל העובדים. <strong>ראשון לציון</strong> הינה החלופה השנייה בטיבה בתרחיש הבסיס (8.15), במיוחד אם יתברר כי קיים רוב לעובדים המתגוררים בדרום.</p>
+                    <p>מסמך זה מציג את עבודת המטה שבוצעה בחטיבת הנכסים לבחינת חלופות להעתקת משרדי הנהלת החברה (מטה) ממיקומם הנוכחי בת"א, או לחלופין, שיפוץ והישארות בנכס הקיים ("חלופה 0"). המהלך נועד להתאים את סביבת העבודה לצרכים העדכניים של החברה, לשפר את הנגישות לעובדים ולאורחים, ולמקסם את היעילות הכלכלית.</p>
+                    <p>במסגרת העבודה נותחו 8 חלופות (7 מתחמי תעסוקה מרכזיים בגוש דן והשפלה + חלופת ה-0). הניתוח התבסס על מודל משוקלל המעניק עדיפות לנגישות תחבורתית מגוונת ולחוויית העובד. המסקנה המרכזית היא כי נוצר מהפך בדירוג:</p>
+                    <ul class="list-disc list-inside">
+                        <li><strong>חלופת ה-0 (הישארות בקרליבך):</strong> מספקת את המענה המיטבי (ציון 8.70) בשל היעדר דמי שכירות ומיקום מרכזי.</li>
+                        <li><strong>חלופת פתח-תקווה (רמת סיב):</strong> ירדה למקום השני (ציון 8.30) אך נותרת החלופה התפעולית הטובה ביותר למעבר. ראשון לציון הינה החלופה השלישית בטיבה בתרחיש הבסיס (7.85), אך תהפוך לאסטרטגית אם יתברר כי קיים רוב לעובדים המתגוררים בדרום.</li>
+                    </ul>
 
                     <h2>2. הגדרת הפרוגרמה והצרכים</h2>
                     <p>על בסיס ניתוח ראשוני של מצבת כוח האדם וצרכי החברה, הוגדרו עקרונות הבסיס לאיתור:</p>
                     <ul>
                         <li><strong>היקף השטח:</strong> כ-5,000 מ"ר (ברוטו). שטח זה מאפשר יחס ברוטו לעובד של כ-33 מ"ר, הכולל רווחה נדיבה, חדרי ישיבות מרובים ושטחי ציבור.</li>
                         <li><strong>אוכלוסייה:</strong> כ-150 עובדים (הנהלה, כספים, משפטית, נכסים, הנדסה).</li>
-                        <li><strong>תצורה:</strong> עדיפות לקומות גדולות (Floor Plate של 1,500 מ"ר ומעלה) לשמירה על רצף ניהולי וסנכרון בין מחלקות.</li>
-                        <li><strong>נגישות:</strong> דרישה ל"תמהיל תחבורה מלא" – דגש על רכבת קלה (רק"ל) ורכבת כבדה, לצד נגישות לרכב פרטי.</li>
+                        <li><strong>תצורה:</strong> עדיפות לקומות גדולות (Floor Plate של 1,500 מ"ר ומעלה) לשמירה על רצף ניהולי וסנכרון בין מחלקות. (הערה: חלופה 0 מאותגרת בסעיף זה בשל קומות קטנות).</li>
+                        <li><strong>נגישות:</strong> דרישה ל"תמהיל תחבורה מלא", דגש על רכבת קלה (רק"ל) ורכבת כבדה, לצד נגישות לרכב פרטי.</li>
                     </ul>
 
                     <h2>3. מתודולוגיית הדירוג (מודל המשקולות)</h2>
@@ -513,7 +515,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td rowspan="3">תחבורה ציבורית (40%)</td>
+                                    <td rowspan="3">תחבורה ציבורית (סה"כ 40%)</td>
                                     <td>רכבת קלה (רק"ל)</td>
                                     <td>15%</td>
                                     <td>אמצעי הניידות המרכזי והאמין במטרופולין.</td>
@@ -529,7 +531,7 @@
                                     <td>רשת משלימה וגיבוי לרכבות.</td>
                                 </tr>
                                 <tr>
-                                    <td rowspan="2">רכב וחניה (20%)</td>
+                                    <td rowspan="2">רכב וחניה (סה"כ 20%)</td>
                                     <td>נגישות כבישים</td>
                                     <td>15%</td>
                                     <td>קרבה לצירים ארציים (איילון/4/431).</td>
@@ -540,19 +542,19 @@
                                     <td>גמישות תפעולית (הסתמכות על פתרונות היקפיים).</td>
                                 </tr>
                                 <tr>
-                                    <td>כלכלי (15%)</td>
+                                    <td>כלכלי</td>
                                     <td>עלויות שוטפות</td>
                                     <td>15%</td>
                                     <td>שכ"ד, ניהול וארנונה.</td>
                                 </tr>
                                 <tr>
-                                    <td>שוק (10%)</td>
+                                    <td>שוק</td>
                                     <td>זמינות והיצע</td>
                                     <td>10%</td>
                                     <td>כוח מיקוח וכניסה מהירה.</td>
                                 </tr>
                                 <tr>
-                                    <td rowspan="2">איכות ורווחה (15%)</td>
+                                    <td rowspan="2">איכות ורווחה (סה"כ 15%)</td>
                                     <td>איכות וגמישות תפעולית</td>
                                     <td>10%</td>
                                     <td>מפרט הבניין, גודל קומה, מערכות.</td>
@@ -568,37 +570,40 @@
 
                     <h2>4. חלופות אסטרטגיות שנבחנו</h2>
                     <ul>
-                        <li><strong>חלופה א':</strong> תל אביב – ציר יגאל אלון / ביצרון (מגדלי טויוטה, אלקטרה, תוצרת הארץ).</li>
-                        <li><strong>חלופה ב':</strong> רמת גן – מתחם הבורסה (אזור מגדל השחר, אטריום, סבידור).</li>
-                        <li><strong>חלופה ג':</strong> בני ברק – מתחם ה-BBC (צפון בני ברק, מגדלי ב.ס.ר).</li>
-                        <li><strong>חלופה ד':</strong> פתח תקווה – רמת סיב / קריית אריה (אזור גלובל טאוורס, ב.ס.ר סיטי).</li>
-                        <li><strong>חלופה ה':</strong> ראשון לציון – מתחם האלף (מערב ראשל"צ).</li>
-                        <li><strong>חלופה ו':</strong> מודיעין – ליגד / מע"ר.</li>
-                        <li><strong>חלופה ז':</strong> אזור השרון – הרצליה פיתוח / רעננה צפון.</li>
+                        <li><strong>חלופה 0 (חדשה):</strong> תל אביב, מתחם קרליבך (מבנה בבעלות החברה).</li>
+                        <li><strong>חלופה א':</strong> תל אביב, ציר יגאל אלון / ביצרון (מגדלי טויוטה, אלקטרה, תוצרת הארץ).</li>
+                        <li><strong>חלופה ב':</strong> רמת גן, מתחם הבורסה (אזור מגדל השחר, אטריום, סבידור).</li>
+                        <li><strong>חלופה ג':</strong> בני ברק, מתחם ה-BBC (צפון בני ברק, מגדלי ב.ס.ר).</li>
+                        <li><strong>חלופה ד':</strong> פתח תקווה, רמת סיב / קריית אריה (אזור גלובל טאוורס, ב.ס.ר סיטי).</li>
+                        <li><strong>חלופה ה':</strong> ראשון לציון, מתחם האלף (מערב ראשל"צ).</li>
+                        <li><strong>חלופה ו':</strong> מודיעין, ליגד / מע"ר.</li>
+                        <li><strong>חלופה ז':</strong> אזור השרון, הרצליה פיתוח / רעננה צפון.</li>
                     </ul>
 
                     <h2>5. ניתוח עומק השוואתי (Data Breakdown)</h2>
                     
-                    <h3>5.1 ניתוח עלויות מפורט: שכירות, ניהול וארנונה (אומדן 2025)</h3>
-                    <p>בצענו ניתוח שוק על בסיס נתוני אמת והצעות מחיר ראשוניות (Asking Price) למשרדים ברמת גמר מלא (Class A) בשטח של כ-5,000 מ"ר. הנתונים להלן כוללים שקלול של דמי שכירות, דמי ניהול ותשלומי ארנונה (לפי תעריפי 2024/5):</p>
+                    <h3>5.1 ניתוח עלויות מפורט: שכירות, ניהול וארנונה (אומדן 2025/6)</h3>
+                    <p>ביצענו ניתוח שוק על בסיס נתוני אמת והצעות מחיר ראשוניות (Asking Price) למשרדים ברמת גמר מלא (Class A) בשטח של כ-5,000 מ"ר. הנתונים להלן כוללים שקלול של דמי שכירות, דמי ניהול ותשלומי ארנונה. עדכון: הטבלה כוללת כעת את חלופת ה-0 (ללא שכירות).</p>
                     
                     <div class="report-table-wrapper">
                         <table class="report-table">
                             <thead>
                                 <tr>
                                     <th>פרמטר</th>
-                                    <th>תל אביב</th>
-                                    <th>רמת גן</th>
-                                    <th>בני ברק</th>
-                                    <th>פתח תקווה</th>
-                                    <th>ראשל"צ</th>
-                                    <th>מודיעין</th>
+                                    <th>חלופה 0 (קיים)</th>
+                                    <th>ת"א (יגאל אלון)</th>
+                                    <th>רמת גן (הבורסה)</th>
+                                    <th>בני ברק (BBC)</th>
+                                    <th>פתח תקווה (רמת סיב)</th>
+                                    <th>ראשל"צ (האלף)</th>
+                                    <th>מודיעין (מע"ר)</th>
                                     <th>הרצליה פיתוח</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>שכירות למ"ר (הערכה)</td>
+                                    <td>שכירות למ"ר</td>
+                                    <td>0 ₪</td>
                                     <td>135 ₪</td>
                                     <td>120 ₪</td>
                                     <td>75 ₪</td>
@@ -609,6 +614,7 @@
                                 </tr>
                                 <tr>
                                     <td>דמי ניהול למ"ר</td>
+                                    <td>12 ₪</td>
                                     <td>24 ₪</td>
                                     <td>24 ₪</td>
                                     <td>20 ₪</td>
@@ -618,7 +624,8 @@
                                     <td>22 ₪</td>
                                 </tr>
                                 <tr>
-                                    <td>ארנונה למ"ר (חודשי*)</td>
+                                    <td>ארנונה למ"ר</td>
+                                    <td>~34 ₪</td>
                                     <td>~34 ₪</td>
                                     <td>~31 ₪</td>
                                     <td>~28 ₪</td>
@@ -628,7 +635,8 @@
                                     <td>~30 ₪</td>
                                 </tr>
                                 <tr class="font-bold bg-slate-100">
-                                    <td>סה"כ למ"ר לחודש</td>
+                                    <td>סה"כ למ"ר</td>
+                                    <td>46 ₪</td>
                                     <td>193 ₪</td>
                                     <td>175 ₪</td>
                                     <td>123 ₪</td>
@@ -638,7 +646,8 @@
                                     <td>167 ₪</td>
                                 </tr>
                                 <tr>
-                                    <td>סה"כ חודשי (5,000 מ"ר)</td>
+                                    <td>סה"כ חודשי</td>
+                                    <td>230,000 ₪</td>
                                     <td>965,000 ₪</td>
                                     <td>875,000 ₪</td>
                                     <td>615,000 ₪</td>
@@ -648,7 +657,8 @@
                                     <td>835,000 ₪</td>
                                 </tr>
                                 <tr class="font-bold text-primary">
-                                    <td>עלות שנתית כוללת</td>
+                                    <td>עלות שנתית</td>
+                                    <td>2.76 מלש"ח</td>
                                     <td>11.6 מלש"ח</td>
                                     <td>10.5 מלש"ח</td>
                                     <td>7.4 מלש"ח</td>
@@ -660,13 +670,14 @@
                             </tbody>
                         </table>
                     </div>
-                    <p class="text-xs text-slate-500 mb-4">*הערה: המספרים לעיל מהווים אומדן להשוואה בין-עירונית ואינם מהווים חלופה לבדיקה פרטנית של כל נכס, שתבוצע בשלב מו"מ. הטווחים עשויים לנוע בשיעור של ±10% בהתאם לסיווג הנכס המדויק ואזור המס הספציפי.</p>
-                    <p><strong>משמעויות כלכליות:</strong> המעבר למודיעין או לפתח תקווה משקף חיסכון שנתי של כ-5 עד 6 מיליון ש"ח (כ-50% מעלות הדיור) בהשוואה להישארות בתל אביב. בנוסף, עלות החניה בפריפריה נמוכה בכ-50% מאשר בתל אביב, חיסכון נוסף של כמיליון ש"ח בשנה.</p>
+                    <p class="text-xs text-slate-500 mb-4">הערה: המספרים לעיל מהווים אומדן להשוואה בין-עירונית. הטווחים עשויים לנוע בשיעור של ±10%.</p>
+                    <p><strong>משמעויות כלכליות מעודכנות:</strong> הישארות בנכס הקיים (חלופה 0) חוסכת כ-3.7 מיליון ש"ח בשנה מול החלופה הזולה ביותר (פ"ת), וכ-9 מיליון ש"ח מול תל אביב. זהו פער דרמטי שחייב להתבטא בניקוד (נרמול).</p>
 
                     <h3>5.2 נגישות רכבתית (קלה וכבדה)</h3>
                     <ul>
+                        <li><strong>חלופה 0 (קרליבך):</strong> רק"ל (10/10): סמוך לתחנת קרליבך (צומת קו אדום וירוק). רכבת כבדה (8/10): מרחק הליכה מתחנת השלום.</li>
                         <li><strong>פתח תקווה (רמת סיב):</strong> נגישות מצוינת לרכבת הקלה (הקו האדום - תחנות שנקר/שחם/בלינסון בלב אזורי התעסוקה). הנגישות לרכבת כבדה (תחנת קריית אריה) טובה לחלק הצפוני, ודורשת קישורית מאזור רמת סיב הדרומי.</li>
-                        <li><strong>רמת גן (הבורסה):</strong> הציון הגבוה ביותר. שילוב מנצח של רכבת כבדה ("סבידור מרכז" - ה-Hub הראשי של ישראל) ורכבת קלה (תחנת "אבא הלל" של הקו האדום) במרחק הליכה מיידי.</li>
+                        <li><strong>רמת גן (הבורסה):</strong> הציון הגבוה ביותר (במקור). שילוב מנצח של רכבת כבדה ("סבידור מרכז" - ה-Hub הראשי של ישראל) ורכבת קלה (תחנת "אבא הלל" של הקו האדום) במרחק הליכה מיידי.</li>
                         <li><strong>תל אביב (יגאל אלון):</strong> נגישות טובה לרכבת כבדה (תחנת "השלום" במרחק הליכה של כ-8-10 דקות). נגישות בינונית לרכבת הקלה (תחנות הקו האדום "יהודית" או "שאול המלך" במרחק הליכה של כ-10-12 דקות).</li>
                         <li><strong>בני ברק (BBC):</strong> נגישות מצוינת לרכבת הקלה (תחנות "בן גוריון" ו"אהרונוביץ'" של הקו האדום). נגישות נמוכה לרכבת כבדה (תחנת "בני ברק" ממוקמת בקצה הצפוני ודורשת הליכה ארוכה או שאטל), יש אוטובוסים גם מתחנת הבורסה.</li>
                         <li><strong>ראשון לציון (מתחם האלף):</strong> נגישות מצוינת לרכבת כבדה (תחנת "משה דיין" צמודה למתחם, קו מהיר לת"א ולדרום). חיסרון מהותי: אין כרגע רכבת קלה פעילה (הקו הירוק בבנייה, צפי הפעלה 2028).</li>
@@ -676,15 +687,11 @@
 
                     <h3>5.3 נגישות כבישים ואוטובוסים</h3>
                     <ul>
+                        <li><strong>חלופה 0 (קרליבך):</strong> כבישים (6/10): עומסי תנועה כבדים במרכז ת"א. חניה (10/10): חניון פרטי בבעלות החברה המספיק לכלל העובדים. אוטובוסים (9/10): נגישות מעולה.</li>
                         <li><strong>מתחם האלף (ראשל"צ):</strong> הציון הגבוה ביותר. ממוקם על מחלף ייעודי המחבר ישירות את נתיבי איילון דרום (כביש 20) וכביש 431. מאפשר לעובדי הדרום והשפלה לעצור "לפני הפקק" הגדול של גוש דן.</li>
                         <li><strong>תל אביב (יגאל אלון):</strong> ירידה נוחה יחסית מאיילון, אך ציר יגאל אלון עצמו ורחובות הגישה סובלים מעומסי תנועה כבדים מאוד בשעות הבוקר והערב. אוטובוסים: נגישות מצוינת.</li>
                         <li><strong>רמת גן (הבורסה):</strong> "צוואר בקבוק" לרכב פרטי. הכניסה והיציאה למתחם כרוכה בעמידה ממושכת בפקקים. אוטובוסים: הציון הגבוה ביותר (מסוף 2000).</li>
-                        <li><strong>בני ברק (BBC):</strong>
-                            <ul class="list-none pl-0">
-                                <li><strong>כבישים:</strong> גישה סבירה מכביש 4 (מחלף אם המושבות/ז'בוטינסקי), אך המתחם הפנימי (רחובות הירקון/בן גוריון) צפוף וקשה לתנועה.</li>
-                                <li><strong>אוטובוסים:</strong> נגישות טובה מאוד. נהנה מהשירות האינטנסיבי על ציר ז'בוטינסקי ודרך בן גוריון.</li>
-                            </ul>
-                        </li>
+                        <li><strong>בני ברק (BBC):</strong> כבישים: גישה סבירה מכביש 4 (מחלף אם המושבות/ז'בוטינסקי), אך המתחם הפנימי (רחובות הירקון/בן גוריון) צפוף וקשה לתנועה. אוטובוסים: נגישות טובה מאוד. נהנה מהשירות האינטנסיבי על ציר ז'בוטינסקי ודרך בן גוריון.</li>
                         <li><strong>פתח תקווה (רמת סיב):</strong> מיקום אסטרטגי (כביש 4, 5, 471), אך עומסים בכניסות לעיר (ז'בוטינסקי/רבין) בבקרים. אוטובוסים: נגישות טובה מאוד.</li>
                         <li><strong>מודיעין (ליגד/מע"ר):</strong> נגישות פנומנלית לרכב פרטי דרך כביש 431 וכביש 1. הפארק הטכנולוגי מרווח וללא פקקי תנועה פנימיים.</li>
                         <li><strong>אזור השרון (הרצליה/רעננה):</strong> אתגר קשה לעובדים הגרים מדרום לגלילות. ההגעה בבוקר מחייבת חצייה של כל נתיבי איילון/כביש 4 לכיוון צפון.</li>
@@ -692,51 +699,23 @@
 
                     <h3>5.4 איכות, גמישות תפעולית וסביבת עבודה</h3>
                     <ul>
-                        <li><strong>תל אביב - ציר יגאל אלון (ציון: 9.5 משוקלל):</strong>
+                        <li><strong>חלופה 0 (קרליבך):</strong>
                             <ul class="list-none pl-0">
-                                <li><strong>איכות המבנה:</strong> מגדלי Class A+ אייקוניים (כגון מגדלי אלון, אלקטרה, תוצרת הארץ). לובי מפואר, שמירה 24/7, ומערכות ניהול מתקדמות.</li>
-                                <li><strong>סביבת עבודה:</strong> הציון הגבוה ביותר בישראל. סביבה אורבנית שוקקת ("עירוב שימושים" אמיתי). שפע מסעדות מכל הסוגים במרחק הליכה, בתי קפה, מכוני כושר, וגישה רגלית למתחם שרונה ועזריאלי. האזור פעיל ותוסס גם בשעות הערב.</li>
+                                <li><strong>איכות וגמישות (7):</strong> מתפרס על פני מספר קומות, מבנה ישן יחסית, חיסרון תפעולי מול הבניינים החדשים בחלופות האחרות שנבדקו.</li>
+                                <li><strong>סביבת עבודה (10):</strong> ממוקם בלב תל אביב, סביבה תוססת ומרכזית גם בעת עבודות הרק"ל.</li>
                             </ul>
                         </li>
-                        <li><strong>פתח תקווה - רמת סיב (ציון: 8.0 משוקלל):</strong>
-                            <ul class="list-none pl-0">
-                                <li><strong>איכות המבנה:</strong> תנופת בנייה חדשה ומודרנית (גלובל טאוורס, ב.ס.ר סיטי). היתרון האסטרטגי הוא גודל הקומה (Floor Plate): קומות ענק של 1,500-2,500 מ"ר המאפשרות לרכז את כל המטה ב-2-3 קומות בלבד, מה שמייעל את התקשורת הארגונית וחוסך שטחי שירות כפולים.</li>
-                                <li><strong>סביבת עבודה:</strong> פונקציונלית מאוד ("אזור תעשייה משודרג"). קיימים מתחמי הסעדה ובילוי ייעודיים המספקים פתרון, אך האזור פחות "הליכתי" ומרגיש מנותק בשעות הערב.</li>
-                            </ul>
-                        </li>
-                        <li><strong>ראשון לציון - מתחם האלף (ציון: 7.5 משוקלל):</strong>
-                            <ul class="list-none pl-0">
-                                <li><strong>איכות המבנה:</strong> הציון הגבוה ביותר לאיכות הבנייה (10/10). כלל הבניינים הם חדשים לחלוטין ("מהניילונים"), נבנו בתקן ירוק (LEED) מחמיר, ומציעים תשתיות תקשורת ומערכות חכמות מתקדמות ביותר. קומות ענק מרווחות.</li>
-                                <li><strong>סביבת עבודה:</strong> עדיין בשלבי פיתוח ראשוניים. ההיצע הקולינרי מוגבל כרגע לקפיטריות בתוך הבניינים או למתחמי קניות סמוכים (קניון הזהב/סינמה סיטי) המצריכים רכב או שאטל. חסרה תחושת "רחוב" והליכה ספונטנית.</li>
-                            </ul>
-                        </li>
-                        <li><strong>רמת גן - מתחם הבורסה (ציון: 8.0 משוקלל):</strong>
-                            <ul class="list-none pl-0">
-                                <li><strong>איכות המבנה:</strong> מלאי מעורב מאוד. לצד מגדלים חדשים ונוצצים (אטריום, ספיר), ישנם בניינים ותיקים רבים עם קומות קטנות (כ-1,000 מ"ר) וריבוי עמודים, המקשים על תכנון Open Space יעיל ומחייבים פיצול החברה למספר רב של קומות.</li>
-                                <li><strong>סביבת עבודה:</strong> סביבה אינטנסיבית ושוקקת חיים. היצע אדיר וזמין של מסעדות פועלים ומזון מהיר, אך האזור סובל מצפיפות גבוהה, רעש, וזיהום אוויר, והוא פחות "מזמין" להליכה נינוחה או לאירוח יוקרתי.</li>
-                            </ul>
-                        </li>
-                        <li><strong>אזור השרון - הרצליה פיתוח (ציון: 9.5 משוקלל):</strong>
-                            <ul class="list-none pl-0">
-                                <li><strong>איכות המבנה:</strong> מבנים איכותיים מאוד, שילוב של מגדלים וקמפוסים נמוכים ומטופחים.</li>
-                                <li><strong>סביבת עבודה:</strong> סביבת העבודה היוקרתית בישראל. מסעדות גורמה, קרבה לים, מלונות עסקים ואווירה בינלאומית. החיסרון הוא עלויות המחיה הגבוהות (מסעדות, חניה) והריחוק עבור עובדי הדרום.</li>
-                            </ul>
-                        </li>
-                        <li><strong>מודיעין - ליגד/מע"ר (ציון: 8.0 משוקלל):</strong>
-                            <ul class="list-none pl-0">
-                                <li><strong>איכות המבנה:</strong> מבנים חדשים, קמפוסים מרווחים ונוף פתוח. צפיפות נמוכה המאפשרת רווחה לעובד.</li>
-                                <li><strong>סביבת עבודה:</strong> במע"ר החדש - מצוינת (צמוד לקניון עזריאלי, רכבת ושדרת חנויות). באזור הפארק הטכנולוגי (ליגד) - הסביבה מבודדת יותר ומסתמכת בעיקר על שירותי הסעדה פנימיים בתוך המתחם.</li>
-                            </ul>
-                        </li>
-                        <li><strong>בני ברק - BBC (ציון: 7.0 משוקלל):</strong>
-                            <ul class="list-none pl-0">
-                                <li><strong>איכות המבנה:</strong> מגדלים חדשים יחסית (בעיקר קבוצת ב.ס.ר), איכות טובה ומחיר תחרותי.</li>
-                                <li><strong>סביבת עבודה:</strong> פונקציונלית ועמוסה. היצע סביר של מסעדות (בעיקר כשרות למהדרין), אך האזור סובל מצפיפות ועומסי תנועה כבדים בתוך הרחובות הצרים של המתחם.</li>
-                            </ul>
-                        </li>
+                        <li><strong>תל אביב, ציר יגאל אלון (ציון: 9.5 משוקלל):</strong> מגדלי Class A+ אייקוניים (כגון מגדלי אלון, אלקטרה, תוצרת הארץ). סביבת עבודה: הציון הגבוה ביותר בישראל. סביבה אורבנית שוקקת ("עירוב שימושים" אמיתי).</li>
+                        <li><strong>פתח תקווה, רמת סיב (ציון: 8.0 משוקלל):</strong> תנופת בנייה חדשה ומודרנית (גלובל טאוורס, ב.ס.ר סיטי). היתרון האסטרטגי הוא גודל הקומה (Floor Plate): קומות ענק של 1,500-2,500 מ"ר. סביבת עבודה: פונקציונלית מאוד ("אזור תעשייה משודרג").</li>
+                        <li><strong>ראשון לציון, מתחם האלף (ציון: 7.5 משוקלל):</strong> הציון הגבוה ביותר לאיכות הבנייה (10/10). כלל הבניינים הם חדשים לחלוטין. סביבת עבודה: עדיין בשלבי פיתוח ראשוניים.</li>
+                        <li><strong>רמת גן, מתחם הבורסה (ציון: 8.0 משוקלל):</strong> מלאי מעורב מאוד. סביבה אינטנסיבית ושוקקת חיים.</li>
+                        <li><strong>אזור השרון, הרצליה פיתוח (ציון: 9.5 משוקלל):</strong> מבנים איכותיים מאוד. סביבת העבודה היוקרתית בישראל.</li>
+                        <li><strong>מודיעין, ליגד/מע"ר (ציון: 8.0 משוקלל):</strong> מבנים חדשים, קמפוסים מרווחים ונוף פתוח. סביבת עבודה: במע"ר החדש - מצוינת. בליגד - מבודדת יותר.</li>
+                        <li><strong>בני ברק, BBC (ציון: 7.0 משוקלל):</strong> מגדלים חדשים יחסית. סביבת עבודה: פונקציונלית ועמוסה.</li>
                     </ul>
 
-                    <h2>6. טבלת דירוג משוקללת (תרחיש בסיס) - מעודכן</h2>
+                    <h2>6. טבלת דירוג משוקללת (כולל חלופה 0 ונרמול עלויות)</h2>
+                    <p class="text-sm">שימו לב: מכיוון שחלופת ה-0 קיבלה ציון עלות 10 (0 ש"ח שכירות), ציוני העלות של שאר החלופות נורמלו כלפי מטה כדי לשקף את הפער הכלכלי האמיתי.</p>
                     <div class="report-table-wrapper">
                         <table class="report-table">
                             <thead>
@@ -744,54 +723,53 @@
                                     <th>#</th>
                                     <th>פרמטר לבחינה</th>
                                     <th>משקל</th>
-                                    <th>תל אביב</th>
-                                    <th>הבורסה</th>
-                                    <th>בני ברק</th>
+                                    <th>חלופה 0 (קיים)</th>
                                     <th>פתח תקווה</th>
                                     <th>ראשל"צ</th>
                                     <th>מודיעין</th>
+                                    <th>בני ברק</th>
+                                    <th>ת"א (אלון)</th>
+                                    <th>הבורסה</th>
                                     <th>השרון</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr><td>1</td><td>רכבת קלה</td><td>15%</td><td>7</td><td>10</td><td>9</td><td>10</td><td>6</td><td>0</td><td>2</td></tr>
-                                <tr><td>2</td><td>רכבת כבדה</td><td>15%</td><td>9</td><td>10</td><td>6</td><td>7</td><td>10</td><td>10</td><td>8</td></tr>
-                                <tr><td>3</td><td>נגישות כבישים</td><td>15%</td><td>7</td><td>4</td><td>6</td><td>7</td><td>9</td><td>10</td><td>5</td></tr>
-                                <tr><td>4</td><td>קווי אוטובוס</td><td>10%</td><td>9</td><td>10</td><td>9</td><td>9</td><td>6</td><td>7</td><td>8</td></tr>
-                                <tr><td>5</td><td>הקצאת חניות</td><td>5%</td><td>3</td><td>2</td><td>6</td><td>10</td><td>10</td><td>10</td><td>8</td></tr>
-                                <tr><td>6</td><td>עלויות</td><td>15%</td><td>5</td><td>4</td><td>8</td><td>10</td><td>8</td><td>10</td><td>6</td></tr>
-                                <tr><td>7</td><td>זמינות והיצע</td><td>10%</td><td>6</td><td>7</td><td>8</td><td>10</td><td>9</td><td>9</td><td>7</td></tr>
-                                <tr><td>8</td><td>איכות וגמישות</td><td>10%</td><td>9</td><td>7</td><td>7</td><td>9</td><td>9</td><td>9</td><td>9</td></tr>
-                                <tr><td>9</td><td>סביבת עבודה</td><td>5%</td><td>10</td><td>9</td><td>6</td><td>7</td><td>6</td><td>7</td><td>10</td></tr>
+                                <tr><td>1</td><td>רכבת קלה</td><td>15%</td><td>10</td><td>10</td><td>6</td><td>0</td><td>9</td><td>7</td><td>10</td><td>2</td></tr>
+                                <tr><td>2</td><td>רכבת כבדה</td><td>15%</td><td>8</td><td>7</td><td>10</td><td>10</td><td>6</td><td>9</td><td>10</td><td>8</td></tr>
+                                <tr><td>3</td><td>נגישות כבישים</td><td>15%</td><td>6</td><td>7</td><td>9</td><td>10</td><td>6</td><td>7</td><td>4</td><td>5</td></tr>
+                                <tr><td>4</td><td>קווי אוטובוס</td><td>10%</td><td>9</td><td>9</td><td>6</td><td>7</td><td>9</td><td>9</td><td>10</td><td>8</td></tr>
+                                <tr><td>5</td><td>הקצאת חניות</td><td>5%</td><td>10</td><td>10</td><td>10</td><td>10</td><td>6</td><td>3</td><td>2</td><td>8</td></tr>
+                                <tr><td>6</td><td>עלויות (מתוקן)</td><td>15%</td><td>10</td><td>7</td><td>6</td><td>8</td><td>6</td><td>3</td><td>4</td><td>4</td></tr>
+                                <tr><td>7</td><td>זמינות והיצע</td><td>10%</td><td>10</td><td>10</td><td>9</td><td>9</td><td>8</td><td>6</td><td>7</td><td>7</td></tr>
+                                <tr><td>8</td><td>איכות וגמישות</td><td>10%</td><td>7</td><td>9</td><td>9</td><td>9</td><td>7</td><td>9</td><td>7</td><td>9</td></tr>
+                                <tr><td>9</td><td>סביבת עבודה</td><td>5%</td><td>10</td><td>7</td><td>6</td><td>7</td><td>6</td><td>10</td><td>9</td><td>10</td></tr>
                                 <tr class="font-bold bg-slate-200 text-primary">
-                                    <td colspan="2">ציון סופי</td><td>100%</td><td>7.25</td><td>7.15</td><td>7.35</td><td>8.75</td><td>8.15</td><td>7.90</td><td>7.05</td>
+                                    <td colspan="2">ציון סופי</td><td>100%</td><td>8.70</td><td>8.30</td><td>7.85</td><td>7.55</td><td>7.05</td><td>6.95</td><td>7.15</td><td>6.15</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
                     <h2>7. ניתוח רגישות (Sensitivity Analysis)</h2>
-                    <p>כלי ניהולי זה נועד לבחון את "יציבות" ההמלצה. להלן פירוט 5 תרחישי קיצון:</p>
+                    <p>כלי ניהולי זה נועד לבחון את "יציבות" ההמלצה. להלן פירוט תרחישי קיצון (כולל חלופת ה-0):</p>
                     
                     <h3>7.1 תרחיש א': "העובד הנוהג" (Car Oriented)</h3>
-                    <p><strong>ההנחה:</strong> הנהלת החברה מחליטה שרכב פרטי הוא אמצעי ההגעה העיקרי לרוב העובדים, וחובה לספק חניה צמודה לכולם.</p>
-                    <p><strong>התוצאה:</strong> מודיעין חזקה מאוד (9.00), אך הפער מצטמצם. ראשון לציון (8.90) צמודה אליה מאוד בפסגה. תל אביב והבורסה נותרות בתחתית.</p>
+                    <p><strong>ההנחה:</strong> רכב פרטי הוא העיקר.</p>
+                    <p><strong>התוצאה:</strong> חלופת ה-0 נחלשת מעט (בגלל הפקקים). מודיעין (9.00 במקור) וראשל"צ מתחזקות ועוקפות את חלופת ה-0.</p>
 
                     <h3>7.2 תרחיש ב': "חיסכון אגרסיבי" (Budget Crisis)</h3>
-                    <p><strong>ההנחה:</strong> החברה נכנסת למשטר התייעלות, והפרמטר הכלכלי הופך למכריע.</p>
-                    <p><strong>התוצאה:</strong> בשל הפגיעה בציון הנגישות, מודיעין (9.00) מאבדת את המקום הראשון המשותף. פתח תקווה (9.30) הופכת למובילה הבלעדית, ומודיעין יורדת למקום השני.</p>
+                    <p><strong>ההנחה:</strong> הפרמטר הכלכלי הופך למכריע (משקל כפול).</p>
+                    <p><strong>התוצאה:</strong> חלופת ה-0 מנצחת בפער עצום (נוק-אאוט). הפער הכלכלי שלה (0 שכירות) מציב אותה הרחק לפני פתח תקווה (שעלותה כ-6.5 מלש"ח).</p>
 
                     <h3>7.3 תרחיש ג': "פרימיום ומרכזיות" (Prestige)</h3>
-                    <p><strong>ההנחה:</strong> העדפה למיקום יוקרתי וסביבת עבודה עשירה על פני חיסכון.</p>
-                    <p><strong>התוצאה:</strong> תל אביב (8.80) והרצליה פיתוח (8.60) כובשות את הפסגה. פתח תקווה ומודיעין יורדות בדירוג, כאשר מצבה של מודיעין מחמיר בשל היעדר הרק"ל.</p>
+                    <p><strong>ההנחה:</strong> העדפה למיקום יוקרתי.</p>
+                    <p><strong>התוצאה:</strong> חלופת ה-0 כובשת את הפסגה. שילוב של מיקום פרימיום (לב ת"א) ללא עלות הפרימיום. תל אביב (יגאל אלון) והרצליה אחריה.</p>
 
                     <h3>7.4 תרחיש ד': "הרוב הצפוני" (North Demographics)</h3>
-                    <p><strong>ההנחה:</strong> סקר העובדים מגלה כי רובם המוחלט מגיע מאזור השרון.</p>
-                    <p><strong>התוצאה:</strong> הרצליה/רעננה (8.40) מצמצמת פערים והופכת לחלופה ריאלית ותחרותית לפתח תקווה.</p>
+                    <p><strong>התוצאה:</strong> פתח תקווה וחלופת ה-0 מתחרות ראש בראש, עם יתרון קל לפתח תקווה בנגישות ויתרון לחלופה 0 בעלות.</p>
 
                     <h3>7.5 תרחיש ה': "הרוב הדרומי" (South Demographics)</h3>
-                    <p><strong>ההנחה:</strong> סקר העובדים מגלה ריכוז גבוה של עובדים באשדוד, יבנה והשפלה.</p>
-                    <p><strong>התוצאה:</strong> ראשון לציון (8.95) כובשת את המקום הראשון בפער ניכר, ודוחקת את מודיעין ופתח תקווה למקומות נמוכים יותר.</p>
+                    <p><strong>התוצאה:</strong> ראשון לציון (8.95 במקור) כובשת את המקום הראשון, ודוחקת את חלופת ה-0 ופתח תקווה למקומות נמוכים יותר.</p>
 
                     <h3>7.6 טבלת סיכום רגישות (מטריצת החלטה)</h3>
                     <div class="report-table-wrapper">
@@ -799,62 +777,46 @@
                             <thead>
                                 <tr>
                                     <th>החלופה</th>
-                                    <th>תרחיש בסיס (מאוזן)</th>
+                                    <th>תרחיש בסיס</th>
                                     <th>תרחיש א' (רכב)</th>
                                     <th>תרחיש ב' (חיסכון)</th>
                                     <th>תרחיש ג' (יוקרה)</th>
-                                    <th>תרחיש ד' (צפון)</th>
                                     <th>תרחיש ה' (דרום)</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="font-bold text-green-700"><td>פתח תקווה</td><td>8.75 (1)</td><td>8.55 (3)</td><td>9.30 (1)</td><td>7.90 (3)</td><td>8.85 (1)</td><td>8.25 (3)</td></tr>
-                                <tr class="font-bold text-blue-700"><td>ראשון לציון</td><td>8.15 (2)</td><td>8.90 (2)</td><td>8.35 (3)</td><td>7.60 (4)</td><td>7.80 (4)</td><td>8.95 (1)</td></tr>
-                                <tr><td>מודיעין</td><td>7.90 (3)</td><td>9.00 (1)</td><td>9.00 (2)</td><td>7.20 (5)</td><td>7.30 (5)</td><td>8.50 (2)</td></tr>
-                                <tr><td>בני ברק</td><td>7.35 (4)</td><td>6.80 (5)</td><td>8.40 (3)</td><td>6.90 (7)</td><td>7.30 (5)</td><td>7.10 (4)</td></tr>
-                                <tr><td>תל אביב</td><td>7.25 (5)</td><td>6.10 (6)</td><td>5.80 (7)</td><td>8.80 (1)</td><td>7.25 (6)</td><td>6.80 (5)</td></tr>
-                                <tr><td>הבורסה</td><td>7.15 (6)</td><td>5.40 (7)</td><td>5.50 (6)</td><td>8.10 (2)</td><td>7.15 (7)</td><td>6.50 (6)</td></tr>
-                                <tr><td>הרצליה/השרון</td><td>7.05 (7)</td><td>6.80 (5)</td><td>6.00 (5)</td><td>8.60 (2)</td><td>8.40 (2)</td><td>6.20 (7)</td></tr>
+                                <tr class="font-bold text-indigo-700"><td>חלופה 0 (קיים)</td><td>8.70 (1)</td><td>8.20 (4)</td><td>9.60 (1)</td><td>9.10 (1)</td><td>8.40 (3)</td></tr>
+                                <tr class="font-bold text-green-700"><td>פתח תקווה</td><td>8.30 (2)</td><td>8.10 (5)</td><td>8.80 (2)</td><td>7.60 (4)</td><td>8.00 (4)</td></tr>
+                                <tr class="font-bold text-blue-700"><td>ראשון לציון</td><td>7.85 (3)</td><td>8.60 (2)</td><td>8.00 (4)</td><td>7.30 (5)</td><td>8.70 (1)</td></tr>
+                                <tr><td>מודיעין</td><td>7.55 (4)</td><td>8.80 (1)</td><td>8.50 (3)</td><td>6.90 (7)</td><td>8.20 (2)</td></tr>
+                                <tr><td>רמת גן (בורסה)</td><td>7.15 (5)</td><td>5.40 (8)</td><td>5.50 (7)</td><td>8.10 (3)</td><td>6.50 (7)</td></tr>
+                                <tr><td>בני ברק</td><td>7.05 (6)</td><td>6.50 (6)</td><td>8.00 (5)</td><td>6.60 (8)</td><td>6.80 (6)</td></tr>
+                                <tr><td>תל אביב (אלון)</td><td>6.95 (7)</td><td>6.10 (7)</td><td>5.80 (8)</td><td>8.80 (2)</td><td>6.80 (5)</td></tr>
+                                <tr><td>השרון</td><td>6.15 (8)</td><td>6.80 (3)</td><td>6.00 (6)</td><td>8.60 (3)</td><td>6.20 (8)</td></tr>
                             </tbody>
                         </table>
                     </div>
 
                     <h3>7.7 מסקנות מניתוח הרגישות</h3>
                     <ul class="list-disc list-inside">
-                        <li><strong>החלופה היציבה ("הבטוחה"):</strong> פתח תקווה. היא מדורגת במקום הראשון בשלושה מתוך שישה תרחישים, ולא יורדת מתחת למקום השלישי באף תרחיש ריאלי.</li>
-                        <li><strong>החלופה האסטרטגית:</strong> ראשון לציון (מתחם האלף). אם הסקר יאשר את ההנחה שרוב העובדים הם "דרומיים" (תרחיש ה'), או אפילו בתרחיש הבסיס, מתחם האלף הופך לחלופה המועדפת השנייה.</li>
-                        <li><strong>מודיעין:</strong> חלופת נישה מובהקת יותר, המתאימה בעיקר לתרחיש של התבססות על רכב פרטי וחיסכון בעלויות, אך ללא פתרון מסילתי מלא (רק"ל).</li>
+                        <li><strong>החלופה היציבה ("הבטוחה"):</strong> כעת זוהי חלופת ה-0. היא מנצחת ברוב התרחישים המרכזיים בזכות העלות האפסית והמיקום.</li>
+                        <li><strong>החלופה האסטרטגית לדרום:</strong> ראשון לציון (מתחם האלף).</li>
+                        <li><strong>מודיעין:</strong> נותרת חלופת נישה לבעלי רכב ולחיסכון (אך פחותה מחלופה 0 בחיסכון).</li>
                     </ul>
 
                     <h2>8. סיכום ומסקנות אינטגרטיביות</h2>
                     <p>תהליך הניתוח מוביל לשלוש תובנות אסטרטגיות מרכזיות:</p>
                     <ul class="list-disc list-inside">
-                        <li><strong>חלופת הליבה (The Rational Choice): פתח תקווה - רמת סיב (ציון 8.75).</strong> זוהי החלופה המנצחת בתרחיש הבסיס. היא מציעה את ה-Value for Money הגבוה ביותר: שילוב של מחיר למ"ר אטרקטיבי, נגישות מעולה לרכבת הקלה וזמינות גבוהה של נכסים חדישים. החיסרון: עומסי תנועה בבקרים.</li>
-                        <li><strong>החלופה האסטרטגית: ראשון לציון - מתחם האלף (ציון 8.15).</strong> זוהי כעת החלופה השנייה בטיבה. במידה ויתברר כי מרכז הכובד הדמוגרפי של העובדים נוטה דרומה, היא החלופה המנצחת. היא מציעה נגישות רכבתית ותחבורתית עדיפה עבור עובדים אלו, ועוצרת אותם "לפני הפקק".</li>
+                        <li><strong>חלופת הליבה: חלופת ה-0 (ציון 8.70).</strong> זוהי החלופה המנצחת בדירוג החדש. היתרון הכלכלי של הישארות בנכס בבעלות (חיסכון של כ-6.5-9 מיליון ש"ח בשנה) הוא דרמטי. בנוסף, המיקום נהנה מנגישות תחבורתית ציבורית מושלמת וחניה פרטית. האתגר היחיד הוא המבנה המיושן והמפוצל.</li>
+                        <li><strong>החלופה התפעולית: פתח תקווה, רמת סיב (ציון 8.30).</strong> זוהי החלופה השנייה בטיבה (ירדה מהמקום הראשון בעקבות נרמול העלויות). היא מספקת את ה-Value for Money הגבוה ביותר מבין אפשרויות המעבר: שילוב של מחיר אטרקטיבי וקומות ענק מודרניות. היא הפתרון הנכון אם החברה מחליטה שאינה יכולה להישאר במבנה הישן.</li>
+                        <li><strong>החלופה האסטרטגית: ראשון לציון, מתחם האלף (ציון 7.85).</strong> במידה ויתברר כי מרכז הכובד הדמוגרפי של העובדים נוטה דרומה, היא עשויה לעקוף את פתח תקווה כאלטרנטיבה להעתקה.</li>
                         <li><strong>חלופות הנישה:</strong>
                             <ul class="list-none list-inside pl-4">
-                                <li><strong>מודיעין (ציון 7.90):</strong> הפתרון הכלכלי ביותר והנוח ביותר לבעלי רכב ולעובדי ירושלים/שפלה, אך חסרונה הגדול הוא היעדר רכבת קלה.</li>
-                                <li><strong>בני ברק (מתחם ה-BBC):</strong> חלופה כלכלית חזקה הנהנית מנגישות טובה לרכבת הקלה ומחיר אטרקטיבי, אך סובלת מצפיפות גבוהה יותר.</li>
-                                <li><strong>תל אביב:</strong> רלוונטית רק בתרחיש של העדפת יוקרה על פני עלות.</li>
-                                <li><strong>אזור השרון (הרצליה/רעננה):</strong> נותרת כחלופת נישה איכותית, אולם נבחר שלא להכניסה בשלב זה, בשל קושי נגישותי משמעותי עבור עובדים מדרום והיעדר פתרון מסילתי (רק"ל) בטווח הנראה לעין.</li>
+                                <li><strong>מודיעין (ציון 7.55):</strong> הפתרון לנהגים, אך כעת פחות אטרקטיבי כלכלית מחלופת ה-0.</li>
+                                <li><strong>בני ברק והבורסה:</strong> נדחקו מטה בדירוג.</li>
                             </ul>
                         </li>
                     </ul>
-
-                    <h2>9. המלצות להמשך פעולה</h2>
-                    <p>לאור הממצאים המעודכנים, אנו ממליצים על ביצוע שני מהלכים מקבילים:</p>
-                    <ul class="list-disc list-inside">
-                        <li><strong>מיפוי גיאוגרפי של מגורי העובדים:</strong> ביצוע ניתוח מקיף לכתובות המגורים. תוצאת המיפוי צפויה להכריע בין פתח תקווה (אם מרבית העובדים מצפון/מזרח) לבין ראשון לציון (אם מרבית העובדים מדרום). מודיעין תישקל רק אם יתגלה ריכוז חריג של עובדים באזור ירושלים או אם החברה תבחר לוותר על רכיב הרק"ל.</li>
-                        <li><strong>פניה דיסקרטית למתווכים בחלופות המועדפות:</strong> מומלץ לפרסם פנייה דיסקרטית ליזמים ולבעלי נכסים באזורים שזכו לדירוג הגבוה ביותר בניתוח:
-                            <ul class="list-none list-inside pl-4">
-                                <li><strong>פתח תקווה (רמת סיב / קריית אריה):</strong> החלופה הכלכלית והמאוזנת ביותר.</li>
-                                <li><strong>ראשון לציון (מתחם האלף):</strong> החלופה האסטרטגית לדרום.</li>
-                                <li><strong>מודיעין (פארק טכנולוגי / מע"ר):</strong> החלופה המפתיעה לבעלי רכב ולחיסכון מקסימלי (למרות היעדר רק"ל).</li>
-                                <li><strong>בני ברק (מתחם ה-BBC):</strong> כחלופה כלכלית מרכזית נהנית מנגישות טובה לרכבת הקלה.</li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <p>אבקש את אישורך לביצוע שני המהלכים במקביל: (1) מיפוי גיאוגרפי של מגורי עובדי המטה, ו־(2) פנייה ממוקדת לבעלי נכסים בארבע החלופות המועדפות (פתח תקווה, ראשון לציון, מודיעין, בני ברק) לצורך קבלת הצעות ראשוניות במסגרת הליך בדיקת שוק.</p>
                     
                     <div class="mt-8 pt-6 border-t border-slate-200">
                         <p class="font-bold text-slate-800">בברכה,<br>סמנכ"ל נכסים</p>
@@ -868,7 +830,7 @@
     <!-- Footer -->
     <footer class="bg-slate-800 text-slate-400 py-6 mt-6 border-t border-slate-700">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs">
-            <p>חטיבת נכסים | דצמבר 2025</p>
+            <p>חטיבת נכסים | ינואר 2026</p>
         </div>
     </footer>
 
@@ -894,49 +856,55 @@
             }
         }
 
-        // --- DATA MODEL ---
-        // Immutable Default Data
+        // --- DATA MODEL (UPDATED JAN 2026) ---
         const defaultCities = {
+            option0: { 
+                id: 'option0', name: 'חלופה 0 (קיים)', color: '#4f46e5', // Indigo-600
+                lat: 32.067, lng: 34.785, // Approx Karlibach
+                cost: 2.76, 
+                scores: { lightRail: 10, heavyRail: 8, roads: 6, bus: 9, parking: 10, cost: 10, avail: 10, quality: 7, env: 10 },
+                pros: ['דירוג 1 בתרחיש בסיס (8.70)', 'חיסכון דרמטי (עלות שכירות אפסית)', 'מיקום מנצח (לב ת"א)', 'נגישות רק"ל מושלמת'],
+                cons: ['מבנה ישן ומפוצל', 'חיסרון אדריכלי (קומות קטנות)', 'עומסי תנועה במרכז העיר']
+            },
             pt: { 
                 id: 'pt', name: 'פתח תקווה', color: '#10b981', 
                 lat: 32.087, lng: 34.856,
                 cost: 6.5, 
-                scores: { lightRail: 10, heavyRail: 7, roads: 7, bus: 9, parking: 10, cost: 10, avail: 10, quality: 9, env: 7 },
-                pros: ['דירוג 1 בתרחיש בסיס (8.75)', 'חיסכון של 50% בעלויות מול ת"א', 'נגישות מלאה לקו האדום', 'קומות ענק (1,500 מ"ר+)'],
-                cons: ['עומסי תנועה כבדים בבוקר', 'תדמית פחות יוקרתית', 'סביבה מנותקת בערב']
+                scores: { lightRail: 10, heavyRail: 7, roads: 7, bus: 9, parking: 10, cost: 7, avail: 10, quality: 9, env: 7 },
+                pros: ['החלופה התפעולית המובילה (8.30)', 'קומות ענק מודרניות', 'נגישות מלאה לקו האדום', 'Value for Money'],
+                cons: ['ירידה למקום ה-2 בגלל עלות', 'עומסי תנועה כבדים בבוקר', 'תדמית פחות יוקרתית']
             },
             rishon: { 
                 id: 'rishon', name: 'ראשון לציון', color: '#3b82f6', 
                 lat: 31.985, lng: 34.765,
                 cost: 7.2, 
-                scores: { lightRail: 6, heavyRail: 10, roads: 9, bus: 6, parking: 10, cost: 8, avail: 9, quality: 9, env: 6 },
-                pros: ['החלופה המובילה לדרום', 'צמוד לרכבת משה דיין', 'בנייה ירוקה (LEED)', 'גישה מ-431 ואיילון'],
-                cons: ['אין רק"ל פעילה (2028)', 'סביבת עבודה בבינוי', 'תחבורה משלימה דלילה']
+                scores: { lightRail: 6, heavyRail: 10, roads: 9, bus: 6, parking: 10, cost: 6, avail: 9, quality: 9, env: 6 },
+                pros: ['החלופה האסטרטגית לדרום', 'צמוד לרכבת משה דיין', 'בנייה ירוקה (LEED)', 'גישה מ-431 ואיילון'],
+                cons: ['אין רק"ל פעילה (2028)', 'יקרה יותר מחלופה 0', 'תחבורה משלימה דלילה']
             },
             modiin: { 
                 id: 'modiin', name: 'מודיעין', color: '#6366f1', 
                 lat: 31.915, lng: 34.985,
                 cost: 5.6, 
-                // UPDATE V2: lightRail set to 0
-                scores: { lightRail: 0, heavyRail: 10, roads: 10, bus: 7, parking: 10, cost: 10, avail: 9, quality: 9, env: 7 },
-                pros: ['העלות הנמוכה ביותר', 'גן עדן לרכב פרטי', 'רכבת מהירה לי-ם ות"א', 'פארק עסקים מרווח'],
-                cons: ['היעדר רכבת קלה (ציון 0)', 'בידוד גיאוגרפי', 'חוסר ב"חיי עיר"']
+                scores: { lightRail: 0, heavyRail: 10, roads: 10, bus: 7, parking: 10, cost: 8, avail: 9, quality: 9, env: 7 },
+                pros: ['גן עדן לרכב פרטי', 'רכבת מהירה לי-ם ות"א', 'פארק עסקים מרווח', 'מנצחת בתרחיש רכב'],
+                cons: ['אין רכבת קלה (ציון 0)', 'בידוד גיאוגרפי', 'פחות אטרקטיבית כלכלית מחלופה 0']
             },
             bbc: { 
                 id: 'bbc', name: 'בני ברק', color: '#eab308', 
                 lat: 32.095, lng: 34.830,
                 cost: 7.4, 
-                scores: { lightRail: 9, heavyRail: 6, roads: 6, bus: 9, parking: 6, cost: 8, avail: 8, quality: 7, env: 6 },
-                pros: ['מיקום מרכזי', 'מחיר תחרותי', 'נגישות טובה לרק"ל', 'ארנונה נוחה'],
-                cons: ['צפיפות גבוהה', 'עומסים במתחם', 'מצוקת חניה']
+                scores: { lightRail: 9, heavyRail: 6, roads: 6, bus: 9, parking: 6, cost: 6, avail: 8, quality: 7, env: 6 },
+                pros: ['מיקום מרכזי', 'נגישות טובה לרק"ל', 'זמינות מידית'],
+                cons: ['צפיפות גבוהה', 'ירידה בדירוג הכללי', 'מצוקת חניה']
             },
             tlv: { 
-                id: 'tlv', name: 'תל אביב', color: '#ef4444', 
+                id: 'tlv', name: 'ת"א (אלון)', color: '#ef4444', 
                 lat: 32.070, lng: 34.794,
                 cost: 11.6, 
-                scores: { lightRail: 7, heavyRail: 9, roads: 7, bus: 9, parking: 3, cost: 5, avail: 6, quality: 9, env: 10 },
-                pros: ['סביבה עסקית מס\' 1', 'יוקרה ומיתוג', 'רכבת השלום', 'עירוב שימושים מלא'],
-                cons: ['היקרה ביותר', 'פקקים קשים', 'מצוקת חניה']
+                scores: { lightRail: 7, heavyRail: 9, roads: 7, bus: 9, parking: 3, cost: 3, avail: 6, quality: 9, env: 10 },
+                pros: ['סביבה עסקית מס\' 1', 'יוקרה ומיתוג', 'רכבת השלום'],
+                cons: ['היקרה ביותר בפער ניכר', 'פקקים קשים', 'מצוקת חניה']
             },
             bursa: { 
                 id: 'bursa', name: 'הבורסה', color: '#f97316', 
@@ -944,15 +912,15 @@
                 cost: 10.5, 
                 scores: { lightRail: 10, heavyRail: 10, roads: 4, bus: 10, parking: 2, cost: 4, avail: 7, quality: 7, env: 9 },
                 pros: ['Hub תחבורתי ראשי', 'סביבה אינטנסיבית', 'שפע שירותים'],
-                cons: ['פקקים לרכב פרטי', 'מלאי ישן בחלקו', 'מחיר גבוה']
+                cons: ['עלות גבוהה מאוד', 'פקקים לרכב פרטי', 'מלאי ישן בחלקו']
             },
             sharon: { 
                 id: 'sharon', name: 'הרצליה', color: '#ec4899', 
                 lat: 32.163, lng: 34.808,
                 cost: 10.0, 
-                scores: { lightRail: 2, heavyRail: 8, roads: 5, bus: 8, parking: 8, cost: 6, avail: 7, quality: 9, env: 10 },
+                scores: { lightRail: 2, heavyRail: 8, roads: 5, bus: 8, parking: 8, cost: 4, avail: 7, quality: 9, env: 10 },
                 pros: ['סביבה יוקרתית', 'תדמית הייטק', 'קרבה לים'],
-                cons: ['פקקים מדרום', 'אין רק"ל', 'עלויות גבוהות']
+                cons: ['מקום אחרון (6.15)', 'פקקים מדרום', 'אין רק"ל', 'עלויות גבוהות']
             }
         };
 
@@ -1457,7 +1425,7 @@
                     <div class="flex justify-between items-start mb-4 border-b pb-2">
                         <div>
                             <h2 class="text-2xl font-bold text-slate-800" style="color: ${city.color}">${city.name}</h2>
-                            <span class="text-xs text-slate-500">עלות: ${city.cost} מלש"ח</span>
+                            <span class="text-xs text-slate-500">עלות שנתית: ${city.cost} מלש"ח</span>
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1495,7 +1463,7 @@
             Chart.defaults.font.family = 'Heebo';
             setScenario('base');
             initCostChart();
-            renderCityDetail('pt');
+            renderCityDetail('option0');
         });
 
     </script>
