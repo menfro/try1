@@ -3,1585 +3,933 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>דשבורד ניתוח חלופות - מטה חנ"י (V13 - דיוק זמנים וסיכונים)</title>
-    <!-- Tailwind CSS -->
+    <title>דשבורד ניתוח חלופות - </title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Chart.js DataLabels Plugin -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
-    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Heebo', sans-serif;
-            background-color: #f8fafc; /* Slate 50 */
-            color: #1e293b; /* Slate 800 */
-        }
-
-        /* Color Palette */
-        .text-primary { color: #004aad; }
-        .bg-primary { background-color: #004aad; }
-        .border-primary { border-color: #004aad; }
-        
-        .text-secondary { color: #38b6ff; }
-        .bg-secondary { background-color: #38b6ff; }
-
-        /* Navigation Active State */
-        .nav-item.active {
-            border-bottom: 3px solid #004aad;
-            color: #004aad;
-            font-weight: 700;
-            background-color: #f1f5f9;
-        }
-
-        /* Sub-tab Navigation */
-        .sub-tab {
-            color: #64748b;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-        }
-        .sub-tab.active {
-            color: #004aad;
-            border-bottom: 2px solid #004aad;
-            font-weight: 700;
-            background-color: #f8fafc;
-        }
-
-        /* Scenario Button Active State */
-        .scenario-btn { transition: all 0.2s ease-in-out; }
-        .scenario-btn:active { transform: scale(0.98); }
-        .scenario-btn.active {
-            background-color: #e0f2fe; /* blue-100 */
-            border-color: #38b6ff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Compact Range Slider */
-        input[type=range] { height: 20px; -webkit-appearance: none; margin: 5px 0; width: 100%; background: transparent; }
-        input[type=range]:focus { outline: none; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #cbd5e1; border-radius: 2px; }
-        input[type=range]::-webkit-slider-thumb { height: 16px; width: 16px; border-radius: 50%; background: #004aad; cursor: pointer; -webkit-appearance: none; margin-top: -6px; box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
-        
-        /* Edit Inputs */
-        .score-input { width: 40px; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px; font-size: 0.75rem; }
-        .score-input:focus { outline: none; border-color: #004aad; background-color: #f0f9ff; }
-
-        /* Chart & Map Containers */
-        .chart-container { position: relative; width: 100%; height: 250px; }
-        @media (min-width: 768px) { .chart-container { height: 320px; } }
-        
-        #map, #heat-map { height: 480px; width: 100%; border-radius: 0.75rem; z-index: 1; }
-        .leaflet-popup-content-wrapper { border-radius: 0.5rem; font-family: 'Heebo', sans-serif; text-align: right; }
-        .leaflet-popup-tip { background: white; }
-
-        /* Report Typography & Tables */
-        .report-content h2 { font-size: 1.25rem; font-weight: 700; color: #004aad; margin-top: 2rem; margin-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
-        .report-content h3 { font-size: 1.1rem; font-weight: 700; color: #334155; margin-top: 1.5rem; margin-bottom: 0.5rem; }
-        .report-content p { margin-bottom: 0.75rem; line-height: 1.6; color: #475569; font-size: 0.95rem; text-align: justify; }
-        .report-content ul { list-style-type: disc; padding-right: 1.5rem; margin-bottom: 1rem; color: #475569; }
-        .report-table-wrapper { overflow-x: auto; margin-bottom: 1.5rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; }
-        .report-table { width: 100%; font-size: 0.85rem; text-align: right; border-collapse: collapse; min-width: 600px; }
-        .report-table th { background-color: #f1f5f9; color: #334155; font-weight: 700; padding: 0.75rem; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
-        .report-table td { padding: 0.75rem; border-bottom: 1px solid #e2e8f0; color: #475569; }
-        .report-table tr:nth-child(even) { background-color: #f8fafc; }
-
-        /* No Scrollbar utility */
+        body { font-family: 'Heebo', sans-serif; background-color: #f1f5f9; color: #1e293b; }
+        .text-primary { color: #1d4ed8; } .bg-primary { background-color: #1d4ed8; } .border-primary { border-color: #1d4ed8; }
+        .nav-item.active { border-bottom: 3px solid #1d4ed8; color: #1d4ed8; font-weight: 700; background-color: #eff6ff; }
+        .metric-card { transition: all 0.2s ease-in-out; cursor: pointer; border: 2px solid transparent; background: white; }
+        .metric-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border-color: #cbd5e1; }
+        .metric-card.active { border-color: #1d4ed8; background-color: #eff6ff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .metric-card.active .icon-bg { background-color: #1d4ed8 !important; color: white !important; }
+        .city-board { background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
+        .city-header { background: #f8fafc; padding: 10px 14px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 10px; }
+        .asset-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 14px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: all 0.2s; }
+        .asset-row:hover { background-color: #eff6ff; padding-right: 18px; }
+        .asset-row:last-child { border-bottom: none; }
+        .score-badge { display: flex; align-items: center; justify-content: center; min-width: 52px; padding: 4px 8px; border-radius: 6px; font-weight: 800; color: white; font-size: 0.88rem; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15); }
+        .score-badge.green { background: linear-gradient(135deg,#10b981,#059669); }
+        .score-badge.yellow { background: linear-gradient(135deg,#f59e0b,#d97706); }
+        .score-badge.red { background: linear-gradient(135deg,#ef4444,#dc2626); }
+        .score-badge.blue { background: linear-gradient(135deg,#3b82f6,#2563eb); }
+        .score-badge.indigo { background: linear-gradient(135deg,#6366f1,#4f46e5); }
+        .custom-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* Impact Select Grid Buttons */
-        .impact-hq-btn { 
-            transition: all 0.2s; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center;
-            text-align: center;
-        }
-        .impact-hq-btn:hover { background-color: #f1f5f9; border-color: #94a3b8; }
-        .impact-hq-btn.active { 
-            background-color: #eef2ff; /* indigo-50 */
-            border-color: #4f46e5; /* indigo-600 */
-            color: #4f46e5;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
-        }
-        .impact-hq-btn.active i { color: #4f46e5; }
+        .chart-container { position: relative; width: 100%; height: 300px; }
+        @media (min-width: 768px) { .chart-container { height: 380px; } }
+        #map, #heat-map { height: 500px; width: 100%; border-radius: 0.75rem; z-index: 1; }
+        .report-table-wrapper { overflow-x: auto; border-radius: 0.5rem; border: 1px solid #e2e8f0; background: white; }
+        .report-table { width: 100%; font-size: 0.82rem; text-align: right; border-collapse: collapse; min-width: 1000px; }
+        .report-table th { background: #f8fafc; color: #334155; font-weight: 800; padding: 0.65rem 0.75rem; border-bottom: 2px solid #e2e8f0; position: sticky; top: 0; z-index: 10; white-space: nowrap; }
+        .report-table td { padding: 0.55rem 0.75rem; border-bottom: 1px solid #f1f5f9; color: #475569; vertical-align: middle; }
+        .report-table tr:hover { background-color: #f8fafc; }
+        .city-filter-btn { padding: 0.55rem 0.9rem; border-radius: 9999px; border: 1px solid #cbd5e1; background: white; color: #475569; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .city-filter-btn:hover { background: #f8fafc; border-color: #94a3b8; }
+        .city-filter-btn.active { background: #1d4ed8; color: white; border-color: #1d4ed8; box-shadow: 0 2px 8px rgba(29,78,216,0.35); }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,23,42,0.7); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.25s; backdrop-filter: blur(4px); padding: 1rem; }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal-content { background: white; border-radius: 16px; width: 100%; max-width: 680px; max-height: 92vh; overflow-y: auto; transform: scale(0.96); transition: transform 0.25s; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3); }
+        .modal-overlay.show .modal-content { transform: scale(1); }
+        .data-bar-bg { width: 100%; background: #e2e8f0; border-radius: 9999px; height: 5px; overflow: hidden; margin-top: 3px; }
+        .data-bar-fill { height: 100%; border-radius: 9999px; }
+        .score-ring { position: relative; display: flex; align-items: center; justify-content: center; }
+        .weight-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 700; }
     </style>
 </head>
 <body>
 
-    <!-- Top Navigation Bar -->
-    <nav class="bg-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <i class="fa-solid fa-building-columns text-primary text-xl ml-2"></i>
+<nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-700 text-white w-9 h-9 rounded-lg flex items-center justify-center shadow"><i class="fa-solid fa-building-columns text-sm"></i></div>
+                <div>
+                    <h1 class="text-base font-black text-slate-800 leading-none">העתקת מטה החברה</h1>
+                    <span class="text-[10px] text-slate-500 font-bold">דשבורד מנהלים · 20 חלופות · נתוני יועץ 16.04.2026</span>
+                </div>
+            </div>
+            <div class="flex space-x-1 md:space-x-2 space-x-reverse h-full items-end pb-0 overflow-x-auto no-scrollbar">
+                <button onclick="switchView('dashboard')" id="nav-dashboard" class="nav-item active px-3 py-3 text-xs md:text-sm font-medium text-slate-600 rounded-t-lg whitespace-nowrap"><i class="fa-solid fa-layer-group ml-1"></i> מסך ראשי</button>
+                <button onclick="switchView('consultant')" id="nav-consultant" class="nav-item px-3 py-3 text-xs md:text-sm font-medium text-slate-600 rounded-t-lg whitespace-nowrap"><i class="fa-solid fa-table-list ml-1"></i> טבלת נתונים</button>
+                <button onclick="switchView('geo')" id="nav-geo" class="nav-item px-3 py-3 text-xs md:text-sm font-medium text-slate-600 rounded-t-lg whitespace-nowrap"><i class="fa-solid fa-users-viewfinder ml-1"></i> ניתוח משאבי אנוש</button>
+                <button onclick="switchView('map')" id="nav-map" class="nav-item px-3 py-3 text-xs md:text-sm font-medium text-slate-600 rounded-t-lg whitespace-nowrap"><i class="fa-solid fa-map-location-dot ml-1"></i> פריסת נכסים</button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+
+    <!-- VIEW 1: DASHBOARD -->
+    <div id="view-dashboard" class="space-y-5">
+        <!-- Header bar -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-5 rounded-xl shadow-sm border border-slate-200 gap-4">
+            <div>
+                <h2 class="text-lg font-black text-slate-800 mb-1">לוח בקרה אסטרטגי — 20 חלופות (מודל יועץ)</h2>
+                <p class="text-xs text-slate-500">בחר מדד בסרגל העליון · לחץ על נכס לצפייה בתעודת הזהות הפיננסית המלאה שלו</p>
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <span class="weight-pill bg-blue-100 text-blue-800">עלויות שוטפות <strong>40%</strong></span>
+                    <span class="weight-pill bg-purple-100 text-purple-800">תחבורה <strong>30%</strong></span>
+                    <span class="weight-pill bg-green-100 text-green-800">איכות נכס <strong>10%</strong></span>
+                    <span class="weight-pill bg-orange-100 text-orange-800">סביבת עבודה <strong>10%</strong></span>
+                    <span class="weight-pill bg-rose-100 text-rose-800">עלות חד-פעמית <strong>10%</strong></span>
+                </div>
+            </div>
+            <div class="flex gap-3 flex-shrink-0">
+                <div class="text-center bg-indigo-50 px-4 py-2 rounded-xl border border-indigo-200">
+                    <span class="block text-2xl font-black text-indigo-700">8.65</span>
+                    <span class="text-[10px] font-bold text-indigo-600">בסיס קיים (ת"א)</span>
+                </div>
+                <div class="text-center bg-green-50 px-4 py-2 rounded-xl border border-green-200">
+                    <span class="block text-2xl font-black text-green-700">7.95</span>
+                    <span class="text-[10px] font-bold text-green-600">ג'י סיטי — ראשל"צ 🏆</span>
+                </div>
+                <div class="text-center bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-200">
+                    <span class="block text-2xl font-black text-emerald-700">7.46</span>
+                    <span class="text-[10px] font-bold text-emerald-600">מבנה כפ"ס #2</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Metric Selectors -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div id="metric-score" class="metric-card active rounded-xl p-4" onclick="setDashboardMetric('score',this)">
+                <div class="flex items-center justify-between mb-1">
+                    <h3 class="text-slate-800 font-bold text-sm">ציון משוקלל יועץ</h3>
+                    <div class="icon-bg bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex justify-center items-center transition-colors"><i class="fa-solid fa-star text-sm"></i></div>
+                </div>
+                <p class="text-[10px] text-slate-500">ציון כולל מתוך 10 (גבוה=טוב)</p>
+            </div>
+            <div id="metric-cost" class="metric-card rounded-xl p-4" onclick="setDashboardMetric('cost',this)">
+                <div class="flex items-center justify-between mb-1">
+                    <h3 class="text-slate-800 font-bold text-sm">עלות שנתית OPEX</h3>
+                    <div class="icon-bg bg-green-100 text-green-600 w-8 h-8 rounded-full flex justify-center items-center transition-colors"><i class="fa-solid fa-shekel-sign text-sm"></i></div>
+                </div>
+                <p class="text-[10px] text-slate-500">מיליוני שקלים לשנה (נמוך=טוב)</p>
+            </div>
+            <div id="metric-transport" class="metric-card rounded-xl p-4" onclick="setDashboardMetric('transport',this)">
+                <div class="flex items-center justify-between mb-1">
+                    <h3 class="text-slate-800 font-bold text-sm">ציון תחבורה</h3>
+                    <div class="icon-bg bg-purple-100 text-purple-600 w-8 h-8 rounded-full flex justify-center items-center transition-colors"><i class="fa-solid fa-train-subway text-sm"></i></div>
+                </div>
+                <p class="text-[10px] text-slate-500">רכבות, כבישים וחניה (מתוך 10)</p>
+            </div>
+            <div id="metric-quality" class="metric-card rounded-xl p-4" onclick="setDashboardMetric('quality',this)">
+                <div class="flex items-center justify-between mb-1">
+                    <h3 class="text-slate-800 font-bold text-sm">ציון סביבה ואיכות</h3>
+                    <div class="icon-bg bg-orange-100 text-orange-600 w-8 h-8 rounded-full flex justify-center items-center transition-colors"><i class="fa-solid fa-building text-sm"></i></div>
+                </div>
+                <p class="text-[10px] text-slate-500">איכות המבנה, גמישות וסביבה</p>
+            </div>
+        </div>
+
+        <!-- Cities Grid -->
+        <div>
+            <h2 class="text-base font-black text-slate-800 mb-3 border-b border-slate-200 pb-2">
+                הנכסים שנבדקו (פילוח לפי ערים) — <span class="font-normal text-xs text-slate-500">מוצג: <span id="grid-title-metric" class="font-bold text-primary">ציון משוקלל יועץ (1-10)</span></span>
+            </h2>
+            <div id="cities-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+        </div>
+    </div>
+
+    <!-- VIEW 2: CONSULTANT TABLE -->
+    <div id="view-consultant" class="hidden space-y-5">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-4 border-b border-slate-100 bg-slate-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-table-list text-green-600 ml-2"></i> מודל היועץ — 20 חלופות (נתוני 16.04.2026)</h2>
+                    <p class="text-xs text-slate-500 mt-1">מיון לפי ציון משוקלל יורד. לחץ על שם נכס לפירוט מלא.</p>
+                </div>
+                <button onclick="downloadCSV()" class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-2 px-4 rounded-lg transition shadow-sm"><i class="fa-solid fa-download"></i> ייצוא CSV</button>
+            </div>
+            <div class="overflow-x-auto custom-scroll">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th class="text-right sticky right-0 bg-slate-50 z-20 border-l border-slate-200 w-44">שם הנכס</th>
+                            <th class="text-right">עיר</th>
+                            <th class="text-right">יזם</th>
+                            <th class="text-center">שטח (מ"ר)</th>
+                            <th class="text-center bg-slate-50 border-r border-slate-200">שכ' + ניהול (למ"ר)</th>
+                            <th class="text-center">ארנונה (שנתי/מ"ר)</th>
+                            <th class="bg-blue-50 text-blue-900 text-center border-r border-blue-200">OPEX חודשי (₪)</th>
+                            <th class="bg-indigo-50 text-indigo-900 text-center border-r border-indigo-200">OPEX שנתי (M₪)</th>
+                            <th class="bg-orange-50 text-orange-900 text-center border-r border-orange-200">CAPEX (M₪)</th>
+                            <th class="text-center">סביבה</th>
+                            <th class="text-center">תחבורה</th>
+                            <th class="text-center">איכות</th>
+                            <th class="bg-slate-100 text-center font-black border-r border-slate-200">ציון יועץ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="consultant-table-body"></tbody>
+                </table>
+            </div>
+            <div class="bg-slate-50 p-3 text-[10px] text-slate-500 border-t border-slate-200">
+                * עלויות OPEX = שכירות + ניהול + חניה + ארנונה. CAPEX = עלות נטו לחברה לאחר השתתפות משכיר. משקולות: שוטף 40% · חד-פעמי 10% · תחבורה 30% · סביבה 10% · איכות 10%
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-200">
+                <h3 class="font-bold text-slate-800 text-base mb-1">OPEX שנתי — 10 הזולים</h3>
+                <p class="text-xs text-slate-500 mb-3">עלות תפעול שנתית כוללת (M₪)</p>
+                <div class="chart-container"><canvas id="opexChart"></canvas></div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-200">
+                <h3 class="font-bold text-slate-800 text-base mb-1">CAPEX — עלות התאמות נטו</h3>
+                <p class="text-xs text-slate-500 mb-3">השקעה הונית לאחר השתתפות משכיר (M₪)</p>
+                <div class="chart-container"><canvas id="capexChart"></canvas></div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-200">
+            <h3 class="font-bold text-slate-800 text-base mb-1">השוואת ציונים — כל 20 הנכסים</h3>
+            <p class="text-xs text-slate-500 mb-3">ציון משוקלל סופי לפי משקולות המודל</p>
+            <div class="chart-container" style="height:420px"><canvas id="scoreBarChart"></canvas></div>
+        </div>
+    </div>
+
+    <!-- VIEW 3: GEO HR IMPACT -->
+    <div id="view-geo" class="hidden space-y-5">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-slate-50">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
                     <div>
-                        <h1 class="text-lg font-bold text-slate-800 leading-none">העתקת מטה החברה</h1>
-                        <span class="text-[10px] text-slate-500">דשבורד מנהלים V13</span>
+                        <h2 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-users-viewfinder text-blue-700 ml-2"></i> השפעה גיאוגרפית על עובדים</h2>
+                        <p class="text-xs text-slate-500 mt-1">מודל מבוסס 137 עובדים ממופים · זמני נסיעה בשעות עומס לעומת המצב הקיים (תל אביב)</p>
+                    </div>
+                    <div class="bg-white px-4 py-2 rounded-xl border border-slate-200 text-center shadow-sm">
+                        <span class="block text-2xl font-black text-blue-700">137</span>
+                        <span class="text-[10px] font-bold text-slate-500">עובדים מופו</span>
                     </div>
                 </div>
-                <div class="flex space-x-2 md:space-x-4 space-x-reverse h-full items-end pb-0 overflow-x-auto no-scrollbar">
-                    <button onclick="switchView('dashboard')" id="nav-dashboard" class="nav-item active px-2 md:px-3 py-3 text-xs md:text-sm font-medium text-slate-600 whitespace-nowrap rounded-t-lg">
-                        <i class="fa-solid fa-chart-pie ml-1"></i> דשבורד
-                    </button>
-                    <button onclick="switchView('geo')" id="nav-geo" class="nav-item px-2 md:px-3 py-3 text-xs md:text-sm font-medium text-slate-600 whitespace-nowrap rounded-t-lg">
-                        <i class="fa-solid fa-users-viewfinder ml-1"></i> ניתוח עובדים <span class="bg-red-500 text-white text-[9px] px-1.5 rounded-full relative -top-1 ml-1">מעודכן</span>
-                    </button>
-                    <button onclick="switchView('custom')" id="nav-custom" class="nav-item px-2 md:px-3 py-3 text-xs md:text-sm font-medium text-slate-600 whitespace-nowrap rounded-t-lg">
-                        <i class="fa-solid fa-sliders ml-1"></i> בנה תרחיש
-                    </button>
-                    <button onclick="switchView('map')" id="nav-map" class="nav-item px-2 md:px-3 py-3 text-xs md:text-sm font-medium text-slate-600 whitespace-nowrap rounded-t-lg">
-                        <i class="fa-solid fa-map-location-dot ml-1"></i> מפת חלופות
-                    </button>
-                    <button onclick="switchView('report')" id="nav-report" class="nav-item px-2 md:px-3 py-3 text-xs md:text-sm font-medium text-slate-600 whitespace-nowrap rounded-t-lg">
-                        <i class="fa-solid fa-file-contract ml-1"></i> דו"ח מלא
-                    </button>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-2">בחר עיר יעד לניתוח (מול קיים — תל אביב):</label>
+                    <div id="geo-city-buttons" class="flex flex-wrap gap-2"></div>
                 </div>
             </div>
-        </div>
-    </nav>
-
-    <!-- Main Content Area -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6">
-
-        <!-- ========================================== -->
-        <!-- VIEW 1: DASHBOARD & SENSITIVITY -->
-        <!-- ========================================== -->
-        <div id="view-dashboard" class="animate-fade-in space-y-6">
-            
-            <!-- Recommendations Banner -->
-            <div class="bg-white rounded-xl shadow-sm p-5 border-r-4 border-primary bg-gradient-to-l from-blue-50 to-white">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div class="md:w-3/4">
-                        <h2 class="text-xl font-bold text-primary mb-2"><i class="fa-solid fa-bullseye ml-1"></i> המלצה אסטרטגית (מעודכן)</h2>
-                        <p class="text-slate-700 text-sm leading-relaxed">
-                            החלופה המובילה: <strong class="text-indigo-700">חלופה 0 - הישארות בקיים (קרליבך)</strong> (ציון 8.70).
-                            <br>
-                            החלופה השנייה (והמובילה למעבר): <strong class="text-green-700">פתח תקווה (רמת סיב)</strong> (ציון 8.30).
-                        </p>
-                    </div>
-                    <div class="flex gap-4 md:w-1/4 justify-end w-full border-t md:border-t-0 pt-3 md:pt-0">
-                        <div class="text-center">
-                            <span class="block text-2xl font-black text-indigo-600">8.70</span>
-                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">ציון הישארות</span>
-                        </div>
-                        <div class="text-center border-r border-slate-200 pr-4">
-                            <span class="block text-2xl font-black text-green-600">8.30</span>
-                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">ציון פתח תקווה</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Scenario Selector -->
-            <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200">
-                <h2 class="text-base font-bold text-slate-800 mb-3 flex items-center">
-                    <i class="fa-solid fa-sliders text-secondary ml-2"></i>
-                    בחר תרחיש לבחינת רגישות ההחלטה:
-                </h2>
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
-                    <button onclick="setScenario('base')" id="btn-base" class="scenario-btn active border rounded-lg p-2 text-right h-full">
-                        <div class="font-bold text-slate-800 text-sm">בסיס (מאוזן)</div>
-                        <div class="text-[10px] text-slate-500 leading-tight">הישארות מנצחת</div>
-                    </button>
-                    <button onclick="setScenario('south')" id="btn-south" class="scenario-btn border rounded-lg p-2 text-right h-full">
-                        <div class="font-bold text-slate-800 text-sm">הרוב הדרומי</div>
-                        <div class="text-[10px] text-slate-500 leading-tight">ראשל"צ מובילה</div>
-                    </button>
-                    <button onclick="setScenario('car')" id="btn-car" class="scenario-btn border rounded-lg p-2 text-right h-full">
-                        <div class="font-bold text-slate-800 text-sm">העובד הנוהג</div>
-                        <div class="text-[10px] text-slate-500 leading-tight">מודיעין קופצת</div>
-                    </button>
-                    <button onclick="setScenario('budget')" id="btn-budget" class="scenario-btn border rounded-lg p-2 text-right h-full">
-                        <div class="font-bold text-slate-800 text-sm">חיסכון אגרסיבי</div>
-                        <div class="text-[10px] text-slate-500 leading-tight">נוק-אאוט לקיים</div>
-                    </button>
-                    <button onclick="setScenario('prestige')" id="btn-prestige" class="scenario-btn border rounded-lg p-2 text-right h-full">
-                        <div class="font-bold text-slate-800 text-sm">יוקרה</div>
-                        <div class="text-[10px] text-slate-500 leading-tight">הקיים עדיין מנצח</div>
-                    </button>
-                    <button onclick="setScenario('north')" id="btn-north" class="scenario-btn border rounded-lg p-2 text-right h-full">
-                        <div class="font-bold text-slate-800 text-sm">הרוב הצפוני</div>
-                        <div class="text-[10px] text-slate-500 leading-tight">תיקו פ"ת והקיים</div>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Content Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Main Score Chart -->
-                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-4 border border-slate-100">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-slate-700 text-sm md:text-base">השוואת ציונים משוקללת</h3>
-                        <button onclick="toggleDrillDown()" class="text-xs bg-slate-100 hover:bg-slate-200 text-primary px-3 py-1 rounded-full transition">
-                            <i class="fa-solid fa-table ml-1"></i> טבלת ציונים גולמיים
-                        </button>
-                    </div>
-                    <div class="chart-container mb-4">
-                        <canvas id="mainChart"></canvas>
-                    </div>
-
-                    <!-- Hidden Drilldown Table -->
-                    <div id="drilldown-container" class="hidden border-t border-slate-100 pt-4 mt-4 bg-slate-50 rounded-lg p-2 overflow-x-auto">
-                        <div class="flex justify-between items-center mb-3">
-                            <h4 class="text-xs font-bold text-slate-500">פירוט ציונים גולמיים (מנורמל מול חלופה 0)</h4>
-                            <div class="flex gap-2">
-                                <button onclick="resetScores()" class="text-[10px] bg-red-50 text-red-600 px-2 py-1 rounded border border-red-100 hover:bg-red-100">
-                                    <i class="fa-solid fa-rotate-left"></i> אפס ברירת מחדל
-                                </button>
-                                <button id="btn-edit-scores" onclick="toggleEditMode()" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded border border-blue-100 hover:bg-blue-100 font-bold">
-                                    <i class="fa-solid fa-pen"></i> ערוך ציונים
-                                </button>
+            <div class="p-5 bg-slate-50">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                    <div class="lg:col-span-1 flex flex-col gap-4">
+                        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+                            <h3 class="font-bold text-slate-800 text-sm text-center mb-3" id="impact-chart-title">השפעת המעבר (עובדים)</h3>
+                            <div class="relative h-44 w-full flex justify-center items-center">
+                                <canvas id="impactChart"></canvas>
                             </div>
+                            <div id="impact-insight" class="mt-4 p-3 rounded-lg text-xs bg-blue-50 border border-blue-100 text-blue-900 leading-relaxed shadow-inner"></div>
                         </div>
-                        <table class="w-full text-xs text-right whitespace-nowrap">
-                            <thead class="bg-slate-200 text-slate-600">
-                                <tr>
-                                    <th class="p-2">עיר</th>
-                                    <th class="p-2 text-center">רק"ל</th>
-                                    <th class="p-2 text-center">רכבת</th>
-                                    <th class="p-2 text-center">רכב</th>
-                                    <th class="p-2 text-center">אוטובוס</th>
-                                    <th class="p-2 text-center">חניה</th>
-                                    <th class="p-2 text-center text-blue-600">עלות</th>
-                                    <th class="p-2 text-center">איכות</th>
-                                </tr>
-                            </thead>
-                            <tbody id="drilldown-body" class="divide-y divide-slate-200">
-                                <!-- Injected via JS -->
-                            </tbody>
-                        </table>
                     </div>
-                </div>
-
-                <!-- Cost Chart -->
-                <div class="lg:col-span-1 space-y-4">
-                    <div class="bg-white rounded-xl shadow-sm p-4 border-t-4 border-green-500">
-                        <div class="flex justify-between items-center mb-2">
-                            <h3 class="font-bold text-slate-700 text-sm">עלות שנתית (מלש"ח)</h3>
-                            <button onclick="toggleCostTable()" class="text-xs text-blue-600 underline">טבלה מלאה</button>
-                        </div>
-                        <div class="chart-container" style="height: 250px;">
-                            <canvas id="costChart"></canvas>
-                        </div>
-                        
-                        <!-- Hidden Cost Table -->
-                        <div id="cost-table-container" class="hidden mt-4 text-xs">
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-right border-collapse">
-                                    <thead class="bg-slate-100">
-                                        <tr>
-                                            <th class="p-1 border">עיר</th>
-                                            <th class="p-1 border font-bold">סה"כ</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y">
-                                        <tr class="bg-blue-50 font-bold"><td class="p-1">הקיים</td><td class="p-1">2.76</td></tr>
-                                        <tr><td class="p-1">ת"א</td><td class="p-1 font-bold">11.6</td></tr>
-                                        <tr><td class="p-1">ר"ג</td><td class="p-1 font-bold">10.5</td></tr>
-                                        <tr><td class="p-1">הרצליה</td><td class="p-1 font-bold">10.0</td></tr>
-                                        <tr><td class="p-1">ב"ב</td><td class="p-1 font-bold">7.4</td></tr>
-                                        <tr><td class="p-1">ראשל"צ</td><td class="p-1 font-bold">7.2</td></tr>
-                                        <tr><td class="p-1">פ"ת</td><td class="p-1 font-bold">6.5</td></tr>
-                                        <tr><td class="p-1">מודיעין</td><td class="p-1 font-bold">5.6</td></tr>
-                                    </tbody>
-                                </table>
-                                <p class="text-[10px] text-slate-400 mt-1">* כולל שכירות, ניהול וארנונה</p>
-                            </div>
-                        </div>
+                    <div class="lg:col-span-2 relative">
+                        <div id="heat-map" class="shadow-sm border border-slate-200 rounded-xl h-full min-h-[450px]"></div>
+                        <div id="heat-map-legend" class="absolute bottom-4 right-4 bg-white/95 p-3 rounded-lg shadow-lg border border-slate-200 z-[1000] text-xs"></div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- ========================================== -->
-        <!-- VIEW 2: GEO / EMPLOYEE IMPACT (SMART HEATMAP)-->
-        <!-- ========================================== -->
-        <div id="view-geo" class="hidden animate-fade-in space-y-6">
-            
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <!-- Header & Grid Selector -->
-                <div class="p-5 border-b border-slate-100 bg-slate-50">
-                    <div class="mb-4 flex justify-between items-start">
-                        <div>
-                            <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-map-location-dot text-primary ml-2"></i> ניתוח השפעה גיאוגרפית (מפה דינמית)</h2>
-                            <p class="text-sm text-slate-500 mt-1">המפה מחשבת ומתעדכנת בזמן אמת ע"ב אלגוריתם מרחקים פלוס <strong>קנסות של פקקי תנועה בשעות שיא</strong>.</p>
-                        </div>
-                        <div class="bg-white px-3 py-1 rounded border border-slate-200 shadow-sm text-center hidden md:block">
-                            <span class="block text-lg font-black text-indigo-600 leading-none">137</span>
-                            <span class="text-[10px] font-bold text-slate-500">עובדים מופו</span>
-                        </div>
-                    </div>
-
-                    <!-- RUSH HOUR WARNING BANNER -->
-                    <div class="bg-slate-100 border border-slate-300 px-4 py-3 rounded-lg shadow-sm text-right mb-5 flex items-start gap-3">
-                        <i class="fa-solid fa-circle-info text-slate-600 mt-1"></i>
-                        <div class="text-sm text-slate-700 font-medium">
-                            <strong class="block text-slate-800 mb-1">הנחת עבודה - שעות שיא וחוק תל אביב:</strong>
-                            <ul class="list-disc list-inside text-xs space-y-1">
-                                <li>הזמנים מחושבים לפי הגעה/חזרה בשעות עומס (בוקר ואחה"צ). <strong>זמן ההתארכות הנקוב הוא לכיוון (בפועל ההשפעה היומית היא כפולה).</strong></li>
-                                <li>פגיעה קלה: הוגדרה כעד 10 דק', פגיעה מתונה עד 20 דק', וקשה מעל 20 דק' תוספת לכיוון.</li>
-                                <li class="text-red-600 font-bold">שימו לב: כל העתקה מחוץ לתל אביב הוגדרה אוטומטית כ"פגיעה קשה" עבור תושבי העיר (אובדן הקרבה המיידית).</li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <!-- Interactive Button Grid -->
-                    <div class="w-full">
-                        <label class="block text-xs font-bold text-slate-600 mb-2">הקלק על חלופה לבחינת ההשפעה לעומת המצב הקיים בתל אביב:</label>
-                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2" id="hq-impact-buttons">
-                            <button id="btn-impact-option0" onclick="setImpactHQ('option0', 'חלופה 0 - הישארות (קרליבך)')" class="impact-hq-btn active p-2 rounded-lg border-2 border-indigo-600 bg-indigo-50 text-indigo-700">
-                                <i class="fa-solid fa-house mb-1 text-lg"></i>
-                                <span class="font-bold text-xs">הקיים (ת"א)</span>
-                            </button>
-                            <button id="btn-impact-pt" onclick="setImpactHQ('pt', 'פתח תקווה (רמת סיב)')" class="impact-hq-btn p-2 rounded-lg border border-slate-200 bg-white text-slate-600">
-                                <i class="fa-solid fa-building mb-1 text-lg"></i>
-                                <span class="font-bold text-xs">פתח תקווה</span>
-                            </button>
-                            <button id="btn-impact-rishon" onclick="setImpactHQ('rishon', 'ראשון לציון (מתחם האלף)')" class="impact-hq-btn p-2 rounded-lg border border-slate-200 bg-white text-slate-600">
-                                <i class="fa-solid fa-building mb-1 text-lg"></i>
-                                <span class="font-bold text-xs">ראשון לציון</span>
-                            </button>
-                            <button id="btn-impact-modiin" onclick="setImpactHQ('modiin', 'מודיעין (מע\'\'ר / ליגד)')" class="impact-hq-btn p-2 rounded-lg border border-slate-200 bg-white text-slate-600">
-                                <i class="fa-solid fa-tree-city mb-1 text-lg"></i>
-                                <span class="font-bold text-xs">מודיעין</span>
-                            </button>
-                            <button id="btn-impact-bbc" onclick="setImpactHQ('bbc', 'בני ברק (BBC)')" class="impact-hq-btn p-2 rounded-lg border border-slate-200 bg-white text-slate-600">
-                                <i class="fa-solid fa-city mb-1 text-lg"></i>
-                                <span class="font-bold text-xs">בני ברק</span>
-                            </button>
-                            <button id="btn-impact-tlv" onclick="setImpactHQ('tlv', 'תל אביב (יגאל אלון)')" class="impact-hq-btn p-2 rounded-lg border border-slate-200 bg-white text-slate-600">
-                                <i class="fa-solid fa-building-user mb-1 text-lg"></i>
-                                <span class="font-bold text-xs">ת"א (אלון)</span>
-                            </button>
-                            <button id="btn-impact-bursa" onclick="setImpactHQ('bursa', 'רמת גן (מתחם הבורסה)')" class="impact-hq-btn p-2 rounded-lg border border-slate-200 bg-white text-slate-600">
-                                <i class="fa-solid fa-train mb-1 text-lg"></i>
-                                <span class="font-bold text-xs">הבורסה</span>
-                            </button>
-                            <button id="btn-impact-sharon" onclick="setImpactHQ('sharon', 'הרצליה פיתוח (השרון)')" class="impact-hq-btn p-2 rounded-lg border border-slate-200 bg-white text-slate-600">
-                                <i class="fa-solid fa-water mb-1 text-lg"></i>
-                                <span class="font-bold text-xs">הרצליה</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sub-tabs -->
-                <div class="flex border-b border-slate-200 px-3 bg-white overflow-x-auto no-scrollbar">
-                    <button onclick="switchGeoTab('geo-overview')" id="btn-geo-overview" class="sub-tab active px-4 py-3 text-sm font-medium whitespace-nowrap">
-                        <i class="fa-solid fa-map-location-dot ml-1"></i> מפה דינמית וסיכום
-                    </button>
-                    <button onclick="switchGeoTab('geo-time')" id="btn-geo-time" class="sub-tab px-4 py-3 text-sm font-medium whitespace-nowrap">
-                        <i class="fa-solid fa-clock ml-1"></i> התארכות זמני נסיעה
-                    </button>
-                    <button onclick="switchGeoTab('geo-severity')" id="btn-geo-severity" class="sub-tab px-4 py-3 text-sm font-medium whitespace-nowrap">
-                        <i class="fa-solid fa-triangle-exclamation ml-1"></i> חומרת פגיעה (סכנת נטישה)
-                    </button>
-                    <button onclick="switchGeoTab('geo-cities')" id="btn-geo-cities" class="sub-tab px-4 py-3 text-sm font-medium whitespace-nowrap">
-                        <i class="fa-solid fa-chart-bar ml-1"></i> פילוח ערי מגורים
-                    </button>
-                </div>
-
-                <div class="p-5 bg-white">
-                    
-                    <!-- SUB-VIEW: OVERVIEW & MAP -->
-                    <div id="geo-overview" class="geo-tab-content">
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            <!-- Impact Chart -->
-                            <div class="lg:col-span-1 flex flex-col gap-4">
-                                <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 flex-grow">
-                                    <h3 class="font-bold text-slate-700 text-sm text-center mb-4" id="impact-chart-title">השפעת המעבר בשעות עומס (מס' עובדים)</h3>
-                                    <div class="relative h-48 w-full flex justify-center items-center">
-                                        <canvas id="impactChart"></canvas>
-                                    </div>
-                                    <!-- Dynamic Text Insight -->
-                                    <div id="impact-insight" class="mt-4 p-3 rounded text-xs bg-white border border-slate-200 text-slate-700 leading-relaxed text-justify shadow-sm">
-                                        <!-- Injected via JS -->
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Dynamic Heat Map -->
-                            <div class="lg:col-span-2 relative">
-                                <div id="heat-map" class="shadow-sm border border-slate-200"></div>
-                                <div id="heat-map-legend" class="absolute bottom-4 right-4 bg-white/90 p-3 rounded shadow-md border border-slate-200 z-[1000] text-[11px]">
-                                    <!-- Populated dynamically based on Selection -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SUB-VIEW: CITIES BREAKDOWN -->
-                    <div id="geo-cities" class="geo-tab-content hidden animate-fade-in">
-                        <div class="max-w-4xl mx-auto">
-                            <h3 class="font-bold text-slate-800 text-lg mb-2">10 הערים המובילות במגורי עובדים</h3>
-                            <p class="text-sm text-slate-500 mb-6">התפלגות כוח האדם לפי ערי המקור. נתון זה שופך אור על "מרכז הכובד" האמיתי של החברה ומסייע בקבלת החלטה מושכלת.</p>
-                            <div class="chart-container" style="height: 350px;">
-                                <canvas id="citiesChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SUB-VIEW: TRAVEL TIME -->
-                    <div id="geo-time" class="geo-tab-content hidden animate-fade-in">
-                        <div class="max-w-4xl mx-auto">
-                            <h3 class="font-bold text-slate-800 text-lg mb-2">התפלגות שינוי בזמני נסיעה בשעות עומס (לכיוון)</h3>
-                            <p class="text-sm text-slate-500 mb-6">הגרף מציג את כמות העובדים (מתוך 137) שייפגעו או ישפרו את זמן הנסיעה היומי שלהם במעבר לחלופה הנבחרת, תחת הנחת פקקי תנועה של בוקר ואחה"צ.</p>
-                            
-                            <div class="chart-container" style="height: 350px;">
-                                <canvas id="timeChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SUB-VIEW: SEVERITY -->
-                    <div id="geo-severity" class="geo-tab-content hidden animate-fade-in">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div>
-                                <h3 class="font-bold text-slate-800 text-lg mb-2">רמת חומרת הפגיעה והשפעה על כוח האדם</h3>
-                                <p class="text-sm text-slate-500 mb-6">הערכת סיכון למשאבי אנוש הנובעת מהארכה של זמני ההגעה בשעות השיא (או יציאה מחוץ לתל אביב לתושבי העיר). <strong class="text-slate-700">הערכים הם מספר עובדים.</strong></p>
-                                <div class="chart-container" style="height: 300px;">
-                                    <canvas id="severityChart"></canvas>
-                                </div>
-                            </div>
-                            <div class="flex flex-col justify-center space-y-2">
-                                <div class="bg-green-50 border border-green-200 p-3 rounded-lg flex items-center gap-3 shadow-sm">
-                                    <div class="bg-green-100 text-green-700 w-10 h-10 flex justify-center items-center rounded-full text-lg flex-shrink-0"><i class="fa-solid fa-angles-down"></i></div>
-                                    <div>
-                                        <h4 class="font-bold text-green-800 text-sm">שיפור בזמני הנסיעה</h4>
-                                        <p class="text-[10px] text-green-700 mt-1">התקרבות משמעותית או קלה לבית העובד.</p>
-                                    </div>
-                                </div>
-                                <div class="bg-slate-50 border border-slate-300 p-3 rounded-lg flex items-center gap-3 shadow-sm">
-                                    <div class="bg-slate-200 text-slate-600 w-10 h-10 flex justify-center items-center rounded-full text-lg flex-shrink-0"><i class="fa-solid fa-equals"></i></div>
-                                    <div>
-                                        <h4 class="font-bold text-slate-700 text-sm">ללא שינוי מהותי (אפור)</h4>
-                                        <p class="text-[10px] text-slate-600 mt-1">זמן ההגעה נותר זהה פחות או יותר למצב כיום בת"א.</p>
-                                    </div>
-                                </div>
-                                <div class="bg-yellow-50 border border-yellow-200 p-3 rounded-lg flex items-center gap-3 shadow-sm">
-                                    <div class="bg-yellow-100 text-yellow-700 w-10 h-10 flex justify-center items-center rounded-full text-lg flex-shrink-0"><i class="fa-solid fa-arrow-up"></i></div>
-                                    <div>
-                                        <h4 class="font-bold text-yellow-800 text-sm">פגיעה קלה (עד +10 דק' לכיוון)</h4>
-                                        <p class="text-[10px] text-yellow-700 mt-1">תוספת נסבלת (עד 20 דק' ביום), לא צפוי סיכון נטישה.</p>
-                                    </div>
-                                </div>
-                                <div class="bg-orange-50 border border-orange-200 p-3 rounded-lg flex items-center gap-3 shadow-sm">
-                                    <div class="bg-orange-100 text-orange-700 w-10 h-10 flex justify-center items-center rounded-full text-lg flex-shrink-0"><i class="fa-solid fa-clock"></i></div>
-                                    <div>
-                                        <h4 class="font-bold text-orange-800 text-sm">פגיעה מתונה (+10 עד +20 דק')</h4>
-                                        <p class="text-[10px] text-orange-700 mt-1">תוספת של עד 40 דק' ליום. יידרשו פתרונות גמישות כגון עבודה מהבית.</p>
-                                    </div>
-                                </div>
-                                <div class="bg-red-50 border border-red-200 p-3 rounded-lg flex items-center gap-3 shadow-sm">
-                                    <div class="bg-red-100 text-red-700 w-10 h-10 flex justify-center items-center rounded-full text-lg flex-shrink-0"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                                    <div>
-                                        <h4 class="font-bold text-red-800 text-sm">פגיעה קשה (+20 דק' ומעלה)</h4>
-                                        <p class="text-[10px] text-red-700 font-bold mt-1">סיכון עזיבה ממשי. תוספת של קרוב לשעה ביום, או מעבר של תושבי ת"א מחוץ לעיר.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-200">
+                <h3 class="font-bold text-slate-800 text-base mb-1">התארכות זמני נסיעה</h3>
+                <p class="text-xs text-slate-500 mb-4 border-b pb-3">מספר עובדים לפי השפעה על זמן נסיעה (שעות שיא)</p>
+                <div class="chart-container"><canvas id="timeChart"></canvas></div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-200">
+                <h3 class="font-bold text-slate-800 text-base mb-1">מדד סיכון עזיבה</h3>
+                <p class="text-xs text-slate-500 mb-4">הערכת עצמת הפגיעה לפי קטגוריות</p>
+                <div class="chart-container"><canvas id="severityChart"></canvas></div>
             </div>
         </div>
+    </div>
 
-        <!-- ========================================== -->
-        <!-- VIEW 3: CUSTOM SCENARIO BUILDER -->
-        <!-- ========================================== -->
-        <div id="view-custom" class="hidden animate-fade-in">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
-                <!-- Controls Column -->
-                <div class="lg:col-span-4 bg-white rounded-xl shadow-sm p-5 border border-slate-200 h-fit">
-                    <div class="flex justify-between items-start mb-4 border-b pb-2">
-                        <div>
-                            <h3 class="font-bold text-slate-800 text-lg leading-none">בניית תרחיש משקולות</h3>
-                            <div class="text-xs text-slate-500 mt-1">
-                                סה"כ ניקוד: <span id="total-weight" class="font-bold text-primary">100%</span> (מתנרמל אוטומטית)
-                            </div>
-                        </div>
-                        <button onclick="resetCustomSliders()" class="text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded text-slate-600 transition"><i class="fa-solid fa-rotate-right"></i> איפוס</button>
-                    </div>
-                    <div id="sliders-container" class="space-y-4">
-                        <!-- Sliders injected by JS -->
-                    </div>
-                </div>
-
-                <!-- Results Column -->
-                <div class="lg:col-span-8 flex flex-col gap-4">
-                    <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-200">
-                        <div class="flex justify-between items-center mb-2">
-                            <h3 class="font-bold text-slate-700 text-sm">דירוג חלופות בזמן אמת</h3>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="customChart"></canvas>
-                        </div>
-                    </div>
-                </div>
+    <!-- VIEW 4: MAP -->
+    <div id="view-map" class="hidden h-full">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden h-[680px] flex flex-col">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-slate-800 text-lg"><i class="fa-solid fa-map-pin text-blue-700 ml-2"></i> פריסת 20 הנכסים במודל</h3>
+                <span class="text-xs text-slate-500 bg-white px-3 py-1 rounded-full border shadow-sm">לחץ על סמן לפרטים</span>
+            </div>
+            <div class="flex-grow p-0">
+                <div id="map" class="h-full w-full rounded-none border-none"></div>
             </div>
         </div>
+    </div>
 
-        <!-- ========================================== -->
-        <!-- VIEW 4: MAP (HQ LOCATIONS) -->
-        <!-- ========================================== -->
-        <div id="view-map" class="hidden animate-fade-in h-full">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden h-[600px] flex flex-col">
-                <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                    <h3 class="font-bold text-slate-800"><i class="fa-solid fa-map-pin text-primary ml-2"></i> מיקומי החלופות המוצעות</h3>
-                    <span class="text-xs text-slate-500 bg-white px-2 py-1 rounded border shadow-sm">לחץ על סמן לצפייה בציון ועלות</span>
-                </div>
-                <div class="flex-grow p-1">
-                    <div id="map" class="h-full w-full"></div>
-                </div>
-            </div>
+</main>
+
+<!-- Modal -->
+<div id="asset-modal" class="modal-overlay" onclick="closeAssetModal(event)">
+    <div class="modal-content flex flex-col" onclick="event.stopPropagation()">
+        <div id="modal-header" class="p-5 border-b border-slate-200 flex justify-between items-start rounded-t-2xl bg-slate-50"></div>
+        <div id="modal-body" class="p-5 flex-grow"></div>
+        <div class="p-4 border-t border-slate-100 bg-slate-50 rounded-b-2xl flex justify-end">
+            <button onclick="closeAssetModal(true)" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 px-5 rounded-lg transition text-sm">סגור</button>
         </div>
+    </div>
+</div>
 
-        <!-- ========================================== -->
-        <!-- VIEW 5: FULL REPORT -->
-        <!-- ========================================== -->
-        <div id="view-report" class="hidden animate-fade-in">
-            <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-6 md:p-10 border border-slate-200 report-content">
-                
-                <div class="border-b-2 border-primary pb-4 mb-8">
-                    <h1 class="text-3xl font-black text-primary mb-2">מסמך עמדה: בחינת חלופות אסטרטגיות להעתקת מטה החברה (גרסה משולבת מלאה)</h1>
-                    <div class="mt-4 text-sm text-slate-600 grid grid-cols-1 md:grid-cols-2 gap-2 bg-slate-50 p-4 rounded-lg">
-                        <div><strong class="text-slate-800">אל:</strong> מנכ"ל החברה</div>
-                        <div><strong class="text-slate-800">מאת:</strong> סמנכ"ל נכסים</div>
-                        <div><strong class="text-slate-800">תאריך:</strong> 13 בינואר 2026 (עדכון למסמך המקורי מדצמבר 2025)</div>
-                        <div><strong class="text-slate-800">הנדון:</strong> דוח ניתוח חלופות, כולל חלופת הישארות (חלופה 0)</div>
-                    </div>
+<script>
+// ============================================================
+// DATA — 20 ASSETS FROM EXCEL (16.04.2026) + BASELINE (OPTION0)
+// ============================================================
+const cities = {
+    option0: {
+        id:'option0', name:'חלופת 0 — הקיים', city:'תל אביב', owner:'בבעלות החברה',
+        lat:32.067, lng:34.785, sqm:5000, rent:0, mgmt:0, arnona:0, parkingPrice:0, parkingSpots:0,
+        opexMonthly:230000, cost:2.76, capex:0,
+        scores:{ score:8.65, transport:10, env:10, quality:8.4, costScore:10, capexScore:10 }
+    },
+    ampa: {
+        id:'ampa', name:'אמפא הרצליה', city:'הרצליה פיתוח', owner:'אמפא נדל"ן',
+        lat:32.165, lng:34.805, sqm:4180, rent:115, mgmt:28, arnona:389, parkingPrice:650, parkingSpots:100,
+        opexMonthly:798242, cost:9.58, capex:4.18,
+        scores:{ score:4.74, transport:5.3, env:7.2, quality:5.0, costScore:4.56, capexScore:1.0 }
+    },
+    azrieli_herz: {
+        id:'azrieli_herz', name:'עזריאלי הרצליה', city:'הרצליה פיתוח', owner:'קבוצת עזריאלי',
+        lat:32.162, lng:34.808, sqm:5320, rent:105, mgmt:28, arnona:389, parkingPrice:800, parkingSpots:100,
+        opexMonthly:960017, cost:11.52, capex:5.32,
+        scores:{ score:5.17, transport:4.8, env:7.2, quality:6.4, costScore:5.56, capexScore:1.45 }
+    },
+    azrieli_modiin: {
+        id:'azrieli_modiin', name:'עזריאלי מודיעין', city:'מודיעין', owner:'קבוצת עזריאלי',
+        lat:31.900, lng:35.005, sqm:5647, rent:85, mgmt:28, arnona:283, parkingPrice:600, parkingSpots:100,
+        opexMonthly:831286, cost:9.98, capex:5.65,
+        scores:{ score:6.87, transport:5.3, env:8.6, quality:8.4, costScore:8.71, capexScore:1.0 }
+    },
+    azrieli_galilot: {
+        id:'azrieli_galilot', name:'עזריאלי גלילות', city:'רמת השרון', owner:'קבוצת עזריאלי',
+        lat:32.120, lng:34.845, sqm:5031, rent:140, mgmt:28, arnona:419, parkingPrice:800, parkingSpots:100,
+        opexMonthly:1100874, cost:13.21, capex:5.03,
+        scores:{ score:4.08, transport:4.5, env:8.7, quality:8.6, costScore:1.93, capexScore:2.32 }
+    },
+    azrieli_holon_manor: {
+        id:'azrieli_holon_manor', name:'עזריאלי חולון המנור', city:'חולון', owner:'קבוצת עזריאלי',
+        lat:32.010, lng:34.783, sqm:4800, rent:82, mgmt:28, arnona:228, parkingPrice:600, parkingSpots:100,
+        opexMonthly:679200, cost:8.15, capex:4.80,
+        scores:{ score:7.34, transport:6.5, env:6.1, quality:7.8, costScore:9.25, capexScore:3.01 }
+    },
+    azrieli_holon_biz: {
+        id:'azrieli_holon_biz', name:'עזריאלי חולון ביזנס', city:'חולון', owner:'קבוצת עזריאלי',
+        lat:32.012, lng:34.780, sqm:5000, rent:78, mgmt:28, arnona:228, parkingPrice:600, parkingSpots:100,
+        opexMonthly:685000, cost:8.22, capex:5.00,
+        scores:{ score:7.36, transport:6.2, env:7.3, quality:6.6, costScore:9.68, capexScore:2.41 }
+    },
+    shlomo_rogovin: {
+        id:'shlomo_rogovin', name:'שלמה רוגובין פ"ת', city:'פתח תקווה', owner:'שלמה נדל"ן — רוגובין',
+        lat:32.091, lng:34.861, sqm:4867, rent:93, mgmt:28, arnona:455, parkingPrice:600, parkingSpots:100,
+        opexMonthly:833447, cost:10.00, capex:4.87,
+        scores:{ score:6.93, transport:8.0, env:8.4, quality:8.4, costScore:6.43, capexScore:2.81 }
+    },
+    rogovin_atir: {
+        id:'rogovin_atir', name:'רוגובין עתיר ידע', city:'כפר סבא', owner:'רוגובין נדל"ן',
+        lat:32.170, lng:34.920, sqm:4749, rent:85, mgmt:28, arnona:455, parkingPrice:600, parkingSpots:100,
+        opexMonthly:776703, cost:9.32, capex:4.75,
+        scores:{ score:5.94, transport:4.7, env:5.7, quality:7.8, costScore:7.16, capexScore:3.17 }
+    },
+    shasson: {
+        id:'shasson', name:'ששון חוגי פ"ת', city:'פתח תקווה', owner:'ששון חוגי',
+        lat:32.087, lng:34.873, sqm:5176, rent:78, mgmt:28, arnona:455, parkingPrice:550, parkingSpots:100,
+        opexMonthly:799913, cost:9.60, capex:5.18,
+        scores:{ score:6.98, transport:7.3, env:7.0, quality:7.0, costScore:8.02, capexScore:1.88 }
+    },
+    gcity: {
+        id:'gcity', name:"ג'י סיטי ראשל\"צ", city:'ראשון לציון', owner:'גזית גלוב',
+        lat:31.984, lng:34.770, sqm:4200, rent:87, mgmt:28, arnona:262, parkingPrice:800, parkingSpots:100,
+        opexMonthly:654700, cost:7.86, capex:4.20,
+        scores:{ score:7.95, transport:8.5, env:8.2, quality:9.4, costScore:7.89, capexScore:4.82 }
+    },
+    amot: {
+        id:'amot', name:'אמות קמפוס', city:'חולון', owner:'אמות',
+        lat:32.015, lng:34.790, sqm:5800, rent:78, mgmt:28, arnona:228, parkingPrice:500, parkingSpots:100,
+        opexMonthly:775000, cost:9.30, capex:5.80,
+        scores:{ score:7.41, transport:6.0, env:6.7, quality:8.4, costScore:10, capexScore:1.0 }
+    },
+    levanda: {
+        id:'levanda', name:'מניבים לבנדה', city:'תל אביב', owner:'קרן הריט מניבים',
+        lat:32.062, lng:34.782, sqm:4400, rent:110, mgmt:28, arnona:360, parkingPrice:1000, parkingSpots:100,
+        opexMonthly:839200, cost:10.07, capex:4.40,
+        scores:{ score:5.66, transport:6.8, env:6.6, quality:7.0, costScore:4.59, capexScore:4.22 }
+    },
+    infinity_migdal: {
+        id:'infinity_migdal', name:'אינפיניטי מגדל', city:'רעננה', owner:'ריט 1',
+        lat:32.185, lng:34.875, sqm:5000, rent:102, mgmt:28, arnona:360, parkingPrice:650, parkingSpots:100,
+        opexMonthly:865000, cost:10.38, capex:5.00,
+        scores:{ score:6.41, transport:6.8, env:7.6, quality:8.6, costScore:6.27, capexScore:2.41 }
+    },
+    infinity_campus: {
+        id:'infinity_campus', name:'אינפיניטי קמפוס', city:'רעננה', owner:'ריט 1',
+        lat:32.186, lng:34.876, sqm:5000, rent:102, mgmt:28, arnona:360, parkingPrice:550, parkingSpots:100,
+        opexMonthly:855000, cost:10.26, capex:5.00,
+        scores:{ score:6.34, transport:6.8, env:7.6, quality:7.2, costScore:6.46, capexScore:2.41 }
+    },
+    damri: {
+        id:'damri', name:'דמרי בית רום', city:'פתח תקווה', owner:'דמרי',
+        lat:32.083, lng:34.875, sqm:4471, rent:72, mgmt:28, arnona:455, parkingPrice:650, parkingSpots:100,
+        opexMonthly:681653, cost:8.18, capex:4.47,
+        scores:{ score:6.89, transport:6.3, env:6.1, quality:7.0, costScore:8.22, capexScore:4.00 }
+    },
+    elite: {
+        id:'elite', name:'מגדל עלית', city:'רמת גן', owner:"סוויצ'אפ",
+        lat:32.083, lng:34.802, sqm:4962, rent:145, mgmt:28, arnona:455, parkingPrice:1400, parkingSpots:100,
+        opexMonthly:1186569, cost:14.24, capex:2.48,
+        scores:{ score:5.56, transport:8.3, env:8.3, quality:8.4, costScore:1.0, capexScore:10 }
+    },
+    vered: {
+        id:'vered', name:'מגדל הורד', city:'גבעתיים', owner:"סוויצ'אפ",
+        lat:32.075, lng:34.805, sqm:5388, rent:120, mgmt:28, arnona:455, parkingPrice:850, parkingSpots:100,
+        opexMonthly:1086719, cost:13.04, capex:2.69,
+        scores:{ score:5.53, transport:6.5, env:6.4, quality:5.8, costScore:3.55, capexScore:9.36 }
+    },
+    mivne: {
+        id:'mivne', name:'מבנה כפר סבא', city:'כפר סבא', owner:'מבנה',
+        lat:32.172, lng:34.922, sqm:4900, rent:73, mgmt:28, arnona:257, parkingPrice:600, parkingSpots:100,
+        opexMonthly:659842, cost:7.92, capex:4.90,
+        scores:{ score:7.46, transport:6.0, env:7.1, quality:7.2, costScore:9.90, capexScore:2.71 }
+    },
+    onyx: {
+        id:'onyx', name:'ONYX', city:'קריית אונו', owner:'סופרין מנורה',
+        lat:32.054, lng:34.858, sqm:5100, rent:80, mgmt:28, arnona:257, parkingPrice:550, parkingSpots:100,
+        opexMonthly:715025, cost:8.58, capex:5.10,
+        scores:{ score:7.29, transport:6.2, env:7.1, quality:7.6, costScore:9.38, capexScore:2.11 }
+    },
+    beyond: {
+        id:'beyond', name:'Beyond', city:'רמת גן', owner:'תדהר',
+        lat:32.073, lng:34.800, sqm:5100, rent:150, mgmt:28, arnona:340, parkingPrice:550, parkingSpots:100,
+        opexMonthly:1107300, cost:13.29, capex:5.10,
+        scores:{ score:5.14, transport:7.8, env:8.3, quality:9.2, costScore:2.09, capexScore:2.11 }
+    }
+};
+
+// Group by city
+const groupedByCity = {};
+Object.values(cities).forEach(c => {
+    if(!groupedByCity[c.city]) groupedByCity[c.city]=[];
+    groupedByCity[c.city].push(c);
+});
+
+// Employee geo data
+const employeesGeo = [
+    {city:'תל אביב-יפו',lat:32.0853,lng:34.7818,count:19,region:'center'},
+    {city:'פתח תקווה',lat:32.0840,lng:34.8878,count:14,region:'center'},
+    {city:'חולון',lat:32.0158,lng:34.7732,count:7,region:'center'},
+    {city:'ראשון לציון',lat:31.9730,lng:34.7925,count:7,region:'shfela'},
+    {city:'רמת גן',lat:32.0684,lng:34.8248,count:7,region:'center'},
+    {city:'הרצליה',lat:32.1624,lng:34.8447,count:5,region:'sharon'},
+    {city:'אשקלון',lat:31.6693,lng:34.5715,count:5,region:'south'},
+    {city:'קריית אונו',lat:32.0610,lng:34.8624,count:5,region:'center'},
+    {city:'כפר סבא',lat:32.1714,lng:34.9083,count:4,region:'sharon'},
+    {city:'מודיעין',lat:31.9056,lng:35.0062,count:4,region:'shfela'},
+    {city:'אשדוד',lat:31.7912,lng:34.6416,count:3,region:'south'},
+    {city:'רחובות',lat:31.8928,lng:34.8113,count:3,region:'shfela'},
+    {city:'יהוד',lat:32.0336,lng:34.8876,count:3,region:'center'},
+    {city:'גן יבנה',lat:31.7820,lng:34.7088,count:3,region:'south'},
+    {city:'אבן יהודה',lat:32.2687,lng:34.8906,count:3,region:'sharon'},
+    {city:'ראש העין',lat:32.0967,lng:34.9667,count:3,region:'center'},
+    {city:'שוהם',lat:31.9547,lng:34.9452,count:3,region:'shfela'},
+    {city:'גבעתיים',lat:32.0722,lng:34.8089,count:2,region:'center'},
+    {city:'אזור',lat:32.0233,lng:34.8028,count:2,region:'center'},
+    {city:'נס ציונה',lat:31.9304,lng:34.7981,count:2,region:'shfela'},
+    {city:'להבים',lat:31.3683,lng:34.8197,count:2,region:'south'},
+    {city:'רמת השרון',lat:32.1458,lng:34.8398,count:1,region:'sharon'},
+    {city:'ניר יפה',lat:32.5539,lng:35.2589,count:1,region:'north'},
+    {city:'בת חפר',lat:32.3361,lng:35.0116,count:1,region:'sharon'},
+    {city:'נהורה',lat:31.6375,lng:34.6978,count:1,region:'south'},
+    {city:'אורנית',lat:32.1331,lng:34.9922,count:1,region:'sharon'},
+    {city:"ג'ולס",lat:32.9469,lng:35.1764,count:1,region:'north'},
+    {city:'גינתון',lat:31.9567,lng:34.9142,count:1,region:'shfela'},
+    {city:'טייבה',lat:32.2662,lng:35.0086,count:1,region:'sharon'},
+    {city:'נען',lat:31.8808,lng:34.8622,count:1,region:'shfela'},
+    {city:'קריית מוצקין',lat:32.8322,lng:35.0747,count:1,region:'north'},
+    {city:'ברקת',lat:32.0167,lng:34.9500,count:1,region:'center'},
+    {city:'חדרה',lat:32.4340,lng:34.9197,count:1,region:'north'},
+    {city:'חיפה',lat:32.7940,lng:34.9896,count:1,region:'north'},
+    {city:'צופית',lat:32.1864,lng:34.9228,count:1,region:'sharon'},
+    {city:'נצרת',lat:32.7019,lng:35.3035,count:1,region:'north'},
+    {city:'כפר יונה',lat:32.3161,lng:34.9358,count:1,region:'sharon'},
+    {city:'גני טל',lat:31.8028,lng:34.7500,count:1,region:'south'},
+    {city:'בנימינה',lat:32.5186,lng:34.9458,count:1,region:'north'},
+    {city:'הוד השרון',lat:32.1528,lng:34.8911,count:1,region:'sharon'},
+    {city:'יבנה',lat:31.8767,lng:34.7431,count:1,region:'shfela'},
+    {city:'רמלה',lat:31.9286,lng:34.8697,count:1,region:'shfela'},
+    {city:'נתניה',lat:32.3215,lng:34.8532,count:1,region:'sharon'},
+    {city:'קריית ים',lat:32.8469,lng:35.0664,count:1,region:'north'},
+    {city:'אמונים',lat:31.7450,lng:34.6644,count:1,region:'south'},
+    {city:'עמינדב',lat:31.7511,lng:35.1378,count:1,region:'shfela'},
+    {city:'באר יעקב',lat:31.9422,lng:34.8322,count:1,region:'shfela'},
+    {city:'גן הדרום',lat:31.7619,lng:34.6836,count:1,region:'south'},
+    {city:'מזכרת בתיה',lat:31.8542,lng:34.8431,count:1,region:'shfela'},
+    {city:'אייל',lat:32.2036,lng:34.9922,count:1,region:'sharon'},
+    {city:'דימונה',lat:31.0667,lng:35.0333,count:1,region:'south'},
+    {city:'ניר גלים',lat:31.8211,lng:34.6853,count:1,region:'south'}
+];
+
+const cityTargetGeo = {
+    'תל אביב':{lat:32.067,lng:34.785},
+    'פתח תקווה':{lat:32.091,lng:34.861},
+    'ראשון לציון':{lat:31.984,lng:34.770},
+    'חולון':{lat:32.015,lng:34.790},
+    'מודיעין':{lat:31.900,lng:35.005},
+    'רמת גן':{lat:32.083,lng:34.802},
+    'גבעתיים':{lat:32.073,lng:34.800},
+    'הרצליה פיתוח':{lat:32.165,lng:34.805},
+    'רעננה':{lat:32.185,lng:34.875},
+    'כפר סבא':{lat:32.170,lng:34.920},
+    'קריית אונו':{lat:32.061,lng:34.862},
+    'רמת השרון':{lat:32.120,lng:34.845}
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let currentDashboardMetric = 'score';
+let currentImpactCity = 'פתח תקווה';
+let opexChartInstance=null, capexChartInstance=null, scoreBarChartInstance=null;
+let impactChartInstance=null, timeChartInstance=null, severityChartInstance=null;
+let mapInstance=null, heatMapInstance=null, heatLayerGroup=null;
+
+if(typeof ChartDataLabels!=='undefined') Chart.register(ChartDataLabels);
+Chart.defaults.font.family='Heebo'; Chart.defaults.color='#475569';
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function getColorClass(metric, value) {
+    if(metric==='score'||metric==='quality'||metric==='transport'||metric==='env'){
+        if(value>=7.5) return 'green';
+        if(value>=6.0) return 'yellow';
+        return 'red';
+    }
+    if(metric==='cost'){
+        if(value<=8.5) return 'green';
+        if(value<=11.0) return 'yellow';
+        return 'red';
+    }
+    return 'blue';
+}
+
+function setDashboardMetric(metric, el){
+    currentDashboardMetric = metric;
+    document.querySelectorAll('.metric-card').forEach(c=>{
+        c.classList.remove('active');
+        const ib = c.querySelector('.icon-bg');
+        if(ib) ib.classList.remove('bg-primary','!bg-blue-700','text-white');
+    });
+    if(el){
+        el.classList.add('active');
+        const ib = el.querySelector('.icon-bg');
+        if(ib){ ib.classList.add('bg-primary'); ib.style.backgroundColor='#1d4ed8'; ib.style.color='white'; }
+    }
+    const titles = {score:'ציון משוקלל יועץ (1-10)',cost:'OPEX שנתי (M₪)',transport:'ציון תחבורה (1-10)',quality:'ציון איכות נכס (1-10)'};
+    const t = document.getElementById('grid-title-metric');
+    if(t) t.innerText = titles[metric];
+    renderCityCards();
+}
+
+function renderCityCards(){
+    const container = document.getElementById('cities-grid');
+    if(!container) return;
+    container.innerHTML='';
+    const cityIcons = {
+        'תל אביב':'fa-building-user text-indigo-600',
+        'פתח תקווה':'fa-industry text-orange-500',
+        'חולון':'fa-warehouse text-sky-500',
+        'ראשון לציון':'fa-city text-green-600',
+        'כפר סבא':'fa-water text-cyan-500',
+        'הרצליה פיתוח':'fa-water text-teal-500',
+        'מודיעין':'fa-tree-city text-emerald-600',
+        'רמת השרון':'fa-building text-violet-500',
+        'רמת גן':'fa-building text-blue-500',
+        'גבעתיים':'fa-building text-blue-400',
+        'רעננה':'fa-leaf text-green-500',
+        'קריית אונו':'fa-building-circle-check text-amber-500'
+    };
+    for(const cityName in groupedByCity){
+        const assets = groupedByCity[cityName].sort((a,b)=>b.scores.score-a.scores.score);
+        const icon = cityIcons[cityName]||'fa-city text-slate-500';
+        let html = `<div class="city-board hover:shadow-lg transition">
+            <div class="city-header">
+                <div class="bg-white w-9 h-9 rounded-full flex items-center justify-center shadow-sm border border-slate-200 shrink-0 text-sm"><i class="fa-solid ${icon}"></i></div>
+                <div><h3 class="font-black text-slate-800 text-base leading-tight">${cityName}</h3><p class="text-[10px] text-slate-500 font-bold">${assets.length} נכס${assets.length>1?'ים':''}</p></div>
+            </div><div class="flex flex-col flex-grow p-0 bg-white">`;
+        assets.forEach(asset=>{
+            let val, num;
+            if(currentDashboardMetric==='cost'){ num=asset.cost; val=num.toFixed(1)+'M'; }
+            else if(currentDashboardMetric==='transport'){ num=asset.scores.transport; val=num.toFixed(1); }
+            else if(currentDashboardMetric==='quality'){ num=asset.scores.quality; val=num.toFixed(1); }
+            else { num=asset.scores.score; val=num.toFixed(2); }
+            const col = getColorClass(currentDashboardMetric, num);
+            const isBase = asset.id==='option0';
+            html+=`<div class="asset-row ${isBase?'bg-indigo-50 border-r-4 border-indigo-500':''}" onclick="openAssetModal('${asset.id}')">
+                <div class="flex flex-col pr-1 w-3/4">
+                    <span class="font-bold text-slate-800 text-sm truncate">${asset.name}</span>
+                    <span class="text-[10px] text-slate-500 truncate">${asset.owner||'---'}</span>
                 </div>
-
-                <h2>1. תקציר מנהלים</h2>
-                <p>מסמך זה מציג את עבודת המטה שבוצעה בחטיבת הנכסים לבחינת חלופות להעתקת משרדי הנהלת החברה (מטה) ממיקומם הנוכחי בת"א, או לחלופין, שיפוץ והישארות בנכס הקיים ("חלופה 0"). המהלך נועד להתאים את סביבת העבודה לצרכים העדכניים של החברה, לשפר את הנגישות לעובדים ולאורחים, ולמקסם את היעילות הכלכלית.</p>
-                <div class="bg-blue-50 p-4 border-r-4 border-blue-500 rounded my-4">
-                    <strong>החלטה נדרשת:</strong> אישור לביצוע סקר מגורים ממוכן לכלל עובדי המטה, אישור לבדיקת היתכנות אדריכלית לנכס הקיים, ואישור לצאת בפניה דיסקרטית בארבע חלופות נבחרות: פתח תקווה, ראשון לציון, מודיעין ובני ברק.
-                </div>
-                <p>במסגרת העבודה נותחו 8 חלופות (7 מתחמי תעסוקה מרכזיים בגוש דן והשפלה + חלופת ה-0). הניתוח התבסס על מודל משוקלל המעניק עדיפות לנגישות תחבורתית מגוונת ולחוויית העובד. המסקנה המרכזית היא כי נוצר מהפך בדירוג:</p>
-                <ul class="list-disc list-inside mb-4">
-                    <li><strong>חלופת ה-0 (הישארות בקרליבך):</strong> מספקת את המענה המיטבי (ציון 8.70) בשל היעדר דמי שכירות ומיקום מרכזי.</li>
-                    <li><strong>חלופת פתח-תקווה (רמת סיב):</strong> ירדה למקום השני (ציון 8.30) אך נותרת החלופה התפעולית הטובה ביותר למעבר. ראשון לציון הינה החלופה השלישית בטיבה בתרחיש הבסיס (7.85), אך תהפוך לאסטרטגית אם יתברר כי קיים רוב לעובדים המתגוררים בדרום.</li>
-                </ul>
-
-                <h2>2. הגדרת הפרוגרמה והצרכים</h2>
-                <p>על בסיס ניתוח ראשוני של מצבת כוח האדם וצרכי החברה, הוגדרו עקרונות הבסיס לאיתור:</p>
-                <ul>
-                    <li><strong>היקף השטח:</strong> כ-5,000 מ"ר (ברוטו). שטח זה מאפשר יחס ברוטו לעובד של כ-33 מ"ר, הכולל רווחה נדיבה, חדרי ישיבות מרובים ושטחי ציבור.</li>
-                    <li><strong>אוכלוסייה:</strong> כ-150 עובדים (הנהלה, כספים, משפטית, נכסים, הנדסה).</li>
-                    <li><strong>תצורה:</strong> עדיפות לקומות גדולות (Floor Plate של 1,500 מ"ר ומעלה) לשמירה על רצף ניהולי וסנכרון בין מחלקות. (הערה: חלופה 0 מאותגרת בסעיף זה בשל קומות קטנות).</li>
-                    <li><strong>נגישות:</strong> דרישה ל"תמהיל תחבורה מלא", דגש על רכבת קלה (רק"ל) ורכבת כבדה, לצד נגישות לרכב פרטי.</li>
-                </ul>
-
-                <h2>3. מתודולוגיית הדירוג (מודל המשקולות)</h2>
-                <p>הניקוד לכל חלופה ניתן על בסיס המשקולות הבאים:</p>
-                <div class="report-table-wrapper">
-                    <table class="report-table">
-                        <thead>
-                            <tr>
-                                <th>קטגוריה</th>
-                                <th>פרמטר</th>
-                                <th>משקל</th>
-                                <th>רציונל</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td rowspan="3" class="font-bold">תחבורה ציבורית (40%)</td>
-                                <td>רכבת קלה (רק"ל)</td>
-                                <td>15%</td>
-                                <td>אמצעי הניידות המרכזי והאמין במטרופולין.</td>
-                            </tr>
-                            <tr>
-                                <td>רכבת כבדה</td>
-                                <td>15%</td>
-                                <td>קריטי לעובדים המגיעים מהפריפריה (חיפה/אשדוד).</td>
-                            </tr>
-                            <tr>
-                                <td>אוטובוסים</td>
-                                <td>10%</td>
-                                <td>רשת משלימה וגיבוי לרכבות.</td>
-                            </tr>
-                            <tr>
-                                <td rowspan="2" class="font-bold">רכב וחניה (20%)</td>
-                                <td>נגישות כבישים</td>
-                                <td>15%</td>
-                                <td>קרבה לצירים ארציים (איילון/4/431).</td>
-                            </tr>
-                            <tr>
-                                <td>הקצאת חניות</td>
-                                <td>5%</td>
-                                <td>גמישות תפעולית (הסתמכות על פתרונות היקפיים).</td>
-                            </tr>
-                            <tr>
-                                <td class="font-bold">כלכלי (15%)</td>
-                                <td>עלויות שוטפות</td>
-                                <td>15%</td>
-                                <td>שכ"ד, ניהול וארנונה.</td>
-                            </tr>
-                            <tr>
-                                <td class="font-bold">שוק (10%)</td>
-                                <td>זמינות והיצע</td>
-                                <td>10%</td>
-                                <td>כוח מיקוח וכניסה מהירה.</td>
-                            </tr>
-                            <tr>
-                                <td rowspan="2" class="font-bold">איכות ורווחה (15%)</td>
-                                <td>איכות וגמישות תפעולית</td>
-                                <td>10%</td>
-                                <td>מפרט הבניין, גודל קומה, מערכות.</td>
-                            </tr>
-                            <tr>
-                                <td>סביבת עבודה</td>
-                                <td>5%</td>
-                                <td>מסעדות, שירותים בקרבת מקום, אווירה.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <h2>4. חלופות אסטרטגיות שנבחנו</h2>
-                <ul>
-                    <li><strong>חלופה 0 (חדשה):</strong> תל אביב, מתחם קרליבך (מבנה בבעלות החברה).</li>
-                    <li><strong>חלופה א':</strong> תל אביב, ציר יגאל אלון / ביצרון (מגדלי טויוטה, אלקטרה, תוצרת הארץ).</li>
-                    <li><strong>חלופה ב':</strong> רמת גן, מתחם הבורסה (אזור מגדל השחר, אטריום, סבידור).</li>
-                    <li><strong>חלופה ג':</strong> בני ברק, מתחם ה-BBC (צפון בני ברק, מגדלי ב.ס.ר).</li>
-                    <li><strong>חלופה ד':</strong> פתח תקווה, רמת סיב / קריית אריה (אזור גלובל טאוורס, ב.ס.ר סיטי).</li>
-                    <li><strong>חלופה ה':</strong> ראשון לציון, מתחם האלף (מערב ראשל"צ).</li>
-                    <li><strong>חלופה ו':</strong> מודיעין, ליגד / מע"ר.</li>
-                    <li><strong>חלופה ז':</strong> אזור השרון, הרצליה פיתוח / רעננה צפון.</li>
-                </ul>
-
-                <h2>5. ניתוח עומק השוואתי (Data Breakdown)</h2>
-                <h3>5.1 ניתוח עלויות מפורט: שכירות, ניהול וארנונה (אומדן 2025/6)</h3>
-                <p>ביצענו ניתוח שוק על בסיס נתוני אמת והצעות מחיר ראשוניות (Asking Price) למשרדים ברמת גמר מלא (Class A) בשטח של כ-5,000 מ"ר. הנתונים להלן כוללים שקלול של דמי שכירות, דמי ניהול ותשלומי ארנונה. <strong>עדכון: הטבלה כוללת כעת את חלופת ה-0 (ללא שכירות).</strong></p>
-                <div class="report-table-wrapper">
-                    <table class="report-table">
-                        <thead>
-                            <tr>
-                                <th>פרמטר</th>
-                                <th class="text-indigo-600 bg-indigo-50">חלופה 0 (קיים)</th>
-                                <th>ת"א (יגאל אלון)</th>
-                                <th>ר"ג (בורסה)</th>
-                                <th>ב"ב (BBC)</th>
-                                <th>פ"ת (רמת סיב)</th>
-                                <th>ראשל"צ (האלף)</th>
-                                <th>מודיעין (מע"ר)</th>
-                                <th>הרצליה פיתוח</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td class="font-bold text-slate-700">שכירות למ"ר</td><td class="bg-indigo-50 font-bold">0 ₪</td><td>135 ₪</td><td>120 ₪</td><td>75 ₪</td><td>65 ₪</td><td>75 ₪</td><td>60 ₪</td><td>115 ₪</td></tr>
-                            <tr><td class="font-bold text-slate-700">דמי ניהול למ"ר</td><td class="bg-indigo-50">12 ₪</td><td>24 ₪</td><td>24 ₪</td><td>20 ₪</td><td>18 ₪</td><td>20 ₪</td><td>16 ₪</td><td>22 ₪</td></tr>
-                            <tr><td class="font-bold text-slate-700">ארנונה למ"ר</td><td class="bg-indigo-50">~34 ₪</td><td>~34 ₪</td><td>~31 ₪</td><td>~28 ₪</td><td>~25 ₪</td><td>~25 ₪</td><td>~18 ₪</td><td>~30 ₪</td></tr>
-                            <tr class="bg-slate-100 border-t-2 border-slate-300"><td class="font-bold text-slate-800">סה"כ למ"ר</td><td class="bg-indigo-100 font-bold text-indigo-700">46 ₪</td><td>193 ₪</td><td>175 ₪</td><td>123 ₪</td><td>108 ₪</td><td>120 ₪</td><td>94 ₪</td><td>167 ₪</td></tr>
-                            <tr><td class="font-bold text-slate-700">סה"כ חודשי</td><td class="bg-indigo-50">230,000 ₪</td><td>965,000 ₪</td><td>875,000 ₪</td><td>615,000 ₪</td><td>540,000 ₪</td><td>600,000 ₪</td><td>470,000 ₪</td><td>835,000 ₪</td></tr>
-                            <tr class="text-primary font-black border-t-2 border-primary"><td class="font-bold">עלות שנתית</td><td class="bg-indigo-100 text-indigo-700">2.76 מלש"ח</td><td>11.6 מלש"ח</td><td>10.5 מלש"ח</td><td>7.4 מלש"ח</td><td>6.5 מלש"ח</td><td>7.2 מלש"ח</td><td>5.6 מלש"ח</td><td>10.0 מלש"ח</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <p class="text-xs text-slate-500 mb-4">*הערה: המספרים לעיל מהווים אומדן להשוואה בין-עירונית. הטווחים עשויים לנוע בשיעור של ±10%.</p>
-                <p><strong>משמעויות כלכליות מעודכנות:</strong> הישארות בנכס הקיים (חלופה 0) חוסכת כ-3.7 מיליון ש"ח בשנה מול החלופה הזולה ביותר (פ"ת), וכ-9 מיליון ש"ח מול תל אביב. זהו פער דרמטי שחייב להתבטא בניקוד (נרמול).</p>
-
-                <h3>5.2 נגישות רכבתית (קלה וכבדה)</h3>
-                <p><strong>חלופה 0 (קרליבך):</strong> רק"ל (10/10): סמוך לתחנת קרליבך (צומת קו אדום וירוק). רכבת כבדה (8/10): מרחק הליכה מתחנת השלום.</p>
-                <p><strong>פתח תקווה (רמת סיב):</strong> נגישות מצוינת לרכבת הקלה (הקו האדום - תחנות שנקר/שחם/בלינסון בלב אזורי התעסוקה). הנגישות לרכבת כבדה (תחנת קריית אריה) טובה לחלק הצפוני, ודורשת קישורית מאזור רמת סיב הדרומי.</p>
-                <p><strong>רמת גן (הבורסה):</strong> הציון הגבוה ביותר (במקור). שילוב מנצח של רכבת כבדה ("סבידור מרכז" - ה-Hub הראשי של ישראל) ורכבת קלה (תחנת "אבא הלל" של הקו האדום) במרחק הליכה מיידי.</p>
-                <p><strong>תל אביב (יגאל אלון):</strong> נגישות טובה לרכבת כבדה (תחנת "השלום" במרחק הליכה של כ-8-10 דקות). נגישות בינונית לרכבת הקלה (תחנות הקו האדום "יהודית" או "שאול המלך" במרחק הליכה של כ-10-12 דקות).</p>
-                <p><strong>בני ברק (BBC):</strong> נגישות מצוינת לרכבת הקלה (תחנות "בן גוריון" ו"אהרונוביץ'" של הקו האדום). נגישות נמוכה לרכבת כבדה (תחנת "בני ברק" ממוקמת בקצה הצפוני ודורשת הליכה ארוכה או שאטל), יש אוטובוסים גם מתחנת הבורסה.</p>
-                <p><strong>ראשון לציון (מתחם האלף):</strong> נגישות מצוינת לרכבת כבדה (תחנת "משה דיין" צמודה למתחם, קו מהיר לת"א ולדרום). חיסרון מהותי: אין כרגע רכבת קלה פעילה (הקו הירוק בבנייה, צפי הפעלה 2028).</p>
-                <p><strong>מודיעין:</strong> מצטיינת ברכבת כבדה מהירה לת"א (כ-25 דקות) ולירושלים (כ-20 דקות) מתחנות "פאתי מודיעין" (אזור ליגד) ו"מודיעין מרכז" (מע"ר). ציון 0 בנגישות רכבת קלה - אין מענה רק"ל קיים או מתוכנן בטווח הזמן הרלוונטי.</p>
-                <p><strong>אזור השרון:</strong> רכבת כבדה קיימת (דורשת שאטל למרכזי התעסוקה). אין מענה רק"ל בטווח הקרוב.</p>
-
-                <h3>5.3 נגישות כבישים ואוטובוסים</h3>
-                <p><strong>חלופה 0 (קרליבך):</strong> כבישים (6/10): עומסי תנועה כבדים במרכז ת"א. חניה (10/10): חניון פרטי בבעלות החברה המספיק לכלל העובדים. אוטובוסים (9/10): נגישות מעולה.</p>
-                <p><strong>מתחם האלף (ראשל"צ):</strong> הציון הגבוה ביותר. ממוקם על מחלף ייעודי המחבר ישירות את נתיבי איילון דרום (כביש 20) וכביש 431. מאפשר לעובדי הדרום והשפלה לעצור "לפני הפקק" הגדול של גוש דן.</p>
-                <p><strong>תל אביב (יגאל אלון):</strong> ירידה נוחה יחסית מאיילון, אך ציר יגאל אלון עצמו ורחובות הגישה סובלים מעומסי תנועה כבדים מאוד בשעות הבוקר והערב. אוטובוסים: נגישות מצוינת.</p>
-                <p><strong>רמת גן (הבורסה):</strong> "צוואר בקבוק" לרכב פרטי. הכניסה והיציאה למתחם כרוכה בעמידה ממושכת בפקקים. אוטובוסים: הציון הגבוה ביותר (מסוף 2000).</p>
-                <p><strong>בני ברק (BBC):</strong> כבישים: גישה סבירה מכביש 4 (מחלף אם המושבות/ז'בוטינסקי), אך המתחם הפנימי (רחובות הירקון/בן גוריון) צפוף וקשה לתנועה. אוטובוסים: נגישות טובה מאוד. נהנה מהשירות האינטנסיבי על ציר ז'בוטינסקי ודרך בן גוריון.</p>
-                <p><strong>פתח תקווה (רמת סיב):</strong> מיקום אסטרטגי (כביש 4, 5, 471), אך עומסים בכניסות לעיר (ז'בוטינסקי/רבין) בבקרים. אוטובוסים: נגישות טובה מאוד.</p>
-                <p><strong>מודיעין (ליגד/מע"ר):</strong> נגישות פנומנלית לרכב פרטי דרך כביש 431 וכביש 1. הפארק הטכנולוגי מרווח וללא פקקי תנועה פנימיים.</p>
-                <p><strong>אזור השרון (הרצליה/רעננה):</strong> אתגר קשה לעובדים הגרים מדרום לגלילות. ההגעה בבוקר מחייבת חצייה של כל נתיבי איילון/כביש 4 לכיוון צפון.</p>
-
-                <h3>5.4 איכות, גמישות תפעולית וסביבת עבודה</h3>
-                <p><strong>חלופה 0 (קרליבך):</strong><br>איכות וגמישות (7): מתפרס על פני מספר קומות, מבנה ישן יחסית, חיסרון תפעולי מול הבניינים החדשים בחלופות האחרות שנבדקו.<br>סביבת עבודה (10): ממוקם בלב תל אביב, סביבה תוססת ומרכזית גם בעת עבודות הרק"ל.</p>
-                <p><strong>תל אביב, ציר יגאל אלון (ציון: 9.5 משוקלל):</strong> מגדלי Class A+ אייקוניים (כגון מגדלי אלון, אלקטרה, תוצרת הארץ). סביבת עבודה: הציון הגבוה ביותר בישראל. סביבה אורבנית שוקקת ("עירוב שימושים" אמיתי).</p>
-                <p><strong>פתח תקווה, רמת סיב (ציון: 8.0 משוקלל):</strong> תנופת בנייה חדשה ומודרנית (גלובל טאוורס, ב.ס.ר סיטי). היתרון האסטרטגי הוא גודל הקומה (Floor Plate): קומות ענק של 1,500-2,500 מ"ר. סביבת עבודה: פונקציונלית מאוד ("אזור תעשייה משודרג").</p>
-                <p><strong>ראשון לציון, מתחם האלף (ציון: 7.5 משוקלל):</strong> הציון הגבוה ביותר לאיכות הבנייה (10/10). כלל הבניינים הם חדשים לחלוטין. סביבת עבודה: עדיין בשלבי פיתוח ראשוניים.</p>
-                <p><strong>רמת גן, מתחם הבורסה (ציון: 8.0 משוקלל):</strong> מלאי מעורב מאוד. סביבה אינטנסיבית ושוקקת חיים.</p>
-                <p><strong>אזור השרון, הרצליה פיתוח (ציון: 9.5 משוקלל):</strong> מבנים איכותיים מאוד. סביבת העבודה היוקרתית בישראל.</p>
-                <p><strong>מודיעין, ליגד/מע"ר (ציון: 8.0 משוקלל):</strong> מבנים חדשים, קמפוסים מרווחים ונוף פתוח. סביבת עבודה: במע"ר החדש - מצוינת. בליגד - מבודדת יותר.</p>
-                <p><strong>בני ברק, BBC (ציון: 7.0 משוקלל):</strong> מגדלים חדשים יחסית. סביבת עבודה: פונקציונלית ועמוסה.</p>
-
-                <h2>6. טבלת דירוג משוקללת (כולל חלופה 0 ונרמול עלויות)</h2>
-                <p>שימו לב: מכיוון שחלופת ה-0 קיבלה ציון עלות 10 (0 ש"ח שכירות), ציוני העלות של שאר החלופות נורמלו כלפי מטה כדי לשקף את הפער הכלכלי האמיתי.</p>
-                <div class="report-table-wrapper">
-                    <table class="report-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>פרמטר לבחינה</th>
-                                <th>משקל</th>
-                                <th class="text-indigo-700 bg-indigo-50 font-bold">חלופה 0 (קיים)</th>
-                                <th>פתח תקווה</th>
-                                <th>ראשל"צ</th>
-                                <th>מודיעין</th>
-                                <th>בני ברק</th>
-                                <th>ת"א (אלון)</th>
-                                <th>הבורסה</th>
-                                <th>השרון</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>1</td><td class="font-bold text-slate-700">רכבת קלה</td><td>15%</td><td class="bg-indigo-50">10</td><td>10</td><td>6</td><td>0</td><td>9</td><td>7</td><td>10</td><td>2</td></tr>
-                            <tr><td>2</td><td class="font-bold text-slate-700">רכבת כבדה</td><td>15%</td><td class="bg-indigo-50">8</td><td>7</td><td>10</td><td>10</td><td>6</td><td>9</td><td>10</td><td>8</td></tr>
-                            <tr><td>3</td><td class="font-bold text-slate-700">נגישות כבישים</td><td>15%</td><td class="bg-indigo-50">6</td><td>7</td><td>9</td><td>10</td><td>6</td><td>7</td><td>4</td><td>5</td></tr>
-                            <tr><td>4</td><td class="font-bold text-slate-700">קווי אוטובוס</td><td>10%</td><td class="bg-indigo-50">9</td><td>9</td><td>6</td><td>7</td><td>9</td><td>9</td><td>10</td><td>8</td></tr>
-                            <tr><td>5</td><td class="font-bold text-slate-700">הקצאת חניות</td><td>5%</td><td class="bg-indigo-50">10</td><td>10</td><td>10</td><td>10</td><td>6</td><td>3</td><td>2</td><td>8</td></tr>
-                            <tr><td>6</td><td class="font-bold text-blue-600">עלויות (מתוקן)</td><td class="font-bold text-blue-600">15%</td><td class="bg-indigo-50 font-bold text-blue-600">10</td><td class="font-bold">7</td><td class="font-bold">6</td><td class="font-bold">8</td><td class="font-bold">6</td><td class="font-bold text-red-500">3</td><td class="font-bold">4</td><td class="font-bold">4</td></tr>
-                            <tr><td>7</td><td class="font-bold text-slate-700">זמינות והיצע</td><td>10%</td><td class="bg-indigo-50">10</td><td>10</td><td>9</td><td>9</td><td>8</td><td>6</td><td>7</td><td>7</td></tr>
-                            <tr><td>8</td><td class="font-bold text-slate-700">איכות וגמישות</td><td>10%</td><td class="bg-indigo-50 text-red-500 font-bold">7</td><td>9</td><td>9</td><td>9</td><td>7</td><td>9</td><td>7</td><td>9</td></tr>
-                            <tr><td>9</td><td class="font-bold text-slate-700">סביבת עבודה</td><td>5%</td><td class="bg-indigo-50">10</td><td>7</td><td>6</td><td>7</td><td>6</td><td>10</td><td>9</td><td>10</td></tr>
-                            <tr class="font-black border-t-2 border-primary bg-slate-100">
-                                <td></td><td class="text-primary">ציון סופי</td><td>100%</td><td class="bg-indigo-100 text-indigo-700 text-lg">8.70</td><td class="text-green-600 text-lg">8.30</td><td>7.85</td><td>7.55</td><td>7.05</td><td>6.95</td><td>7.15</td><td>6.15</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <h2>7. ניתוח רגישות (Sensitivity Analysis)</h2>
-                <p>כלי ניהולי זה נועד לבחון את "יציבות" ההמלצה. להלן פירוט תרחישי קיצון (כולל חלופת ה-0):</p>
-                
-                <h3>7.1 תרחיש א': "העובד הנוהג" (Car Oriented)</h3>
-                <p><strong>ההנחה:</strong> רכב פרטי הוא העיקר.<br>
-                <strong>התוצאה:</strong> חלופת ה-0 נחלשת מעט (בגלל הפקקים). מודיעין (9.00 במקור) וראשל"צ מתחזקות ועוקפות את חלופת ה-0.</p>
-                
-                <h3>7.2 תרחיש ב': "חיסכון אגרסיבי" (Budget Crisis)</h3>
-                <p><strong>ההנחה:</strong> הפרמטר הכלכלי הופך למכריע (משקל כפול).<br>
-                <strong>התוצאה:</strong> חלופת ה-0 מנצחת בפער עצום (נוק-אאוט). הפער הכלכלי שלה (0 שכירות) מציב אותה הרחק לפני פתח תקווה (שעלותה כ-6.5 מלש"ח).</p>
-                
-                <h3>7.3 תרחיש ג': "פרימיום ומרכזיות" (Prestige)</h3>
-                <p><strong>ההנחה:</strong> העדפה למיקום יוקרתי.<br>
-                <strong>התוצאה:</strong> חלופת ה-0 כובשת את הפסגה. שילוב של מיקום פרימיום (לב ת"א) ללא עלות הפרימיום. תל אביב (יגאל אלון) והרצליה אחריה.</p>
-                
-                <h3>7.4 תרחיש ד': "הרוב הצפוני" (North Demographics)</h3>
-                <p><strong>התוצאה:</strong> פתח תקווה וחלופת ה-0 מתחרות ראש בראש, עם יתרון קל לפתח תקווה בנגישות ויתרון לחלופה 0 בעלות.</p>
-                
-                <h3>7.5 תרחיש ה': "הרוב הדרומי" (South Demographics)</h3>
-                <p><strong>התוצאה:</strong> ראשון לציון (8.95 במקור) כובשת את המקום הראשון, ודוחקת את חלופת ה-0 ופתח תקווה למקומות נמוכים יותר.</p>
-
-                <h3>7.6 טבלת סיכום רגישות (מטריצת החלטה)</h3>
-                <div class="report-table-wrapper">
-                    <table class="report-table">
-                        <thead>
-                            <tr>
-                                <th>החלופה</th>
-                                <th>תרחיש בסיס</th>
-                                <th>תרחיש א' (רכב)</th>
-                                <th>תרחיש ב' (חיסכון)</th>
-                                <th>תרחיש ג' (יוקרה)</th>
-                                <th>תרחיש ה' (דרום)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="font-bold text-indigo-700 bg-indigo-50"><td>חלופה 0 (קיים)</td><td>8.70 (1)</td><td>8.20 (4)</td><td class="text-green-600">9.60 (1)</td><td class="text-green-600">9.10 (1)</td><td>8.40 (3)</td></tr>
-                            <tr class="font-bold text-green-700"><td>פתח תקווה</td><td>8.30 (2)</td><td>8.10 (5)</td><td>8.80 (2)</td><td>7.60 (4)</td><td>8.00 (4)</td></tr>
-                            <tr class="font-bold text-blue-700"><td>ראשון לציון</td><td>7.85 (3)</td><td>8.60 (2)</td><td>8.00 (4)</td><td>7.30 (5)</td><td class="text-green-600">8.70 (1)</td></tr>
-                            <tr><td>מודיעין</td><td>7.55 (4)</td><td class="text-green-600 font-bold">8.80 (1)</td><td>8.50 (3)</td><td>6.90 (7)</td><td>8.20 (2)</td></tr>
-                            <tr><td>רמת גן (בורסה)</td><td>7.15 (5)</td><td>5.40 (8)</td><td>5.50 (7)</td><td>8.10 (3)</td><td>6.50 (7)</td></tr>
-                            <tr><td>בני ברק</td><td>7.05 (6)</td><td>6.50 (6)</td><td>8.00 (5)</td><td>6.60 (8)</td><td>6.80 (6)</td></tr>
-                            <tr><td>תל אביב (אלון)</td><td>6.95 (7)</td><td>6.10 (7)</td><td>5.80 (8)</td><td>8.80 (2)</td><td>6.80 (5)</td></tr>
-                            <tr><td>השרון</td><td>6.15 (8)</td><td>6.80 (3)</td><td>6.00 (6)</td><td>8.60 (3)</td><td>6.20 (8)</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <h3>7.7 מסקנות מניתוח הרגישות</h3>
-                <ul class="list-disc list-inside">
-                    <li><strong>החלופה היציבה ("הבטוחה"):</strong> כעת זוהי חלופת ה-0. היא מנצחת ברוב התרחישים המרכזיים בזכות העלות האפסית והמיקום.</li>
-                    <li><strong>החלופה האסטרטגית לדרום:</strong> ראשון לציון (מתחם האלף).</li>
-                    <li><strong>מודיעין:</strong> נותרת חלופת נישה לבעלי רכב ולחיסכון (אך פחותה מחלופה 0 בחיסכון).</li>
-                </ul>
-
-                <h2>8. סיכום ומסקנות אינטגרטיביות</h2>
-                <p>תהליך הניתוח מוביל לשלוש תובנות אסטרטגיות מרכזיות:</p>
-                <ol class="list-decimal list-inside space-y-2">
-                    <li><strong>חלופת הליבה: חלופת ה-0 (ציון 8.70).</strong> זוהי החלופה המנצחת בדירוג החדש. היתרון הכלכלי של הישארות בנכס בבעלות (חיסכון של כ-6.5-9 מיליון ש"ח בשנה) הוא דרמטי. בנוסף, המיקום נהנה מנגישות תחבורתית ציבורית מושלמת וחניה פרטית. האתגר היחיד הוא המבנה המיושן והמפוצל.</li>
-                    <li><strong>החלופה התפעולית: פתח תקווה, רמת סיב (ציון 8.30).</strong> זוהי החלופה השנייה בטיבה (ירדה מהמקום הראשון בעקבות נרמול העלויות). היא מספקת את ה-Value for Money הגבוה ביותר מבין אפשרויות המעבר: שילוב של מחיר אטרקטיבי וקומות ענק מודרניות. היא הפתרון הנכון אם החברה מחליטה שאינה יכולה להישאר במבנה הישן.</li>
-                    <li><strong>החלופה האסטרטגית: ראשון לציון, מתחם האלף (ציון 7.85).</strong> במידה ויתברר כי מרכז הכובד הדמוגרפי של העובדים נוטה דרומה, היא עשויה לעקוף את פתח תקווה כאלטרנטיבה להעתקה.</li>
-                    <li><strong>חלופות הנישה:</strong> מודיעין (ציון 7.55): הפתרון לנהגים, אך כעת פחות אטרקטיבי כלכלית מחלופת ה-0. בני ברק והבורסה: נדחקו מטה בדירוג.</li>
-                </ol>
-
-                <div class="mt-8 pt-6 border-t border-slate-200 flex justify-between items-end">
-                    <p class="font-bold text-slate-800 text-lg">בברכה,<br>סמנכ"ל נכסים</p>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-slate-800 text-slate-400 py-6 mt-6 border-t border-slate-700">
-        <div class="max-w-7xl mx-auto px-4 text-center text-xs">
-            <p>חברת נמלי ישראל | חטיבת נכסים | ינואר 2026</p>
-        </div>
-    </footer>
-
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        // Register DataLabels for Chart.js
-        Chart.register(ChartDataLabels);
-        Chart.defaults.font.family = 'Heebo';
-
-        // --- DATA MODEL (HQ ALTERNATIVES) ---
-        const defaultCities = {
-            option0: { 
-                id: 'option0', name: 'חלופה 0 (קיים)', color: '#4f46e5', 
-                lat: 32.067, lng: 34.785, 
-                cost: 2.76, 
-                scores: { lightRail: 10, heavyRail: 8, roads: 6, bus: 9, parking: 10, cost: 10, avail: 10, quality: 7, env: 10 }
-            },
-            pt: { 
-                id: 'pt', name: 'פתח תקווה', color: '#10b981', 
-                lat: 32.087, lng: 34.856,
-                cost: 6.5, 
-                scores: { lightRail: 10, heavyRail: 7, roads: 7, bus: 9, parking: 10, cost: 7, avail: 10, quality: 9, env: 7 }
-            },
-            rishon: { 
-                id: 'rishon', name: 'ראשון לציון', color: '#3b82f6', 
-                lat: 31.985, lng: 34.765,
-                cost: 7.2, 
-                scores: { lightRail: 6, heavyRail: 10, roads: 9, bus: 6, parking: 10, cost: 6, avail: 9, quality: 9, env: 6 }
-            },
-            modiin: { 
-                id: 'modiin', name: 'מודיעין', color: '#6366f1', 
-                lat: 31.915, lng: 34.985,
-                cost: 5.6, 
-                scores: { lightRail: 0, heavyRail: 10, roads: 10, bus: 7, parking: 10, cost: 8, avail: 9, quality: 9, env: 7 }
-            },
-            bbc: { 
-                id: 'bbc', name: 'בני ברק', color: '#eab308', 
-                lat: 32.095, lng: 34.830,
-                cost: 7.4, 
-                scores: { lightRail: 9, heavyRail: 6, roads: 6, bus: 9, parking: 6, cost: 6, avail: 8, quality: 7, env: 6 }
-            },
-            tlv: { 
-                id: 'tlv', name: 'ת"א (אלון)', color: '#ef4444', 
-                lat: 32.070, lng: 34.794,
-                cost: 11.6, 
-                scores: { lightRail: 7, heavyRail: 9, roads: 7, bus: 9, parking: 3, cost: 3, avail: 6, quality: 9, env: 10 }
-            },
-            bursa: { 
-                id: 'bursa', name: 'הבורסה', color: '#f97316', 
-                lat: 32.082, lng: 34.800,
-                cost: 10.5, 
-                scores: { lightRail: 10, heavyRail: 10, roads: 4, bus: 10, parking: 2, cost: 4, avail: 7, quality: 7, env: 9 }
-            },
-            sharon: { 
-                id: 'sharon', name: 'הרצליה', color: '#ec4899', 
-                lat: 32.163, lng: 34.808,
-                cost: 10.0, 
-                scores: { lightRail: 2, heavyRail: 8, roads: 5, bus: 8, parking: 8, cost: 4, avail: 7, quality: 9, env: 10 }
-            }
-        };
-
-        let cities = JSON.parse(JSON.stringify(defaultCities));
-
-        // --- EMPLOYEE GEO DATA (EXACT COUNT = 137) ---
-        const employeesGeo = [
-            { city: 'תל אביב-יפו', lat: 32.0853, lng: 34.7818, count: 19, region: 'center' },
-            { city: 'פתח תקווה', lat: 32.0840, lng: 34.8878, count: 14, region: 'center' },
-            { city: 'חולון', lat: 32.0158, lng: 34.7732, count: 7, region: 'center' },
-            { city: 'ראשון לציון', lat: 31.9730, lng: 34.7925, count: 7, region: 'shfela' },
-            { city: 'רמת גן', lat: 32.0684, lng: 34.8248, count: 7, region: 'center' },
-            { city: 'הרצליה', lat: 32.1624, lng: 34.8447, count: 5, region: 'sharon' },
-            { city: 'אשקלון', lat: 31.6693, lng: 34.5715, count: 5, region: 'south' },
-            { city: 'קריית אונו', lat: 32.0610, lng: 34.8624, count: 5, region: 'center' },
-            { city: 'כפר סבא', lat: 32.1714, lng: 34.9083, count: 4, region: 'sharon' },
-            { city: 'מודיעין', lat: 31.9056, lng: 35.0062, count: 4, region: 'shfela' },
-            { city: 'אשדוד', lat: 31.7912, lng: 34.6416, count: 3, region: 'south' },
-            { city: 'רחובות', lat: 31.8928, lng: 34.8113, count: 3, region: 'shfela' },
-            { city: 'יהוד', lat: 32.0336, lng: 34.8876, count: 3, region: 'center' },
-            { city: 'גן יבנה', lat: 31.7820, lng: 34.7088, count: 3, region: 'south' },
-            { city: 'אבן יהודה', lat: 32.2687, lng: 34.8906, count: 3, region: 'sharon' },
-            { city: 'ראש העין', lat: 32.0967, lng: 34.9667, count: 3, region: 'center' },
-            { city: 'שוהם', lat: 31.9547, lng: 34.9452, count: 3, region: 'shfela' },
-            { city: 'גבעתיים', lat: 32.0722, lng: 34.8089, count: 2, region: 'center' },
-            { city: 'אזור', lat: 32.0233, lng: 34.8028, count: 2, region: 'center' },
-            { city: 'נס ציונה', lat: 31.9304, lng: 34.7981, count: 2, region: 'shfela' },
-            { city: 'להבים', lat: 31.3683, lng: 34.8197, count: 2, region: 'south' },
-            { city: 'רמת השרון', lat: 32.1458, lng: 34.8398, count: 1, region: 'sharon' },
-            { city: 'ניר יפה', lat: 32.5539, lng: 35.2589, count: 1, region: 'north' },
-            { city: 'בת חפר', lat: 32.3361, lng: 35.0116, count: 1, region: 'sharon' },
-            { city: 'נהורה', lat: 31.6375, lng: 34.6978, count: 1, region: 'south' },
-            { city: 'אורנית', lat: 32.1331, lng: 34.9922, count: 1, region: 'sharon' },
-            { city: 'ג\'ולס', lat: 32.9469, lng: 35.1764, count: 1, region: 'north' },
-            { city: 'גינתון', lat: 31.9567, lng: 34.9142, count: 1, region: 'shfela' },
-            { city: 'טייבה', lat: 32.2662, lng: 35.0086, count: 1, region: 'sharon' },
-            { city: 'נען', lat: 31.8808, lng: 34.8622, count: 1, region: 'shfela' },
-            { city: 'קרית מוצקין', lat: 32.8322, lng: 35.0747, count: 1, region: 'north' },
-            { city: 'ברקת', lat: 32.0167, lng: 34.9500, count: 1, region: 'center' },
-            { city: 'חדרה', lat: 32.4340, lng: 34.9197, count: 1, region: 'north' },
-            { city: 'חיפה', lat: 32.7940, lng: 34.9896, count: 1, region: 'north' },
-            { city: 'צופית', lat: 32.1864, lng: 34.9228, count: 1, region: 'sharon' },
-            { city: 'נצרת', lat: 32.7019, lng: 35.3035, count: 1, region: 'north' },
-            { city: 'כפר יונה', lat: 32.3161, lng: 34.9358, count: 1, region: 'sharon' },
-            { city: 'גני טל', lat: 31.8028, lng: 34.7500, count: 1, region: 'south' },
-            { city: 'בנימינה', lat: 32.5186, lng: 34.9458, count: 1, region: 'north' },
-            { city: 'הוד השרון', lat: 32.1528, lng: 34.8911, count: 1, region: 'sharon' },
-            { city: 'יבנה', lat: 31.8767, lng: 34.7431, count: 1, region: 'shfela' },
-            { city: 'רמלה', lat: 31.9286, lng: 34.8697, count: 1, region: 'shfela' },
-            { city: 'נתניה', lat: 32.3215, lng: 34.8532, count: 1, region: 'sharon' },
-            { city: 'קריית ים', lat: 32.8469, lng: 35.0664, count: 1, region: 'north' },
-            { city: 'אמונים', lat: 31.7450, lng: 34.6644, count: 1, region: 'south' },
-            { city: 'עמינדב', lat: 31.7511, lng: 35.1378, count: 1, region: 'shfela' },
-            { city: 'באר יעקב', lat: 31.9422, lng: 34.8322, count: 1, region: 'shfela' },
-            { city: 'גן הדרום', lat: 31.7619, lng: 34.6836, count: 1, region: 'south' },
-            { city: 'מזכרת בתיה', lat: 31.8542, lng: 34.8431, count: 1, region: 'shfela' },
-            { city: 'אייל', lat: 32.2036, lng: 34.9922, count: 1, region: 'sharon' },
-            { city: 'דימונה', lat: 31.0667, lng: 35.0333, count: 1, region: 'south' },
-            { city: 'ניר גלים', lat: 31.8211, lng: 34.6853, count: 1, region: 'south' }
-        ];
-
-        // RUSH HOUR PENALTIES
-        const rushHourPenalties = {
-            'pt': { 'center': 5, 'south': 25, 'shfela': 20, 'sharon': -10, 'north': -10 },
-            'rishon': { 'center': 10, 'south': -25, 'shfela': -20, 'sharon': 35, 'north': 40 },
-            'modiin': { 'center': 20, 'south': 10, 'shfela': -15, 'sharon': 40, 'north': 45 },
-            'bbc': { 'center': 10, 'south': 20, 'shfela': 15, 'sharon': 0, 'north': 0 },
-            'tlv': { 'center': 5, 'south': 10, 'shfela': 10, 'sharon': 10, 'north': 10 },
-            'bursa': { 'center': 15, 'south': 0, 'shfela': 0, 'sharon': -5, 'north': -5 },
-            'sharon': { 'center': 15, 'south': 45, 'shfela': 35, 'sharon': -20, 'north': -20 }
-        };
-
-        const scenarios = {
-            base: { weights: { lightRail: 15, heavyRail: 15, roads: 15, bus: 10, parking: 5, cost: 15, avail: 10, quality: 10, env: 5 } },
-            south: { weights: { lightRail: 10, heavyRail: 25, roads: 25, bus: 5, parking: 5, cost: 15, avail: 10, quality: 5, env: 0 } },
-            car: { weights: { lightRail: 5, heavyRail: 10, roads: 25, bus: 5, parking: 25, cost: 10, avail: 10, quality: 5, env: 5 } },
-            budget: { weights: { lightRail: 10, heavyRail: 10, roads: 10, bus: 10, parking: 5, cost: 40, avail: 10, quality: 5, env: 0 } },
-            prestige: { weights: { lightRail: 15, heavyRail: 10, roads: 10, bus: 10, parking: 5, cost: 5, avail: 5, quality: 20, env: 20 } },
-            north: { weights: { lightRail: 5, heavyRail: 25, roads: 5, bus: 10, parking: 10, cost: 5, avail: 10, quality: 15, env: 15 } }
-        };
-
-        // Globals
-        let mainChartInstance = null;
-        let costChartInstance = null;
-        let customChartInstance = null;
-        let impactChartInstance = null;
-        let timeChartInstance = null;
-        let severityChartInstance = null;
-        let citiesChartInstance = null;
-        let currentScenarioKey = 'base';
-        let currentImpactHQ = 'option0';
-        let isEditMode = false;
-        let mapInstance = null;
-        let heatMapInstance = null;
-        let heatLayerGroup = null;
-
-        // --- CORE FUNCTIONS ---
-        function calculateRanking(weights) {
-            const results = [];
-            let sumWeights = 0;
-            for (const p in weights) sumWeights += weights[p];
-            if (sumWeights === 0) sumWeights = 1; 
-
-            for (const key in cities) {
-                const city = cities[key];
-                let score = 0;
-                for (const param in weights) {
-                    if(city.scores[param] !== undefined) score += city.scores[param] * weights[param];
-                }
-                results.push({ key: key, name: city.name, score: (score / sumWeights).toFixed(2), color: city.color, rawScores: city.scores });
-            }
-            return results.sort((a, b) => b.score - a.score);
-        }
-
-        // Distance Calculator (Haversine)
-        function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-            var R = 6371; 
-            var dLat = deg2rad(lat2-lat1);
-            var dLon = deg2rad(lon2-lon1); 
-            var a = 
-                Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
-            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-            var d = R * c; 
-            return d;
-        }
-        function deg2rad(deg) { return deg * (Math.PI/180); }
-
-        // Generate dynamic impact data based on distances + rush hour penalties
-        function generateImpactData(hqKey) {
-            let data = {
-                improves: 0, same: 0, worsens: 0,
-                timeBins: [0, 0, 0, 0, 0],
-                severity: [0, 0, 0, 0, 0, 0], // [Sig Improve, Minor Improve, Same, Minor Worsen, Mod Worsen, Sev Worsen]
-                msg: ""
-            };
-
-            const baseHq = cities['option0'];
-            const newHq = cities[hqKey];
-
-            if (hqKey === 'option0') {
-                data.same = 137; 
-                data.timeBins[1] = 137; 
-                data.severity[2] = 137; // 'Same' is index 2
-                data.msg = "חלופת המצב הקיים אינה משנה את זמני ההגעה לאיש מהעובדים, ולכן היא נטולת סיכוני שימור כוח אדם הקשורים לזמן נסיעה.";
-                return data;
-            }
-
-            employeesGeo.forEach(emp => {
-                const baseDist = getDistanceFromLatLonInKm(emp.lat, emp.lng, baseHq.lat, baseHq.lng);
-                const newDist = getDistanceFromLatLonInKm(emp.lat, emp.lng, newHq.lat, newHq.lng);
-                
-                // Base difference in minutes (approx 1.5 min per km diff to account for urban speed)
-                let diffMinutes = (newDist - baseDist) * 1.5; 
-                
-                // Add rush hour penalty based on region crossing
-                const penalty = rushHourPenalties[hqKey] ? (rushHourPenalties[hqKey][emp.region] || 0) : 0;
-                const totalImpactMins = diffMinutes + penalty;
-
-                // TLV PENALTY RULE: moving out of TLV is automatically severe for TLV residents
-                let forceSevere = false;
-                if (emp.city === 'תל אביב-יפו' && hqKey !== 'option0' && hqKey !== 'tlv') {
-                    forceSevere = true;
-                }
-
-                if (forceSevere) {
-                    data.severity[5] += emp.count; // Sev Worsen
-                    data.worsens += emp.count;
-                    data.timeBins[4] += emp.count;
-                } else if (totalImpactMins <= -15) {
-                    data.severity[0] += emp.count; // Sig Improve
-                    data.improves += emp.count;
-                    data.timeBins[0] += emp.count; 
-                } else if (totalImpactMins < -5) {
-                    data.severity[1] += emp.count; // Minor Improve
-                    data.improves += emp.count;
-                    data.timeBins[0] += emp.count;
-                } else if (totalImpactMins <= 5) {
-                    data.severity[2] += emp.count; // Same
-                    data.same += emp.count;
-                    data.timeBins[1] += emp.count;
-                } else if (totalImpactMins <= 10) {
-                    data.severity[3] += emp.count; // Minor Worsen (<=10)
-                    data.worsens += emp.count;
-                    data.timeBins[2] += emp.count;
-                } else if (totalImpactMins <= 20) {
-                    data.severity[4] += emp.count; // Mod Worsen (<=20)
-                    data.worsens += emp.count;
-                    data.timeBins[3] += emp.count;
-                } else {
-                    data.severity[5] += emp.count; // Sev Worsen (>20)
-                    data.worsens += emp.count;
-                    data.timeBins[4] += emp.count;
-                }
-            });
-
-            // Specific strategic messages
-            if (hqKey === 'pt') data.msg = "מעבר לפתח תקווה מיטיב משמעותית עם עובדי השרון והעיר פתח תקווה עצמה. מנגד, קיימת פגיעה בתושבי הדרום והשפלה, ופגיעה קשה ב-19 תושבי תל אביב שמאבדים את הקרבה למשרד.";
-            if (hqKey === 'rishon') data.msg = "ראשון לציון מקצרת את הנסיעה לאוכלוסיית הדרום והשפלה. הבעיה נעוצה בתושבי השרון, צפון ותל אביב, שיחוו הרעה ניכרת (חציית פקקי איילון צפונה בערב ודרומה בבוקר).";
-            if (hqKey === 'modiin') data.msg = "מודיעין היא החלופה המורכבת ביותר בהיבט הדמוגרפי. למרות היותה זולה, היא פוגעת בלמעלה מ-80 עובדים (שרון, תל אביב וצפון), לחלקם מעל 40 דק' תוספת ביום.";
-            if (hqKey === 'bbc') data.msg = "בני ברק שומרת על סטטוס-קוו לרוב תושבי גוש דן. הרעה תורגש בעיקר לתושבי תל אביב המאבדים נגישות רגלית/קלה, ולנוסעי רכב פרטי בציר ז'בוטינסקי.";
-            if (hqKey === 'tlv') data.msg = "מעבר לציר יגאל אלון דומה מאוד למצב הנוכחי עבור תושבי תל אביב. עם זאת, עומסי התנועה באזור קשים יותר בשעות השיא (15:30-17:30), מה שיוסיף זמן לנהגים המגיעים מבחוץ.";
-            if (hqKey === 'bursa') data.msg = "מתחם הבורסה ישפר זמנים דרמטית למגיעים ברכבת מחוץ לעיר. מנגד, הוא יפגע בעשרות עובדים (כולל תושבי ת\"א) בשל עומסי התנועה הכבדים בכניסות.";
-            if (hqKey === 'sharon') data.msg = "הרצליה פיתוח מושלמת לעובדי השרון והצפון, אך מציבה מחסום תחבורתי קשה לעובדי השפלה, הדרום ותל אביב. פוטנציאל נטישה ממשי להרבה מהם שיבלו שעות בפקקים.";
-
-            return data;
-        }
-
-        // --- DASHBOARD VIEW ---
-        function setScenario(key) {
-            currentScenarioKey = key;
-            document.querySelectorAll('.scenario-btn').forEach(btn => {
-                btn.classList.remove('active', 'bg-blue-50', 'border-secondary', 'shadow-md');
-                btn.classList.add('border-slate-200');
-            });
-            const activeBtn = document.getElementById(`btn-${key}`);
-            if (activeBtn) {
-                activeBtn.classList.add('active', 'bg-blue-50', 'border-secondary', 'shadow-md');
-                activeBtn.classList.remove('border-slate-200');
-            }
-            const rankingData = calculateRanking(scenarios[key].weights);
-            updateMainChart(rankingData);
-            populateDrillDownTable(rankingData);
-        }
-
-        function populateDrillDownTable(data) {
-            const tbody = document.getElementById('drilldown-body');
-            tbody.innerHTML = '';
-            data.forEach(item => {
-                const s = item.rawScores;
-                const cell = (val, param) => isEditMode ? `<input type="number" min="0" max="10" value="${val}" class="score-input" onchange="updateScore('${item.key}', '${param}', this.value)">` : val;
-                const isOpt0 = item.key === 'option0';
-                const bgClass = isOpt0 ? 'bg-indigo-50 font-bold' : 'hover:bg-white';
-
-                tbody.innerHTML += `
-                    <tr class="${bgClass} transition border-b">
-                        <td class="p-2 text-slate-800">${item.name}</td>
-                        <td class="p-2 text-center">${cell(s.lightRail, 'lightRail')}</td>
-                        <td class="p-2 text-center">${cell(s.heavyRail, 'heavyRail')}</td>
-                        <td class="p-2 text-center">${cell(s.roads, 'roads')}</td>
-                        <td class="p-2 text-center">${cell(s.bus, 'bus')}</td>
-                        <td class="p-2 text-center">${cell(s.parking, 'parking')}</td>
-                        <td class="p-2 text-center text-blue-600 font-bold">${cell(s.cost, 'cost')}</td>
-                        <td class="p-2 text-center">${cell(s.quality, 'quality')}</td>
-                    </tr>
-                `;
-            });
-        }
-
-        function toggleEditMode() {
-            isEditMode = !isEditMode;
-            const btn = document.getElementById('btn-edit-scores');
-            if (isEditMode) {
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> סיום עריכה';
-                btn.classList.replace('bg-blue-50', 'bg-green-50'); btn.classList.replace('text-blue-600', 'text-green-600');
-            } else {
-                btn.innerHTML = '<i class="fa-solid fa-pen"></i> ערוך ציונים';
-                btn.classList.replace('bg-green-50', 'bg-blue-50'); btn.classList.replace('text-green-600', 'text-blue-600');
-            }
-            setScenario(currentScenarioKey);
-        }
-
-        function updateScore(cityKey, param, value) {
-            let val = parseFloat(value);
-            if (isNaN(val)) val = 0; if (val > 10) val = 10; if (val < 0) val = 0;
-            cities[cityKey].scores[param] = val;
-            setScenario(currentScenarioKey);
-        }
-
-        function resetScores() {
-            if (confirm('האם לאפס את כל הציונים לברירת המחדל?')) {
-                cities = JSON.parse(JSON.stringify(defaultCities));
-                if (isEditMode) toggleEditMode();
-                setScenario(currentScenarioKey);
-            }
-        }
-
-        function toggleDrillDown() { document.getElementById('drilldown-container').classList.toggle('hidden'); }
-        function toggleCostTable() { document.getElementById('cost-table-container').classList.toggle('hidden'); }
-
-        function updateMainChart(data) {
-            const ctx = document.getElementById('mainChart').getContext('2d');
-            if (mainChartInstance) mainChartInstance.destroy();
-            mainChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: { labels: data.map(d => d.name), datasets: [{ label: 'ציון סופי', data: data.map(d => d.score), backgroundColor: data.map(d => d.color), borderRadius: 4 }] },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'top', font: { weight: 'bold', size: 11 }, formatter: v => v } },
-                    scales: { y: { min: 0, max: 11, display: false }, x: { grid: { display: false } } }, layout: { padding: { top: 20 } }
-                }
-            });
-        }
-
-        function initCostChart() {
-            const ctx = document.getElementById('costChart').getContext('2d');
-            const sortedCities = Object.values(cities).sort((a, b) => b.cost - a.cost);
-            if (costChartInstance) costChartInstance.destroy();
-            costChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: { labels: sortedCities.map(c => c.name), datasets: [{ data: sortedCities.map(c => c.cost), backgroundColor: sortedCities.map(c => c.color), borderRadius: 4 }] },
-                options: {
-                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', formatter: v => v + ' M', font: { size: 10, weight: 'bold' } } },
-                    scales: { x: { display: false, max: 14 }, y: { grid: { display: false } } }, layout: { padding: { right: 30 } }
-                }
-            });
-        }
-
-        // --- GEO & EMPLOYEE IMPACT VIEW ---
-        function initGeoView() {
-            if (!heatMapInstance) {
-                heatMapInstance = L.map('heat-map').setView([32.05, 34.85], 9);
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                    attribution: '&copy; OpenStreetMap contributors'
-                }).addTo(heatMapInstance);
-            } else {
-                heatMapInstance.invalidateSize();
-            }
-            updateImpactAnalysis();
-            renderCitiesChart();
-        }
-
-        function switchGeoTab(tabId) {
-            document.querySelectorAll('.geo-tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.sub-tab').forEach(el => el.classList.remove('active', 'bg-slate-50'));
-            
-            document.getElementById(tabId).classList.remove('hidden');
-            const btn = document.getElementById(`btn-${tabId}`);
-            btn.classList.add('active', 'bg-slate-50');
-            
-            if(tabId === 'geo-overview' && heatMapInstance) setTimeout(() => heatMapInstance.invalidateSize(), 100);
-        }
-
-        function setImpactHQ(hqKey, hqName) {
-            currentImpactHQ = hqKey;
-            document.querySelectorAll('.impact-hq-btn').forEach(btn => {
-                btn.classList.remove('active', 'border-2', 'border-indigo-600', 'bg-indigo-50', 'text-indigo-700');
-                btn.classList.add('border', 'border-slate-200', 'bg-white', 'text-slate-600');
-            });
-            const activeBtn = document.getElementById(`btn-impact-${hqKey}`);
-            if (activeBtn) {
-                activeBtn.classList.remove('border', 'border-slate-200', 'bg-white', 'text-slate-600');
-                activeBtn.classList.add('active', 'border-2', 'border-indigo-600', 'bg-indigo-50', 'text-indigo-700');
-            }
-            updateImpactAnalysis(hqName);
-        }
-
-        function updateHeatMap(hqKey) {
-            if (!heatMapInstance) return;
-            if (!heatLayerGroup) {
-                heatLayerGroup = L.layerGroup().addTo(heatMapInstance);
-            }
-            heatLayerGroup.clearLayers();
-
-            const baseHq = cities['option0'];
-            const newHq = cities[hqKey];
-            const isBase = hqKey === 'option0';
-
-            // Update Legend
-            const legend = document.getElementById('heat-map-legend');
-            if (isBase) {
-                legend.innerHTML = `
-                    <span class="font-bold block mb-2 border-b pb-1 text-slate-700">מצב קיים - גודל ריכוז:</span>
-                    <div class="flex items-center gap-2 mb-1.5"><div class="w-4 h-4 rounded-full bg-slate-600 opacity-70 border border-slate-800"></div> ריכוז גבוה (8+ עובדים)</div>
-                    <div class="flex items-center gap-2 mb-1.5"><div class="w-4 h-4 rounded-full bg-slate-400 opacity-70 border border-slate-600"></div> ריכוז בינוני (4-7 עובדים)</div>
-                    <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-full bg-slate-300 opacity-70 border border-slate-500"></div> בודדים (1-3 עובדים)</div>
-                    <div class="mt-2 pt-1 border-t text-[9px] text-slate-500">* גודל העיגול מייצג כמות עובדים</div>
-                `;
-            } else {
-                legend.innerHTML = `
-                    <span class="font-bold block mb-2 border-b pb-1 text-slate-700">השפעת המעבר (ביחס לקיים):</span>
-                    <div class="flex items-center gap-2 mb-1.5"><div class="w-4 h-4 rounded-full bg-[#16a34a] opacity-80 border border-green-800"></div> <span class="text-green-700 font-bold">שיפור משמעותי</span></div>
-                    <div class="flex items-center gap-2 mb-1.5"><div class="w-4 h-4 rounded-full bg-[#4ade80] opacity-80 border border-green-600"></div> <span class="text-green-600 font-bold">שיפור קל</span></div>
-                    <div class="flex items-center gap-2 mb-1.5"><div class="w-4 h-4 rounded-full bg-[#cbd5e1] opacity-80 border border-slate-500"></div> <span class="text-slate-600 font-bold">ללא שינוי (אפור)</span></div>
-                    <div class="flex items-center gap-2 mb-1.5"><div class="w-4 h-4 rounded-full bg-[#facc15] opacity-80 border border-yellow-600"></div> <span class="text-yellow-700 font-bold">פגיעה קלה (עד 10 דק')</span></div>
-                    <div class="flex items-center gap-2 mb-1.5"><div class="w-4 h-4 rounded-full bg-[#f97316] opacity-80 border border-orange-700"></div> <span class="text-orange-600 font-bold">פגיעה מתונה (10-20 דק')</span></div>
-                    <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-full bg-[#ef4444] opacity-80 border border-red-700"></div> <span class="text-red-600 font-bold">פגיעה קשה (סיכון)</span></div>
-                    <div class="mt-2 pt-1 border-t text-[9px] text-slate-500">* מחושב דינמית פר-יישוב ע"ב מרחק ופקקים</div>
-                `;
-            }
-
-            employeesGeo.forEach(emp => {
-                let radius = 600 + (emp.count * 180);
-                let color, impactText;
-
-                if (isBase) {
-                    color = emp.count > 7 ? '#475569' : (emp.count > 3 ? '#94a3b8' : '#cbd5e1'); 
-                    impactText = 'מצב קיים (בסיס)';
-                } else {
-                    const baseDist = getDistanceFromLatLonInKm(emp.lat, emp.lng, baseHq.lat, baseHq.lng);
-                    const newDist = getDistanceFromLatLonInKm(emp.lat, emp.lng, newHq.lat, newHq.lng);
-                    
-                    let diffMinutes = (newDist - baseDist) * 1.5; 
-                    const penalty = rushHourPenalties[hqKey] ? (rushHourPenalties[hqKey][emp.region] || 0) : 0;
-                    let totalImpactMins = diffMinutes + penalty;
-                    
-                    // TLV PENALTY RULE
-                    let forceSevere = false;
-                    if (emp.city === 'תל אביב-יפו' && hqKey !== 'option0' && hqKey !== 'tlv') {
-                        forceSevere = true;
-                    }
-
-                    if (forceSevere || totalImpactMins > 20) {
-                        color = '#ef4444'; // Red
-                        impactText = 'הרעה משמעותית (מעל 20 דק\' תוספת לכיוון)';
-                        if (forceSevere) impactText = 'הרעה משמעותית עקב מעבר אל מחוץ לעיר';
-                    } else if (totalImpactMins <= -15) {
-                        color = '#16a34a'; // Dark Green
-                        impactText = 'שיפור משמעותי בהגעה';
-                    } else if (totalImpactMins < -5) {
-                        color = '#4ade80'; // Light Green
-                        impactText = 'שיפור קל בהגעה';
-                    } else if (totalImpactMins <= 5) {
-                        color = '#cbd5e1'; // Gray
-                        impactText = 'ללא שינוי מהותי (אפור)';
-                    } else if (totalImpactMins <= 10) {
-                        color = '#facc15'; // Yellow
-                        impactText = 'התארכות קלה (עד 10 דק\' לכיוון)';
-                    } else if (totalImpactMins <= 20) {
-                        color = '#f97316'; // Orange
-                        impactText = 'התארכות מתונה (10-20 דק\' לכיוון)';
-                    }
-                }
-
-                const popupHtml = `
-                    <div class='text-right font-sans'>
-                        <strong class='text-sm text-slate-800'>${emp.city}</strong><br>
-                        <span class='text-slate-600'>${emp.count} עובדים מופו</span>
-                        ${!isBase ? `<div class='mt-1 pt-1 border-t border-slate-200 font-bold' style='color:${color === '#cbd5e1' ? '#475569' : color}'>${impactText}</div>` : ''}
-                    </div>
-                `;
-
-                L.circle([emp.lat, emp.lng], { 
-                    color: isBase ? '#334155' : color, 
-                    fillColor: color, 
-                    fillOpacity: 0.8, 
-                    weight: 1, 
-                    radius: radius 
-                }).addTo(heatLayerGroup).bindPopup(popupHtml);
-            });
-        }
-
-        function updateImpactAnalysis(hqNameFallback) {
-            const hqKey = currentImpactHQ;
-            const data = generateImpactData(hqKey);
-            const titleName = hqNameFallback || document.getElementById(`btn-impact-${hqKey}`).querySelector('span').innerText;
-            
-            updateHeatMap(hqKey);
-
-            document.getElementById('impact-insight').innerHTML = `<strong>תובנה אסטרטגית:</strong> ${data.msg}`;
-            document.getElementById('impact-chart-title').innerText = `השפעת מעבר ל${titleName}`;
-
-            const ctx1 = document.getElementById('impactChart').getContext('2d');
-            if (impactChartInstance) impactChartInstance.destroy();
-            impactChartInstance = new Chart(ctx1, {
-                type: 'doughnut',
-                data: {
-                    labels: ['שיפור', 'ללא שינוי', 'הרעה'],
-                    datasets: [{ data: [data.improves, data.same, data.worsens], backgroundColor: ['#10b981', '#cbd5e1', '#ef4444'], borderWidth: 2, borderColor: '#fff' }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false, cutout: '65%',
-                    plugins: { 
-                        legend: { position: 'right', labels: { font: { family: 'Heebo', size: 11 }, padding: 15 } }, 
-                        datalabels: { color: '#fff', font: { weight: 'bold' }, formatter: v => v > 0 ? v : '' },
-                        tooltip: { callbacks: { label: function(context) { return ' ' + context.raw + ' עובדים'; } } }
-                    }
-                }
-            });
-
-            const ctx2 = document.getElementById('timeChart').getContext('2d');
-            if (timeChartInstance) timeChartInstance.destroy();
-            timeChartInstance = new Chart(ctx2, {
-                type: 'bar',
-                data: {
-                    labels: ['זמן נסיעה התקצר', 'אין שינוי משמעותי', 'התארך בעד 10 דק\'', 'התארך ב 10-20 דק\'', 'התארך במעל 20 דק\''],
-                    datasets: [{
-                        label: 'מספר עובדים',
-                        data: data.timeBins,
-                        backgroundColor: ['#10b981', '#cbd5e1', '#facc15', '#f97316', '#ef4444'],
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { display: false }, 
-                        datalabels: { anchor: 'end', align: 'top', font: { weight: 'bold', size: 12 }, formatter: v => v > 0 ? v : '' },
-                        tooltip: { callbacks: { label: function(context) { return ' ' + context.raw + ' עובדים'; } } }
-                    },
-                    scales: { 
-                        y: { beginAtZero: true, max: 137, title: { display: true, text: 'מספר עובדים (מתוך 137)' } }, 
-                        x: { grid: { display: false }, ticks: { font: { size: 10 } } } 
-                    }
-                }
-            });
-
-            const ctx3 = document.getElementById('severityChart').getContext('2d');
-            if (severityChartInstance) severityChartInstance.destroy();
-            severityChartInstance = new Chart(ctx3, {
-                type: 'pie',
-                data: {
-                    labels: ['שיפור משמעותי', 'שיפור קל', 'ללא שינוי', 'פגיעה קלה', 'פגיעה מתונה', 'פגיעה קשה'],
-                    datasets: [{ data: data.severity, backgroundColor: ['#16a34a', '#4ade80', '#cbd5e1', '#facc15', '#f97316', '#ef4444'], borderWidth: 1 }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { position: 'bottom', labels: { font: { family: 'Heebo' } } }, 
-                        datalabels: { color: '#334155', font: { weight: 'bold' }, formatter: v => v > 0 ? v : '' },
-                        tooltip: { callbacks: { label: function(context) { return ' ' + context.raw + ' עובדים'; } } }
-                    }
-                }
-            });
-        }
-
-        function renderCitiesChart() {
-            const ctx = document.getElementById('citiesChart').getContext('2d');
-            if (citiesChartInstance) citiesChartInstance.destroy();
-            
-            const sortedData = [...employeesGeo].sort((a,b) => b.count - a.count).slice(0, 10);
-
-            citiesChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: sortedData.map(d => d.city),
-                    datasets: [{
-                        label: 'מספר עובדים',
-                        data: sortedData.map(d => d.count),
-                        backgroundColor: '#38b6ff',
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { display: false }, 
-                        datalabels: { anchor: 'end', align: 'end', font: { weight: 'bold', size: 11 } } 
-                    },
-                    scales: { 
-                        x: { display: false, max: 20 }, 
-                        y: { grid: { display: false }, ticks: { stepSize: 2 } } 
-                    },
-                    layout: { padding: { right: 30 } }
-                }
-            });
-        }
-
-        // --- MAP VIEW (HQ LOCATIONS) ---
-        function initMap() {
-            if (mapInstance) return;
-            mapInstance = L.map('map').setView([32.05, 34.85], 11);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(mapInstance);
-
-            for (const key in cities) {
-                const city = cities[key];
-                const score = calculateRanking(scenarios.base.weights).find(c => c.key === key).score;
-                
-                const icon = L.divIcon({
-                    className: 'custom-div-icon',
-                    html: `<div style="background-color: ${city.color}; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.4);"></div>`,
-                    iconSize: [16, 16], iconAnchor: [8, 8]
-                });
-
-                L.marker([city.lat, city.lng], { icon: icon }).addTo(mapInstance)
-                    .bindPopup(`<div class="text-right"><h3 style="color:${city.color}" class="font-bold">${city.name}</h3><div>ציון: ${score}</div><div class="text-slate-500 text-xs">עלות: ${city.cost}M</div></div>`);
-            }
-        }
-
-        // --- UTILS ---
-        function switchView(viewName) {
-            ['dashboard', 'custom', 'report', 'map', 'geo'].forEach(v => {
-                const el = document.getElementById(`view-${v}`);
-                const nav = document.getElementById(`nav-${v}`);
-                if(el) el.classList.add('hidden');
-                if(nav) { nav.classList.remove('active', 'text-primary', 'bg-slate-100'); nav.classList.add('text-slate-600'); }
-            });
-            document.getElementById(`view-${viewName}`).classList.remove('hidden');
-            const activeNav = document.getElementById(`nav-${viewName}`);
-            activeNav.classList.add('active', 'text-primary', 'bg-slate-100');
-            activeNav.classList.remove('text-slate-600');
-            
-            if (viewName === 'custom') initCustomView();
-            if (viewName === 'geo') setTimeout(initGeoView, 100);
-            if (viewName === 'map') setTimeout(() => { initMap(); mapInstance.invalidateSize(); }, 100);
-        }
-
-        // --- CUSTOM SCENARIO VIEW LOGIC ---
-        function initCustomView() {
-            const container = document.getElementById('sliders-container');
-            container.innerHTML = '';
-            const baseWeights = scenarios.base.weights;
-
-            if (!window.currentCustomWeights) window.currentCustomWeights = {...baseWeights};
-
-            const displayParams = {
-                lightRail: { label: 'רק"ל', icon: 'fa-train-subway' },
-                heavyRail: { label: 'רכבת', icon: 'fa-train' },
-                roads: { label: 'רכב', icon: 'fa-car' },
-                bus: { label: 'אוטובוס', icon: 'fa-bus' },
-                parking: { label: 'חניה', icon: 'fa-square-parking' },
-                cost: { label: 'עלות', icon: 'fa-shekel-sign' },
-                quality: { label: 'איכות', icon: 'fa-building' },
-                env: { label: 'סביבה', icon: 'fa-tree' }
-            };
-
-            for (const [key, config] of Object.entries(displayParams)) {
-                const initialVal = window.currentCustomWeights[key] || 0;
-                container.innerHTML += `
-                    <div class="flex items-center gap-2 text-sm">
-                        <div class="w-24 flex-shrink-0 flex items-center text-slate-700 font-medium">
-                            <i class="fa-solid ${config.icon} w-5 text-primary"></i> ${config.label}
-                        </div>
-                        <input type="range" min="0" max="100" step="0.1" value="${initialVal}" id="slider-${key}" class="flex-grow" oninput="onSliderChange('${key}', this.value)">
-                        <span class="w-12 text-center font-mono font-bold text-primary text-xs bg-slate-100 rounded" id="val-${key}">${initialVal}%</span>
-                    </div>`;
-            }
-            updateCustomAnalysis();
-        }
-
-        function onSliderChange(changedKey, newValue) {
-            newValue = parseFloat(newValue);
-            const targetTotal = 100.0;
-            window.currentCustomWeights[changedKey] = newValue;
-            
-            const remainingBudget = Math.max(0, targetTotal - newValue);
-            const displayParamsKeys = ['lightRail', 'heavyRail', 'roads', 'bus', 'parking', 'cost', 'quality', 'env'];
-            const otherKeys = displayParamsKeys.filter(k => k !== changedKey);
-            
-            let sumOthers = 0;
-            otherKeys.forEach(k => sumOthers += (window.currentCustomWeights[k] || 0));
-            
-            if (sumOthers > 0) {
-                otherKeys.forEach(k => window.currentCustomWeights[k] = remainingBudget * (window.currentCustomWeights[k] / sumOthers));
-            } else if (remainingBudget > 0 && otherKeys.length > 0) {
-                 const equalShare = remainingBudget / otherKeys.length;
-                 otherKeys.forEach(k => window.currentCustomWeights[k] = equalShare);
-            } else {
-                 otherKeys.forEach(k => window.currentCustomWeights[k] = 0);
-            }
-
-            let currentSum = 0;
-            displayParamsKeys.forEach(k => {
-                window.currentCustomWeights[k] = Math.round(window.currentCustomWeights[k] * 10) / 10;
-                currentSum += window.currentCustomWeights[k];
-            });
-
-            const error = targetTotal - currentSum;
-            if (Math.abs(error) > 0.001) {
-                let adjustKey = otherKeys[0]; let maxVal = -1;
-                otherKeys.forEach(k => { if (window.currentCustomWeights[k] > maxVal) { maxVal = window.currentCustomWeights[k]; adjustKey = k; } });
-                window.currentCustomWeights[adjustKey] = Math.round((window.currentCustomWeights[adjustKey] + error) * 10) / 10;
-            }
-
-            displayParamsKeys.forEach(k => {
-                const val = window.currentCustomWeights[k];
-                if(document.getElementById(`val-${k}`)) document.getElementById(`val-${k}`).innerText = val.toFixed(1) + '%';
-                if (k !== changedKey && document.getElementById(`slider-${k}`)) document.getElementById(`slider-${k}`).value = val;
-            });
-            updateCustomAnalysis();
-        }
-
-        function resetCustomSliders() { window.currentCustomWeights = null; initCustomView(); }
-
-        function updateCustomAnalysis() {
-            const data = calculateRanking(window.currentCustomWeights);
-            let total = 0;
-            ['lightRail', 'heavyRail', 'roads', 'bus', 'parking', 'cost', 'quality', 'env'].forEach(k => total += (window.currentCustomWeights[k] || 0));
-            if(document.getElementById('total-weight')) document.getElementById('total-weight').innerText = Math.round(total) + '%';
-
-            const ctx = document.getElementById('customChart').getContext('2d');
-            if (customChartInstance) customChartInstance.destroy();
-            customChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: { labels: data.map(d => d.name), datasets: [{ data: data.map(d => d.score), backgroundColor: data.map(d => d.color), borderRadius: 4, barThickness: 20 }] },
-                options: {
-                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, datalabels: { color: '#1e293b', anchor: 'end', align: 'end', font: { weight: 'bold', size: 11 } } },
-                    scales: { x: { beginAtZero: true, max: 11, display: false }, y: { grid: { display: false }, ticks: { font: { size: 11 } } } },
-                    layout: { padding: { right: 30 } }, animation: { duration: 0 }
-                }
-            });
-        }
-
-        // --- INITIALIZATION ---
-        window.addEventListener('DOMContentLoaded', () => {
-            setScenario('base');
-            initCostChart();
+                <div class="score-badge ${isBase?'indigo':col}">${val}</div>
+            </div>`;
         });
+        html+='</div></div>';
+        container.innerHTML+=html;
+    }
+}
 
-    </script>
+// ============================================================
+// MODAL
+// ============================================================
+function openAssetModal(assetId){
+    const a = cities[assetId];
+    const modal = document.getElementById('asset-modal');
+    const header = document.getElementById('modal-header');
+    const body = document.getElementById('modal-body');
+    if(!modal||!header||!body) return;
+    const isBase = a.id==='option0';
+    header.className=`p-5 border-b border-slate-200 flex justify-between items-start rounded-t-2xl ${isBase?'bg-indigo-50':'bg-slate-50'}`;
+    header.innerHTML=`
+        <div>
+            <h2 class="text-xl font-black text-slate-800">${a.name} <span class="text-xs font-bold text-slate-500 bg-white px-2 py-1 rounded-md border border-slate-200 ml-2">${a.city}</span></h2>
+            <p class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-user-tie ml-1"></i> ${a.owner}</p>
+            <p class="text-xs text-slate-400 mt-0.5"><i class="fa-solid fa-ruler-combined ml-1"></i> שטח: ${a.sqm.toLocaleString('he-IL')} מ"ר</p>
+        </div>
+        <div class="${isBase?'bg-indigo-600':'bg-blue-700'} text-white px-4 py-3 rounded-xl text-center shadow-md flex-shrink-0">
+            <span class="block text-3xl font-black leading-none">${a.scores.score.toFixed(2)}</span>
+            <span class="text-[10px] uppercase font-bold mt-1 block">ציון יועץ</span>
+        </div>`;
+    const opexM = a.opexMonthly.toLocaleString('he-IL');
+    // Score breakdown bars
+    const scoreRows = [
+        {label:'עלויות שוטפות',val:a.scores.costScore,weight:'40%',color:'#3b82f6'},
+        {label:'תחבורה וחניה',val:a.scores.transport,weight:'30%',color:'#8b5cf6'},
+        {label:'סביבת עבודה',val:a.scores.env,weight:'10%',color:'#f59e0b'},
+        {label:'איכות נכס',val:a.scores.quality,weight:'10%',color:'#10b981'},
+        {label:'עלות חד-פעמית',val:a.scores.capexScore,weight:'10%',color:'#f97316'},
+    ];
+    const scoreHTML = scoreRows.map(r=>`
+        <div class="flex items-center gap-3 text-sm py-2 border-b border-slate-50 last:border-0">
+            <span class="text-slate-600 w-36 text-xs font-bold shrink-0">${r.label} <span class="font-normal text-slate-400">(${r.weight})</span></span>
+            <div class="flex-grow bg-slate-100 rounded-full h-2.5"><div class="h-2.5 rounded-full" style="width:${r.val*10}%;background:${r.color}"></div></div>
+            <span class="font-black w-8 text-right text-sm" style="color:${r.color}">${r.val.toFixed(1)}</span>
+        </div>`).join('');
+    body.innerHTML=`
+        <div class="grid grid-cols-2 gap-3 mb-5">
+            <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                <div class="text-xs text-blue-700 font-bold mb-1">OPEX שנתי</div>
+                <div class="text-2xl font-black text-blue-700">${a.cost.toFixed(2)}<span class="text-sm font-bold">M ₪</span></div>
+                <div class="text-[10px] text-blue-500 mt-1">${opexM} ₪/חודש</div>
+            </div>
+            <div class="bg-orange-50 p-4 rounded-xl border border-orange-100">
+                <div class="text-xs text-orange-700 font-bold mb-1">CAPEX נטו (לאחר השתתפות)</div>
+                <div class="text-2xl font-black ${a.capex>0?'text-orange-600':'text-slate-400'}">${a.capex>0?a.capex.toFixed(2)+' M':'ללא'}<span class="text-sm font-bold">${a.capex>0?' ₪':''}</span></div>
+                <div class="text-[10px] text-orange-400 mt-1">השקעה חד-פעמית</div>
+            </div>
+        </div>
+        ${a.rent>0?`<div class="bg-slate-50 rounded-xl p-3 mb-4 text-xs text-slate-700 grid grid-cols-4 gap-2 border border-slate-100">
+            <div><div class="text-slate-400 font-bold">שכירות</div><div class="font-black text-sm">${a.rent} ₪/מ"ר</div></div>
+            <div><div class="text-slate-400 font-bold">ניהול</div><div class="font-black text-sm">${a.mgmt} ₪/מ"ר</div></div>
+            <div><div class="text-slate-400 font-bold">ארנונה/שנה</div><div class="font-black text-sm">${a.arnona} ₪/מ"ר</div></div>
+            <div><div class="text-slate-400 font-bold">חניה</div><div class="font-black text-sm">${a.parkingPrice} ₪/מקום</div></div>
+        </div>`:''}
+        <h3 class="font-bold text-slate-800 mb-2 text-sm border-b border-slate-100 pb-2">פירוט ציונים לפי פרמטר</h3>
+        <div>${scoreHTML}</div>`;
+    modal.classList.add('show');
+}
+
+function closeAssetModal(e){
+    if(e===true||e.target.id==='asset-modal') document.getElementById('asset-modal').classList.remove('show');
+}
+
+// ============================================================
+// CONSULTANT TABLE
+// ============================================================
+function initConsultantView(){
+    const tbody = document.getElementById('consultant-table-body');
+    if(!tbody) return;
+    tbody.innerHTML='';
+    const sorted = Object.values(cities).sort((a,b)=>b.scores.score-a.scores.score);
+    sorted.forEach((c,idx)=>{
+        const isBase=c.id==='option0';
+        const opexPct=Math.min((c.cost/15)*100,100);
+        const capexPct=Math.min((c.capex/6)*100,100);
+        const scoreColor = c.scores.score>=7.5?'#10b981':c.scores.score>=6?'#f59e0b':'#ef4444';
+        tbody.innerHTML+=`
+            <tr class="cursor-pointer ${isBase?'bg-indigo-50 border-l-4 border-indigo-500':'border-l-4 border-transparent hover:bg-slate-50'}" onclick="openAssetModal('${c.id}')">
+                <td class="font-bold text-slate-800 sticky right-0 ${isBase?'bg-indigo-50':'bg-white'} shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)] z-10">${isBase?'★ ':''}<span class="hover:underline">${c.name}</span></td>
+                <td class="text-xs">${c.city}</td>
+                <td class="text-xs text-slate-500">${c.owner||'---'}</td>
+                <td class="text-center text-xs font-bold">${c.sqm>0?c.sqm.toLocaleString('he-IL'):'---'}</td>
+                <td class="text-center border-r border-slate-200 text-xs font-bold">${c.rent>0?(c.rent+c.mgmt)+'':'---'}</td>
+                <td class="text-center text-xs">${c.arnona>0?c.arnona:'---'}</td>
+                <td class="text-center bg-blue-50/40 border-r border-blue-100 text-xs text-slate-700">${c.opexMonthly>0?c.opexMonthly.toLocaleString('he-IL'):'---'}</td>
+                <td class="border-r border-indigo-200 bg-indigo-50/40">
+                    <div class="text-xs font-black text-indigo-900">${c.cost.toFixed(2)}M</div>
+                    <div class="data-bar-bg"><div class="data-bar-fill bg-indigo-400" style="width:${opexPct}%"></div></div>
+                </td>
+                <td class="border-r border-orange-200 bg-orange-50/40">
+                    <div class="text-xs font-black text-orange-800">${c.capex>0?c.capex.toFixed(2)+'M':'---'}</div>
+                    <div class="data-bar-bg"><div class="data-bar-fill bg-orange-400" style="width:${capexPct}%"></div></div>
+                </td>
+                <td class="text-center text-xs font-bold">${c.scores.env.toFixed(1)}</td>
+                <td class="text-center text-xs font-bold">${c.scores.transport.toFixed(1)}</td>
+                <td class="text-center text-xs font-bold">${c.scores.quality.toFixed(1)}</td>
+                <td class="text-center font-black text-base bg-slate-50 border-r border-slate-200" style="color:${scoreColor}">${c.scores.score.toFixed(2)}</td>
+            </tr>`;
+    });
+
+    // OPEX chart
+    const ctxO = document.getElementById('opexChart');
+    if(ctxO){
+        if(opexChartInstance) opexChartInstance.destroy();
+        const top10 = [...sorted].sort((a,b)=>a.cost-b.cost).slice(0,10);
+        opexChartInstance = new Chart(ctxO.getContext('2d'),{
+            type:'bar',
+            data:{labels:top10.map(c=>c.name),datasets:[{label:'OPEX שנתי (M₪)',data:top10.map(c=>c.cost),backgroundColor:top10.map(c=>c.cost<=8.5?'#10b981':c.cost<=11?'#f59e0b':'#ef4444'),borderRadius:4}]},
+            options:{indexAxis:'y',plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',font:{size:10,weight:'bold'},formatter:v=>v.toFixed(1)+'M'}},scales:{x:{display:false,max:16},y:{grid:{display:false},ticks:{font:{size:10,family:'Heebo'}}}}}
+        });
+    }
+    // CAPEX chart
+    const ctxC = document.getElementById('capexChart');
+    if(ctxC){
+        if(capexChartInstance) capexChartInstance.destroy();
+        const capexSorted=[...sorted].filter(c=>c.capex>0).sort((a,b)=>a.capex-b.capex).slice(0,10);
+        capexChartInstance = new Chart(ctxC.getContext('2d'),{
+            type:'bar',
+            data:{labels:capexSorted.map(c=>c.name),datasets:[{label:'CAPEX (M₪)',data:capexSorted.map(c=>c.capex),backgroundColor:'#f97316',borderRadius:4}]},
+            options:{indexAxis:'y',plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',font:{size:10,weight:'bold'},formatter:v=>v.toFixed(2)+'M'}},scales:{x:{display:false,max:7},y:{grid:{display:false},ticks:{font:{size:10,family:'Heebo'}}}}}
+        });
+    }
+    // Score bar chart (all 20)
+    const ctxS = document.getElementById('scoreBarChart');
+    if(ctxS){
+        if(scoreBarChartInstance) scoreBarChartInstance.destroy();
+        const nonBase = sorted.filter(c=>c.id!=='option0');
+        scoreBarChartInstance = new Chart(ctxS.getContext('2d'),{
+            type:'bar',
+            data:{
+                labels:nonBase.map(c=>c.name),
+                datasets:[{
+                    label:'ציון משוקלל',
+                    data:nonBase.map(c=>c.scores.score),
+                    backgroundColor:nonBase.map(c=>c.scores.score>=7.5?'rgba(16,185,129,0.8)':c.scores.score>=6?'rgba(245,158,11,0.8)':'rgba(239,68,68,0.8)'),
+                    borderRadius:4
+                }]
+            },
+            options:{
+                indexAxis:'y',
+                plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',font:{size:9,weight:'bold'},formatter:v=>v.toFixed(2)}},
+                scales:{
+                    x:{display:true,min:0,max:10,grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{size:10}}},
+                    y:{grid:{display:false},ticks:{font:{size:10,family:'Heebo'}}}
+                }
+            }
+        });
+    }
+}
+
+function downloadCSV(){
+    let csv="\uFEFFשם הנכס,עיר,יזם,שטח (מ\"ר),שכירות+ניהול (למ\"ר),ארנונה שנתית (למ\"ר),OPEX חודשי (₪),OPEX שנתי (M₪),CAPEX נטו (M₪),ציון סביבה,ציון תחבורה,ציון איכות,ציון משוקלל\n";
+    Object.values(cities).sort((a,b)=>b.scores.score-a.scores.score).forEach(c=>{
+        csv+=`${c.name},${c.city},${c.owner},${c.sqm},${c.rent>0?(c.rent+c.mgmt):''},${c.arnona||''},${c.opexMonthly},${c.cost.toFixed(2)},${c.capex.toFixed(2)},${c.scores.env.toFixed(1)},${c.scores.transport.toFixed(1)},${c.scores.quality.toFixed(1)},${c.scores.score.toFixed(2)}\n`;
+    });
+    const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download='hq_assets_16042026.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+// ============================================================
+// GEO VIEW
+// ============================================================
+function initGeoView(){
+    const mapEl=document.getElementById('heat-map');
+    if(mapEl&&!heatMapInstance){
+        heatMapInstance=L.map('heat-map').setView([32.05,34.85],10);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OpenStreetMap'}).addTo(heatMapInstance);
+    } else if(heatMapInstance){ heatMapInstance.invalidateSize(); }
+    renderGeoCityButtons();
+    setImpactCity(currentImpactCity);
+}
+
+function renderGeoCityButtons(){
+    const c=document.getElementById('geo-city-buttons');
+    if(!c) return;
+    c.innerHTML='';
+    Object.keys(cityTargetGeo).forEach(city=>{
+        c.innerHTML+=`<button onclick="setImpactCity('${city}')" class="city-filter-btn ${city===currentImpactCity?'active':''}">${city}</button>`;
+    });
+}
+
+function setImpactCity(city){
+    currentImpactCity=city;
+    document.querySelectorAll('#geo-city-buttons .city-filter-btn').forEach(b=>{
+        b.classList.remove('active');
+        if(b.innerText.trim()===city) b.classList.add('active');
+    });
+    updateImpactAnalysis(city);
+}
+
+function deg2rad(d){return d*(Math.PI/180);}
+function getDistKm(lat1,lon1,lat2,lon2){
+    const R=6371,dLat=deg2rad(lat2-lat1),dLon=deg2rad(lon2-lon1);
+    const a=Math.sin(dLat/2)**2+Math.cos(deg2rad(lat1))*Math.cos(deg2rad(lat2))*Math.sin(dLon/2)**2;
+    return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function getRushPenalty(hqCity,empRegion){
+    let p=0;
+    if(['ראשון לציון','חולון'].includes(hqCity)){if(empRegion==='sharon'||empRegion==='north')p=35;else if(empRegion==='center')p=10;}
+    if(['הרצליה פיתוח','רעננה','כפר סבא','רמת השרון'].includes(hqCity)){if(empRegion==='south'||empRegion==='shfela')p=40;else if(empRegion==='center')p=15;}
+    if(['פתח תקווה','מודיעין','קריית אונו'].includes(hqCity)){if(empRegion==='south'||empRegion==='shfela')p=20;}
+    return p;
+}
+function generateImpactData(cityName){
+    let d={improves:0,same:0,worsens:0,timeBins:[0,0,0,0,0],severity:[0,0,0,0,0,0],msg:''};
+    const base=cityTargetGeo['תל אביב'], hq=cityTargetGeo[cityName];
+    if(cityName==='תל אביב'){
+        d.same=137; d.timeBins[1]=137; d.severity[2]=137;
+        d.msg='חלופת הישארות בתל אביב שומרת על סטטוס קוו מלא. זמני ההגעה אינם משתנים ואין סיכוני שימור כוח אדם.';
+        return d;
+    }
+    employeesGeo.forEach(emp=>{
+        const bd=getDistKm(emp.lat,emp.lng,base.lat,base.lng);
+        const nd=getDistKm(emp.lat,emp.lng,hq.lat,hq.lng);
+        const diff=(nd-bd)*1.5+getRushPenalty(cityName,emp.region);
+        const severe=emp.city==='תל אביב-יפו'&&cityName!=='תל אביב';
+        if(severe){d.severity[5]+=emp.count;d.worsens+=emp.count;d.timeBins[4]+=emp.count;}
+        else if(diff<=-15){d.severity[0]+=emp.count;d.improves+=emp.count;d.timeBins[0]+=emp.count;}
+        else if(diff<-5){d.severity[1]+=emp.count;d.improves+=emp.count;d.timeBins[0]+=emp.count;}
+        else if(diff<=5){d.severity[2]+=emp.count;d.same+=emp.count;d.timeBins[1]+=emp.count;}
+        else if(diff<=10){d.severity[3]+=emp.count;d.worsens+=emp.count;d.timeBins[2]+=emp.count;}
+        else if(diff<=20){d.severity[4]+=emp.count;d.worsens+=emp.count;d.timeBins[3]+=emp.count;}
+        else{d.severity[5]+=emp.count;d.worsens+=emp.count;d.timeBins[4]+=emp.count;}
+    });
+    d.msg=`מעבר ל-${cityName} ישפר זמני נסיעה עבור <strong>${d.improves} עובדים</strong>, ירע עבור <strong>${d.worsens}</strong> — מתוכם <strong>${d.severity[5]} בסיכון עזיבה גבוה</strong>.`;
+    return d;
+}
+
+function updateHeatMap(cityName){
+    if(!heatMapInstance) return;
+    if(!heatLayerGroup) heatLayerGroup=L.layerGroup().addTo(heatMapInstance);
+    heatLayerGroup.clearLayers();
+    const base=cityTargetGeo['תל אביב'],hq=cityTargetGeo[cityName];
+    const isBase=cityName==='תל אביב';
+    const legend=document.getElementById('heat-map-legend');
+    if(legend){
+        legend.innerHTML=isBase
+            ?`<span class="font-bold block mb-2 border-b pb-1">מצב קיים (תל אביב)</span><div class="flex items-center gap-2 mb-1.5"><div class="w-3 h-3 rounded-full bg-slate-600"></div> ריכוז גבוה</div><div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-slate-300"></div> עובד 1-3</div>`
+            :`<span class="font-bold block mb-2 border-b pb-1">מעבר ל-${cityName}</span>
+              <div class="flex items-center gap-2 mb-1"><div class="w-3 h-3 rounded-full bg-[#16a34a]"></div> <span class="text-green-700 font-bold">שיפור משמעותי</span></div>
+              <div class="flex items-center gap-2 mb-1"><div class="w-3 h-3 rounded-full bg-[#4ade80]"></div> <span class="text-green-600">שיפור קל</span></div>
+              <div class="flex items-center gap-2 mb-1"><div class="w-3 h-3 rounded-full bg-[#cbd5e1]"></div> <span class="text-slate-600">ללא שינוי</span></div>
+              <div class="flex items-center gap-2 mb-1"><div class="w-3 h-3 rounded-full bg-[#facc15]"></div> <span class="text-yellow-700">פגיעה קלה</span></div>
+              <div class="flex items-center gap-2 mb-1"><div class="w-3 h-3 rounded-full bg-[#f97316]"></div> <span class="text-orange-600">פגיעה מתונה</span></div>
+              <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-[#ef4444]"></div> <span class="text-red-600 font-bold">פגיעה קשה</span></div>`;
+    }
+    employeesGeo.forEach(emp=>{
+        let color;
+        if(isBase){color=emp.count>7?'#475569':emp.count>3?'#94a3b8':'#cbd5e1';}
+        else{
+            const bd=getDistKm(emp.lat,emp.lng,base.lat,base.lng),nd=getDistKm(emp.lat,emp.lng,hq.lat,hq.lng);
+            const diff=(nd-bd)*1.5+getRushPenalty(cityName,emp.region);
+            const severe=emp.city==='תל אביב-יפו'&&cityName!=='תל אביב';
+            if(severe||diff>20) color='#ef4444';
+            else if(diff<=-15) color='#16a34a';
+            else if(diff<-5) color='#4ade80';
+            else if(diff<=5) color='#cbd5e1';
+            else if(diff<=10) color='#facc15';
+            else color='#f97316';
+        }
+        const popup=`<div class='text-right font-sans text-xs'><strong>${emp.city}</strong><br>${emp.count} עובדים</div>`;
+        L.circle([emp.lat,emp.lng],{color:isBase?'#334155':color,fillColor:color,fillOpacity:0.8,weight:1,radius:600+emp.count*160}).addTo(heatLayerGroup).bindPopup(popup);
+    });
+}
+
+function updateImpactAnalysis(cityName){
+    const d=generateImpactData(cityName);
+    updateHeatMap(cityName);
+    const ins=document.getElementById('impact-insight');
+    if(ins) ins.innerHTML=`<div class="font-bold text-blue-700 text-xs mb-1">תובנה אסטרטגית</div>${d.msg}`;
+    const t=document.getElementById('impact-chart-title');
+    if(t) t.innerText=`מעבר ל-${cityName}`;
+    const ctx1=document.getElementById('impactChart');
+    if(ctx1){
+        if(impactChartInstance) impactChartInstance.destroy();
+        impactChartInstance=new Chart(ctx1.getContext('2d'),{type:'doughnut',data:{labels:['שיפור','ללא שינוי','הרעה'],datasets:[{data:[d.improves,d.same,d.worsens],backgroundColor:['#10b981','#cbd5e1','#ef4444'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'right',labels:{font:{family:'Heebo',size:10}}},datalabels:{color:'#fff',font:{weight:'bold'},formatter:v=>v>0?v:''}}}});
+    }
+    const ctx2=document.getElementById('timeChart');
+    if(ctx2){
+        if(timeChartInstance) timeChartInstance.destroy();
+        timeChartInstance=new Chart(ctx2.getContext('2d'),{type:'bar',data:{labels:["התקצר","ללא שינוי","עד 10 דק'","10–20 דק'","מעל 20 דק'"],datasets:[{label:'עובדים',data:d.timeBins,backgroundColor:['#10b981','#cbd5e1','#facc15','#f97316','#ef4444'],borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'top',font:{weight:'bold',size:11},formatter:v=>v>0?v:''}},scales:{y:{beginAtZero:true,max:137,display:false},x:{grid:{display:false},ticks:{font:{size:9,family:'Heebo'}}}}}});
+    }
+    const ctx3=document.getElementById('severityChart');
+    if(ctx3){
+        if(severityChartInstance) severityChartInstance.destroy();
+        severityChartInstance=new Chart(ctx3.getContext('2d'),{type:'pie',data:{labels:['שיפור משמעותי','שיפור קל','ללא שינוי','פגיעה קלה','פגיעה מתונה','פגיעה קשה'],datasets:[{data:d.severity,backgroundColor:['#16a34a','#4ade80','#cbd5e1','#facc15','#f97316','#ef4444'],borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{family:'Heebo',size:10}}},datalabels:{color:'#334155',font:{weight:'bold'},formatter:v=>v>0?v:''}}}});
+    }
+}
+
+// ============================================================
+// MAP
+// ============================================================
+function initMap(){
+    const el=document.getElementById('map');
+    if(!el||mapInstance) return;
+    mapInstance=L.map('map').setView([32.05,34.85],11);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(mapInstance);
+    Object.values(cities).forEach(c=>{
+        const isBase=c.id==='option0';
+        const sc=c.scores.score;
+        const col=isBase?'#4f46e5':sc>=7.5?'#10b981':sc>=6?'#f59e0b':'#ef4444';
+        const icon=L.divIcon({className:'custom-div-icon',html:`<div style="background:${col};width:${isBase?20:14}px;height:${isBase?20:14}px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.4);"></div>`,iconSize:[isBase?20:14,isBase?20:14],iconAnchor:[isBase?10:7,isBase?10:7]});
+        L.marker([c.lat,c.lng],{icon}).addTo(mapInstance)
+            .bindPopup(`<div class="text-right font-sans text-xs"><strong style="color:${col}" class="text-sm">${c.name}</strong><div class="text-slate-500">${c.owner}</div><div class="mt-1"><span class="font-bold">ציון: ${sc.toFixed(2)}</span> · OPEX: ${c.cost.toFixed(1)}M ₪</div></div>`);
+    });
+    // Add legend
+    const legend=L.control({position:'bottomright'});
+    legend.onAdd=()=>{
+        const div=L.DomUtil.create('div','leaflet-bar');
+        div.style.cssText='background:white;padding:10px;border-radius:8px;font-family:Heebo;font-size:11px;';
+        div.innerHTML='<strong style="display:block;margin-bottom:6px;border-bottom:1px solid #e2e8f0;padding-bottom:4px;">ציון</strong><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><div style="width:12px;height:12px;background:#10b981;border-radius:50%"></div> ≥ 7.5 (טוב)</div><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><div style="width:12px;height:12px;background:#f59e0b;border-radius:50%"></div> 6–7.5 (בינוני)</div><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><div style="width:12px;height:12px;background:#ef4444;border-radius:50%"></div> < 6 (חלש)</div><div style="display:flex;align-items:center;gap:6px"><div style="width:16px;height:16px;background:#4f46e5;border-radius:50%"></div> קיים (ת"א)</div>';
+        return div;
+    };
+    legend.addTo(mapInstance);
+}
+
+// ============================================================
+// NAV
+// ============================================================
+function switchView(name){
+    ['dashboard','consultant','geo','map'].forEach(v=>{
+        document.getElementById(`view-${v}`)?.classList.add('hidden');
+        const n=document.getElementById(`nav-${v}`);
+        if(n){n.classList.remove('active'); n.classList.add('text-slate-600');}
+    });
+    document.getElementById(`view-${name}`)?.classList.remove('hidden');
+    const an=document.getElementById(`nav-${name}`);
+    if(an){an.classList.add('active'); an.classList.remove('text-slate-600');}
+    if(name==='dashboard') setDashboardMetric(currentDashboardMetric,document.getElementById('metric-'+currentDashboardMetric));
+    if(name==='consultant') initConsultantView();
+    if(name==='geo') setTimeout(initGeoView,100);
+    if(name==='map') setTimeout(()=>{initMap(); mapInstance?.invalidateSize();},100);
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape') closeAssetModal(true);});
+window.addEventListener('DOMContentLoaded',()=>{
+    setDashboardMetric('score',document.getElementById('metric-score'));
+});
+</script>
 </body>
 </html>
